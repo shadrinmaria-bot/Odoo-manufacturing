@@ -43,7 +43,7 @@ const workCenters = [
     accentColor: '#FF71A7',
     incidents: 3,
     incidentBadgeHex: '#FB5157',
-    incidentArrow: '▼',
+    incidentArrow: '▲',
     statusLabel: 'Late',
     statusCount: 3,
     oee: 100,
