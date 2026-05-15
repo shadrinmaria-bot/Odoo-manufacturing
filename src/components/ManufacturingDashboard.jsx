@@ -77,6 +77,19 @@ const workCenters = [
   },
 ]
 
+// ── Logo ──────────────────────────────────────────────────────────────────────
+
+function OdooLogo({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" fill="none">
+      <rect x="0"  y="0"  width="10" height="10" rx="2.5" fill="#F47920" />
+      <rect x="12" y="0"  width="10" height="10" rx="2.5" fill="#00B0D7" />
+      <rect x="0"  y="12" width="10" height="10" rx="2.5" fill="#71C73E" />
+      <rect x="12" y="12" width="10" height="10" rx="2.5" fill="#875A7B" />
+    </svg>
+  )
+}
+
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
 function StatusDot({ blocked }) {
@@ -113,7 +126,7 @@ function StatusDot({ blocked }) {
 function IncidentBadge({ center }) {
   return (
     <span
-      className="flex items-center justify-center gap-1 whitespace-nowrap text-white"
+      className="flex items-center justify-center gap-1 whitespace-nowrap"
       style={{
         background: center.incidentBadgeHex,
         height: 20,
@@ -128,6 +141,7 @@ function IncidentBadge({ center }) {
         fontWeight: 700,
         fontSize: 11.87,
         lineHeight: 1,
+        color: '#0A0A0A',
       }}
     >
       <span style={{ fontSize: 9 }}>{center.incidentArrow}</span>
@@ -136,31 +150,54 @@ function IncidentBadge({ center }) {
   )
 }
 
+// Icon button style shared by monitor + chart buttons
+const iconBtnStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 32,
+  height: 32,
+  background: '#3C3E4A',
+  borderRadius: '0 3.78px 3.78px 0',
+  color: '#A0A4AF',
+  border: 'none',
+  cursor: 'pointer',
+  transition: 'filter 0.15s',
+}
+
 function WorkOrderButtons() {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center" style={{ gap: 3 }}>
+      {/* WORK ORDERS — left-rounded only */}
       <button
-        className="px-3 py-1.5 text-white transition-colors hover:brightness-110"
+        className="px-3 text-white transition-colors hover:brightness-110"
         style={{
           background: '#6B3E66',
           borderRadius: '3.78px 0 0 3.78px',
           fontFamily: "'Segoe UI', sans-serif",
           fontWeight: 600,
           fontSize: 14.5,
+          height: 32,
           lineHeight: 1,
           whiteSpace: 'nowrap',
+          border: 'none',
+          cursor: 'pointer',
         }}
       >
         WORK ORDERS
       </button>
-      <button className="p-1.5 rounded hover:bg-white/10 transition-colors text-slate-400 hover:text-white">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+
+      {/* Monitor — right-rounded */}
+      <button style={iconBtnStyle} className="hover:brightness-125">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="2" y="3" width="20" height="14" rx="2" />
           <path d="M8 21h8M12 17v4" />
         </svg>
       </button>
-      <button className="p-1.5 rounded hover:bg-white/10 transition-colors text-slate-400 hover:text-white">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+
+      {/* Chart — right-rounded */}
+      <button style={iconBtnStyle} className="hover:brightness-125">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
           <polyline points="16 7 22 7 22 13" />
         </svg>
@@ -174,10 +211,10 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div
         className="border rounded px-2 py-1 text-xs"
-        style={{ background: '#262A36', borderColor: '#3C3E4B', color: '#ccc' }}
+        style={{ background: '#262A36', borderColor: '#3C3E4A', color: '#aaa' }}
       >
-        <p style={{ fontFamily: "'Segoe UI', sans-serif", fontWeight: 600 }}>{label}</p>
-        <p>Orders: <span style={{ color: '#fff', fontWeight: 700 }}>{payload[0].value}</span></p>
+        <p style={{ fontFamily: "'Segoe UI', sans-serif", fontWeight: 600, color: '#F5F5F6' }}>{label}</p>
+        <p>Orders: <span style={{ color: '#F5F5F6', fontWeight: 700 }}>{payload[0].value}</span></p>
       </div>
     )
   }
@@ -194,15 +231,15 @@ function WorkCenterCard({ center }) {
         width: 623,
         height: 263,
         background: '#262A36',
-        border: `0.63px solid #3C3E4B`,
-        borderRadius: 8,
-        boxShadow: hovered ? '0 0 0 1px rgba(255,255,255,0.1)' : 'none',
+        border: `0.63px solid #3C3E4A`,
+        borderRadius: 0,
+        boxShadow: hovered ? '0 0 0 1px rgba(255,255,255,0.08)' : 'none',
         position: 'relative',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Left accent line */}
+      {/* Left accent line — no border-radius since card has none */}
       <div
         style={{
           position: 'absolute',
@@ -211,7 +248,6 @@ function WorkCenterCard({ center }) {
           bottom: 0,
           width: 2.5,
           background: center.accentColor,
-          borderRadius: '8px 0 0 8px',
         }}
       />
 
@@ -223,8 +259,8 @@ function WorkCenterCard({ center }) {
             style={{
               fontFamily: "'Segoe UI', sans-serif",
               fontWeight: 600,
-              fontSize: 14.5,
-              color: '#E2E8F0',
+              fontSize: 17.03,
+              color: '#F5F5F6',
             }}
           >
             {center.name}
@@ -233,7 +269,7 @@ function WorkCenterCard({ center }) {
         <IncidentBadge center={center} />
       </div>
 
-      {/* Stats row: buttons left, status+oee stacked in middle, count+% stacked on right */}
+      {/* Stats row */}
       <div className="flex items-center pl-5 pr-4 pb-3 gap-6">
         <WorkOrderButtons />
 
@@ -273,7 +309,7 @@ function WorkCenterCard({ center }) {
                 fontFamily: "'Segoe UI', sans-serif",
                 fontWeight: 400,
                 fontSize: 15.14,
-                color: '#E2E8F0',
+                color: '#F5F5F6',
                 lineHeight: 1.2,
               }}
             >
@@ -294,34 +330,39 @@ function WorkCenterCard({ center }) {
         </div>
       </div>
 
-      {/* Timeline chart — Odoo purple line, no fill */}
+      {/* Timeline chart: purple line first (behind), accent color line on top */}
       <div className="flex-1" style={{ minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }}>
             <XAxis
               dataKey="week"
-              tick={{
-                fill: '#626363',
-                fontSize: 12,
-                fontFamily: 'Arial, sans-serif',
-              }}
+              tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis hide domain={[0, 'auto']} />
             <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine
-              x="This Week"
-              stroke="rgba(255,255,255,0.12)"
-              strokeDasharray="3 3"
-            />
+            <ReferenceLine x="This Week" stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
+
+            {/* Purple base line — rendered first, sits behind */}
             <Line
               type="monotone"
               dataKey="orders"
               stroke="#6B3E66"
-              strokeWidth={2}
-              dot={{ r: 3, fill: '#6B3E66', strokeWidth: 0 }}
-              activeDot={{ r: 5, fill: '#6B3E66' }}
+              strokeWidth={3}
+              dot={false}
+              activeDot={false}
+              isAnimationActive={false}
+            />
+
+            {/* Work center accent color line — rendered second, sits in front */}
+            <Line
+              type="monotone"
+              dataKey="orders"
+              stroke={center.accentColor}
+              strokeWidth={1.5}
+              dot={{ r: 3, fill: center.accentColor, strokeWidth: 0 }}
+              activeDot={{ r: 5, fill: center.accentColor, strokeWidth: 0 }}
               isAnimationActive={false}
             />
           </LineChart>
@@ -340,23 +381,28 @@ function TopNav() {
 
   return (
     <header
-      className="flex items-center px-4 h-12 gap-1 border-b"
-      style={{ background: '#1B1D26', borderColor: 'rgba(255,255,255,0.06)' }}
+      className="flex items-center px-4 h-12 gap-1"
+      style={{
+        background: '#262A36',
+        borderBottom: '1px solid #3C3E4A',
+      }}
     >
-      <div className="flex items-center gap-2 mr-4">
-        <div className="w-6 h-6 rounded" style={{ background: 'linear-gradient(135deg,#7c3aed,#2563eb)' }} />
+      {/* Odoo logo + app name */}
+      <div className="flex items-center gap-2 mr-5">
+        <OdooLogo size={22} />
         <span
           style={{
             fontFamily: "'Segoe UI', sans-serif",
             fontWeight: 600,
-            fontSize: 14.5,
-            color: '#E2E8F0',
+            fontSize: 17.15,
+            color: '#F5F5F6',
           }}
         >
           Manufacturing
         </span>
       </div>
 
+      {/* Nav items */}
       <nav className="flex items-center gap-0.5">
         {navItems.map((item) => (
           <button
@@ -365,11 +411,12 @@ function TopNav() {
             className="px-3 py-1.5 rounded transition-colors"
             style={{
               fontFamily: "'Segoe UI', sans-serif",
-              fontWeight: active === item ? 600 : 400,
-              fontSize: 14,
-              color: active === item ? '#1AD3BB' : '#94A3B8',
+              fontWeight: 400,
+              fontSize: 14.55,
+              color: active === item ? '#1AD3BB' : '#F5F5F6',
               border: active === item ? '1px solid rgba(26,211,187,0.4)' : '1px solid transparent',
               background: active === item ? 'rgba(26,211,187,0.05)' : 'transparent',
+              cursor: 'pointer',
             }}
           >
             {item}
@@ -377,31 +424,55 @@ function TopNav() {
         ))}
       </nav>
 
+      {/* Right side */}
       <div className="ml-auto flex items-center gap-3">
-        <button className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+        {/* AI icon */}
+        <button className="p-1.5 rounded hover:bg-white/5 transition-colors" style={{ color: '#F5F5F6' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2a1 1 0 011 1v2a1 1 0 01-2 0V3a1 1 0 011-1zm0 16a1 1 0 011 1v2a1 1 0 01-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.41 1.42a1 1 0 01-1.42 1.41L4.22 5.64a1 1 0 010-1.42zm12.73 12.73a1 1 0 011.41 0l1.42 1.42a1 1 0 01-1.42 1.41l-1.41-1.41a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 010 2H3a1 1 0 01-1-1zm16 0a1 1 0 011-1h2a1 1 0 010 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.41a1 1 0 011.41 1.42L5.64 19.78a1 1 0 01-1.42 0zm12.73-12.73a1 1 0 010-1.42l1.41-1.42a1 1 0 011.42 1.42l-1.42 1.41a1 1 0 01-1.41 0zM12 8a4 4 0 100 8 4 4 0 000-8z" />
+          </svg>
+        </button>
+        {/* Bell */}
+        <button className="p-1.5 rounded hover:bg-white/5 transition-colors relative" style={{ color: '#F5F5F6' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" />
+          </svg>
+          <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full" />
+        </button>
+        {/* Clock */}
+        <button className="p-1.5 rounded hover:bg-white/5 transition-colors" style={{ color: '#F5F5F6' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+        </button>
+        {/* Settings */}
+        <button className="p-1.5 rounded hover:bg-white/5 transition-colors" style={{ color: '#F5F5F6' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="3" />
             <path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" />
           </svg>
         </button>
-        <button
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors hover:brightness-110"
+        {/* Separator */}
+        <span style={{ width: 1, height: 20, background: '#3C3E4A', display: 'inline-block' }} />
+        {/* User name */}
+        <span style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: 14.55, color: '#F5F5F6' }}>
+          ProductDesign
+        </span>
+        {/* Avatar */}
+        <div
+          className="flex items-center justify-center"
           style={{
-            background: '#FB5157',
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            background: '#875A7B',
             fontFamily: "'Segoe UI', sans-serif",
-            fontWeight: 600,
-            fontSize: 13,
-            color: '#fff',
+            fontWeight: 700,
+            fontSize: 12,
+            color: '#F5F5F6',
           }}
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            <line x1="12" y1="9" x2="12" y2="13" />
-            <line x1="12" y1="17" x2="12.01" y2="17" />
-          </svg>
-          Report Incident
-        </button>
-        <div className="w-7 h-7 rounded-full bg-violet-600 flex items-center justify-center text-xs font-bold text-white">
           P
         </div>
       </div>
@@ -414,60 +485,73 @@ function TopNav() {
 function SubHeader() {
   return (
     <div
-      className="flex items-center px-4 h-10 gap-3 border-b"
-      style={{ background: '#1B1D26', borderColor: 'rgba(255,255,255,0.06)' }}
+      className="flex items-center px-4 h-10 gap-3"
+      style={{
+        background: '#262A36',
+        borderBottom: '1px solid #3C3E4A',
+      }}
     >
       <span
         style={{
           fontFamily: "'Segoe UI', sans-serif",
           fontWeight: 400,
-          fontSize: 14,
-          color: '#CBD5E1',
+          fontSize: 16.51,
+          color: '#F5F5F6',
         }}
       >
         Work Centers Overview
       </span>
       <div className="flex-1" />
 
+      {/* Search bar */}
       <div
-        className="flex items-center gap-2 px-3 py-1 rounded border"
-        style={{ background: '#262A36', borderColor: '#3C3E4B', minWidth: 240 }}
+        className="flex items-center gap-2 px-3 py-1 border"
+        style={{
+          background: '#1B1D26',
+          borderColor: '#3C3E4A',
+          borderRadius: 4,
+          minWidth: 280,
+        }}
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2">
           <circle cx="11" cy="11" r="8" />
           <path d="M21 21l-4.35-4.35" />
         </svg>
-        <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363' }}>Search...</span>
+        <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363', flex: 1 }}>
+          Search...
+        </span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
 
-      <button className="p-1.5 rounded text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 6h18M6 12h12M10 18h4" />
-        </svg>
-      </button>
-
-      <div className="flex items-center gap-1" style={{ color: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}>
+      {/* Pagination */}
+      <div className="flex items-center gap-1" style={{ color: '#F5F5F6', fontSize: 13, fontFamily: "'Segoe UI', sans-serif" }}>
         <span>1-3 / 3</span>
-        <button className="p-0.5 hover:text-white disabled:opacity-30" disabled>
+        <button className="p-0.5 opacity-40" disabled style={{ color: '#F5F5F6' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <button className="p-0.5 hover:text-white disabled:opacity-30" disabled>
+        <button className="p-0.5 opacity-40" disabled style={{ color: '#F5F5F6' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
       </div>
 
+      {/* Report Incident */}
       <button
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors hover:brightness-110"
+        className="flex items-center gap-1.5 px-3 py-1.5 transition-colors hover:brightness-110"
         style={{
-          background: '#FB5157',
+          background: '#B83232',
+          borderRadius: 4,
           fontFamily: "'Segoe UI', sans-serif",
           fontWeight: 600,
           fontSize: 13,
-          color: '#fff',
+          color: '#F5F5F6',
+          border: 'none',
+          cursor: 'pointer',
         }}
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
