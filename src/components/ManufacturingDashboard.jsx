@@ -261,39 +261,46 @@ function WorkCenterCard({ center }) {
         </div>
 
         {/* Stats row */}
-        <div className="flex items-center pl-5 pr-4 pb-3 gap-6">
+        <div className="flex items-center pl-5 pr-4 pb-3" style={{ gap: 16 }}>
           <WorkOrderButtons />
-          <div className="flex flex-col" style={{ gap: 2 }}>
-            {center.statusLabel && (
+
+          {/* OEE section: label column + number column separated by 163.97px */}
+          <div className="flex items-start" style={{ gap: 163.97 }}>
+            {/* Left: status label stacked above OEE */}
+            <div className="flex flex-col" style={{ gap: 2 }}>
+              {center.statusLabel && (
+                <span style={{
+                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
+                  fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2,
+                }}>
+                  {center.statusLabel}
+                </span>
+              )}
               <span style={{
                 fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
                 fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2,
               }}>
-                {center.statusLabel}
+                OEE
               </span>
-            )}
-            <span style={{
-              fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
-              fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2,
-            }}>
-              OEE
-            </span>
-          </div>
-          <div className="flex flex-col items-end" style={{ gap: 2 }}>
-            {center.statusCount !== null && (
+            </div>
+
+            {/* Right: count stacked above 100% */}
+            <div className="flex flex-col items-end" style={{ gap: 2 }}>
+              {center.statusCount !== null && (
+                <span style={{
+                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
+                  fontSize: 15.14, color: '#F5F5F6', lineHeight: 1.2,
+                }}>
+                  {center.statusCount}
+                </span>
+              )}
               <span style={{
-                fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
-                fontSize: 15.14, color: '#F5F5F6', lineHeight: 1.2,
+                fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
+                fontSize: 15.14, color: '#1DC959', lineHeight: 1.2,
               }}>
-                {center.statusCount}
+                {center.oee}%
               </span>
-            )}
-            <span style={{
-              fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
-              fontSize: 15.14, color: '#1DC959', lineHeight: 1.2,
-            }}>
-              {center.oee}%
-            </span>
+            </div>
           </div>
         </div>
 
