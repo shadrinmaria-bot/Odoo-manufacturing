@@ -77,19 +77,10 @@ const workCenters = [
   },
 ]
 
-// ── Odoo Logo SVG ─────────────────────────────────────────────────────────────
+// ── Odoo Logo ─────────────────────────────────────────────────────────────────
 
 function OdooLogo({ size = 24 }) {
-  const s = size / 2 - 1.5   // square size
-  const g = size / 2 + 1     // second-column / second-row offset
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none">
-      <rect x="0"  y="0"  width={s} height={s} rx="2" fill="#F47920" />
-      <rect x={g}  y="0"  width={s} height={s} rx="2" fill="#00B0D7" />
-      <rect x="0"  y={g}  width={s} height={s} rx="2" fill="#71C73E" />
-      <rect x={g}  y={g}  width={s} height={s} rx="2" fill="#875A7B" />
-    </svg>
-  )
+  return <img src="/logo.png" width={size} height={size} alt="Manufacturing logo" style={{ display: 'block' }} />
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
