@@ -247,7 +247,7 @@ function WorkCenterCard({ center }) {
       {/* Content layer — above chart, below accent line overlap */}
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Header row */}
-        <div className="flex items-center justify-between pl-5 pr-4 pt-4 pb-2">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 8px 20px' }}>
           <div className="flex items-center gap-2">
             <StatusDot blocked={center.blocked} />
             <span style={{
@@ -260,18 +260,24 @@ function WorkCenterCard({ center }) {
           <IncidentBadge center={center} />
         </div>
 
-        {/* Stats row */}
-        <div className="flex items-center pl-5 pr-4 pb-3" style={{ gap: 98 }}>
+        {/* Stats row — buttons pinned left, OEE section pinned right */}
+        <div
+          style={{
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingLeft: 20, paddingRight: 16, paddingBottom: 12,
+          }}
+        >
           <WorkOrderButtons />
 
-          {/* OEE section: label column + number column separated by 163.97px */}
-          <div className="flex items-start" style={{ gap: 163.97 }}>
+          {/* OEE section: label column + spacer + number column */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
             {/* Left: status label stacked above OEE */}
-            <div className="flex flex-col" style={{ gap: 2 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {center.statusLabel && (
                 <span style={{
                   fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
-                  fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2,
+                  fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2, whiteSpace: 'nowrap',
                 }}>
                   {center.statusLabel}
                 </span>
@@ -285,7 +291,7 @@ function WorkCenterCard({ center }) {
             </div>
 
             {/* Right: count stacked above 100% */}
-            <div className="flex flex-col items-end" style={{ gap: 2 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
               {center.statusCount !== null && (
                 <span style={{
                   fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
