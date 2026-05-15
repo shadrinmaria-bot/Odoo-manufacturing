@@ -11,8 +11,6 @@ import {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const timelineWeeks = ['19-25 Apr', 'This Week', '3-9 May', '10-16 May', '17-23 May']
-
 const carpentryData = [
   { week: '19-25 Apr', orders: 2 },
   { week: 'This Week', orders: 5 },
@@ -41,59 +39,81 @@ const workCenters = [
   {
     id: 'carpentry',
     name: 'Carpentry Workshop',
-    statusColor: '#FB5157',
-    indicatorColor: '#FB5157',
+    blocked: true,
+    accentColor: '#FF71A7',
     incidents: 3,
-    incidentLevel: 'critical',
     incidentBadgeHex: '#FB5157',
     incidentArrow: '▼',
     statusLabel: 'Late',
-    statusLabelColor: 'text-red-400',
     oee: 100,
     data: carpentryData,
     chartColor: '#FB5157',
-    chartFill: 'rgba(251,81,87,0.15)',
   },
   {
     id: 'paint',
     name: 'Paint',
-    statusColor: '#E79A21',
-    indicatorColor: '#E79A21',
+    blocked: false,
+    accentColor: '#ADFFFE',
     incidents: 2,
-    incidentLevel: 'warning',
     incidentBadgeHex: '#E79A21',
     incidentArrow: '▲',
     statusLabel: 'In Progress',
-    statusLabelColor: 'text-teal-400',
     oee: 100,
     data: paintData,
     chartColor: '#E79A21',
-    chartFill: 'rgba(231,154,33,0.15)',
   },
   {
     id: 'assembly',
     name: 'Assembly',
-    statusColor: '#3CC962',
-    indicatorColor: '#3CC962',
+    blocked: false,
+    accentColor: '#7396EB',
     incidents: 0,
-    incidentLevel: 'ok',
     incidentBadgeHex: '#3CC962',
     incidentArrow: '▲',
     statusLabel: null,
-    statusLabelColor: '',
     oee: 100,
     data: assemblyData,
     chartColor: '#3CC962',
-    chartFill: 'rgba(60,201,98,0.15)',
   },
 ]
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
+function StatusDot({ blocked, accentColor }) {
+  if (blocked) {
+    return (
+      <span
+        style={{
+          width: 12,
+          height: 12,
+          borderRadius: '50%',
+          background: '#FB5157',
+          boxShadow: '0 0 6px #FB5157',
+          flexShrink: 0,
+          display: 'inline-block',
+        }}
+      />
+    )
+  }
+  return (
+    <span
+      style={{
+        width: 12,
+        height: 12,
+        borderRadius: '50%',
+        border: `2px solid ${accentColor}`,
+        background: 'transparent',
+        flexShrink: 0,
+        display: 'inline-block',
+      }}
+    />
+  )
+}
+
 function IncidentBadge({ center }) {
   return (
     <span
-      className="flex items-center justify-center gap-1.5 font-semibold text-white text-xs whitespace-nowrap"
+      className="flex items-center justify-center gap-1 whitespace-nowrap text-white"
       style={{
         background: center.incidentBadgeHex,
         height: 20,
@@ -104,40 +124,15 @@ function IncidentBadge({ center }) {
         paddingBottom: 2,
         borderRadius: 21,
         flexShrink: 0,
+        fontFamily: "'Segoe UI', sans-serif",
+        fontWeight: 700,
+        fontSize: 11.87,
+        lineHeight: 1,
       }}
     >
-      <span className="text-[10px]">{center.incidentArrow}</span>
+      <span style={{ fontSize: 9 }}>{center.incidentArrow}</span>
       {center.incidents} Open incident{center.incidents !== 1 ? 's' : ''}
     </span>
-  )
-}
-
-function OEEGauge({ value }) {
-  const radius = 20
-  const circ = 2 * Math.PI * radius
-  const offset = circ - (value / 100) * circ
-
-  return (
-    <div className="flex flex-col items-center gap-0.5">
-      <svg width="52" height="52" viewBox="0 0 52 52">
-        <circle cx="26" cy="26" r={radius} fill="none" stroke="#343848" strokeWidth="5" />
-        <circle
-          cx="26"
-          cy="26"
-          r={radius}
-          fill="none"
-          stroke="#3CC962"
-          strokeWidth="5"
-          strokeDasharray={circ}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          transform="rotate(-90 26 26)"
-        />
-        <text x="26" y="30" textAnchor="middle" fill="#3CC962" fontSize="11" fontWeight="bold">
-          {value}%
-        </text>
-      </svg>
-    </div>
   )
 }
 
@@ -145,22 +140,25 @@ function WorkOrderButtons() {
   return (
     <div className="flex items-center gap-2">
       <button
-        className="px-3 py-1.5 text-xs font-bold text-white transition-colors tracking-wide hover:brightness-110"
+        className="px-3 py-1.5 text-white transition-colors hover:brightness-110"
         style={{
           background: '#6B3E66',
           borderRadius: '3.78px 0 0 3.78px',
+          fontFamily: "'Segoe UI', sans-serif",
+          fontWeight: 600,
+          fontSize: 14.5,
+          lineHeight: 1,
+          whiteSpace: 'nowrap',
         }}
       >
         WORK ORDERS
       </button>
-      {/* monitor icon */}
       <button className="p-1.5 rounded hover:bg-white/10 transition-colors text-slate-400 hover:text-white">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="2" y="3" width="20" height="14" rx="2" />
           <path d="M8 21h8M12 17v4" />
         </svg>
       </button>
-      {/* chart icon */}
       <button className="p-1.5 rounded hover:bg-white/10 transition-colors text-slate-400 hover:text-white">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
@@ -174,9 +172,12 @@ function WorkOrderButtons() {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-navy-700 border border-white/10 rounded px-2 py-1 text-xs text-slate-300">
-        <p className="font-semibold">{label}</p>
-        <p>Orders: <span className="text-white font-bold">{payload[0].value}</span></p>
+      <div
+        className="border rounded px-2 py-1 text-xs"
+        style={{ background: '#262A36', borderColor: '#3C3E4B', color: '#ccc' }}
+      >
+        <p style={{ fontFamily: "'Segoe UI', sans-serif", fontWeight: 600 }}>{label}</p>
+        <p>Orders: <span style={{ color: '#fff', fontWeight: 700 }}>{payload[0].value}</span></p>
       </div>
     )
   }
@@ -188,68 +189,110 @@ function WorkCenterCard({ center }) {
 
   return (
     <div
-      className="flex flex-col rounded-lg overflow-hidden transition-shadow"
+      className="flex flex-col overflow-hidden transition-all"
       style={{
+        width: 623,
+        height: 263,
         background: '#262A36',
-        border: '1px solid rgba(255,255,255,0.07)',
-        boxShadow: hovered ? '0 0 0 1px rgba(255,255,255,0.12)' : 'none',
-        minWidth: 0,
+        border: `0.63px solid #3C3E4B`,
+        borderRadius: 8,
+        boxShadow: hovered ? '0 0 0 1px rgba(255,255,255,0.1)' : 'none',
+        position: 'relative',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Left accent line */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 2.5,
+          background: center.accentColor,
+          borderRadius: '8px 0 0 8px',
+        }}
+      />
+
       {/* Card header row */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-2">
+      <div className="flex items-center justify-between pl-5 pr-4 pt-4 pb-2">
         <div className="flex items-center gap-2">
+          <StatusDot blocked={center.blocked} accentColor={center.accentColor} />
           <span
-            className="w-3 h-3 rounded-full flex-shrink-0"
-            style={{ background: center.indicatorColor, boxShadow: `0 0 6px ${center.indicatorColor}` }}
-          />
-          <span className="font-semibold text-slate-100 text-sm">{center.name}</span>
+            style={{
+              fontFamily: "'Segoe UI', sans-serif",
+              fontWeight: 600,
+              fontSize: 14.5,
+              color: '#E2E8F0',
+            }}
+          >
+            {center.name}
+          </span>
         </div>
         <IncidentBadge center={center} />
       </div>
 
       {/* Stats row */}
-      <div className="flex items-center px-4 pb-3 gap-6">
+      <div className="flex items-center pl-5 pr-4 pb-3 gap-5">
         <WorkOrderButtons />
 
-        <div className="flex items-start gap-6 ml-2">
-          {center.statusLabel && (
-            <div className="flex flex-col items-center">
-              <span className={`text-xs font-semibold ${center.statusLabelColor}`}>
-                {center.statusLabel}
-              </span>
-              <span className="text-[10px] text-slate-500">OEE</span>
-            </div>
-          )}
-          {!center.statusLabel && (
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-teal-400 font-semibold">OEE</span>
-            </div>
-          )}
-          <div className="flex flex-col items-center -mt-1">
-            <span className="text-2xl font-bold text-teal-400 leading-none">{center.oee}%</span>
-          </div>
+        <div className="flex items-baseline gap-3 ml-1">
+          {center.statusLabel ? (
+            <span
+              style={{
+                fontFamily: "'Segoe UI', sans-serif",
+                fontWeight: 400,
+                fontSize: 15.14,
+                color: '#1AD3BB',
+              }}
+            >
+              {center.statusLabel}
+            </span>
+          ) : null}
+          <span
+            style={{
+              fontFamily: "'Segoe UI', sans-serif",
+              fontWeight: 400,
+              fontSize: 15.14,
+              color: '#1AD3BB',
+            }}
+          >
+            OEE
+          </span>
+          <span
+            style={{
+              fontFamily: "'Segoe UI', sans-serif",
+              fontWeight: 700,
+              fontSize: 15.14,
+              color: '#1DC959',
+            }}
+          >
+            {center.oee}%
+          </span>
         </div>
       </div>
 
-      {/* Divider */}
-      <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '0 0' }} />
+      {/* Divider — Odoo purple */}
+      <div style={{ height: 1, background: '#6B3E66', marginLeft: 5, marginRight: 0 }} />
 
       {/* Timeline chart */}
-      <div className="flex-1 pt-2 pb-1" style={{ minHeight: 90 }}>
-        <ResponsiveContainer width="100%" height={90}>
-          <AreaChart data={center.data} margin={{ top: 8, right: 16, left: -28, bottom: 0 }}>
+      <div className="flex-1" style={{ minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={center.data} margin={{ top: 8, right: 16, left: -28, bottom: 2 }}>
             <defs>
               <linearGradient id={`grad-${center.id}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={center.chartColor} stopOpacity={0.3} />
+                <stop offset="5%" stopColor={center.chartColor} stopOpacity={0.28} />
                 <stop offset="95%" stopColor={center.chartColor} stopOpacity={0.02} />
               </linearGradient>
             </defs>
             <XAxis
               dataKey="week"
-              tick={{ fill: '#475569', fontSize: 10 }}
+              tick={{
+                fill: '#626363',
+                fontSize: 12,
+                fontFamily: 'Arial, sans-serif',
+              }}
               axisLine={false}
               tickLine={false}
             />
@@ -257,7 +300,7 @@ function WorkCenterCard({ center }) {
             <Tooltip content={<CustomTooltip />} />
             <ReferenceLine
               x="This Week"
-              stroke="rgba(255,255,255,0.15)"
+              stroke="rgba(255,255,255,0.12)"
               strokeDasharray="3 3"
             />
             <Area
@@ -286,35 +329,42 @@ function TopNav() {
   return (
     <header
       className="flex items-center px-4 h-12 gap-1 border-b"
-      style={{
-        background: '#1B1D26',
-        borderColor: 'rgba(255,255,255,0.06)',
-      }}
+      style={{ background: '#1B1D26', borderColor: 'rgba(255,255,255,0.06)' }}
     >
-      {/* Logo */}
       <div className="flex items-center gap-2 mr-4">
         <div className="w-6 h-6 rounded" style={{ background: 'linear-gradient(135deg,#7c3aed,#2563eb)' }} />
-        <span className="text-slate-100 font-semibold text-sm">Manufacturing</span>
+        <span
+          style={{
+            fontFamily: "'Segoe UI', sans-serif",
+            fontWeight: 600,
+            fontSize: 14.5,
+            color: '#E2E8F0',
+          }}
+        >
+          Manufacturing
+        </span>
       </div>
 
-      {/* Nav items */}
       <nav className="flex items-center gap-0.5">
         {navItems.map((item) => (
           <button
             key={item}
             onClick={() => setActive(item)}
-            className={`px-3 py-1.5 rounded text-sm transition-colors ${
-              active === item
-                ? 'text-teal-400 border border-teal-500/60 bg-teal-500/5'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-            }`}
+            className="px-3 py-1.5 rounded transition-colors"
+            style={{
+              fontFamily: "'Segoe UI', sans-serif",
+              fontWeight: active === item ? 600 : 400,
+              fontSize: 14,
+              color: active === item ? '#1AD3BB' : '#94A3B8',
+              border: active === item ? '1px solid rgba(26,211,187,0.4)' : '1px solid transparent',
+              background: active === item ? 'rgba(26,211,187,0.05)' : 'transparent',
+            }}
           >
             {item}
           </button>
         ))}
       </nav>
 
-      {/* Right side icons */}
       <div className="ml-auto flex items-center gap-3">
         <button className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -322,8 +372,22 @@ function TopNav() {
             <path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" />
           </svg>
         </button>
-        <button className="px-2 py-1 rounded text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">
-          ⚠ Report Incident
+        <button
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors hover:brightness-110"
+          style={{
+            background: '#FB5157',
+            fontFamily: "'Segoe UI', sans-serif",
+            fontWeight: 600,
+            fontSize: 13,
+            color: '#fff',
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          Report Incident
         </button>
         <div className="w-7 h-7 rounded-full bg-violet-600 flex items-center justify-center text-xs font-bold text-white">
           P
@@ -333,37 +397,44 @@ function TopNav() {
   )
 }
 
-// ── Sub-header / toolbar ──────────────────────────────────────────────────────
+// ── Sub-header ────────────────────────────────────────────────────────────────
 
 function SubHeader() {
   return (
     <div
       className="flex items-center px-4 h-10 gap-3 border-b"
-      style={{
-        background: '#1B1D26',
-        borderColor: 'rgba(255,255,255,0.06)',
-      }}
+      style={{ background: '#1B1D26', borderColor: 'rgba(255,255,255,0.06)' }}
     >
-      <span className="text-slate-300 text-sm font-medium">Work Centers Overview</span>
+      <span
+        style={{
+          fontFamily: "'Segoe UI', sans-serif",
+          fontWeight: 400,
+          fontSize: 14,
+          color: '#CBD5E1',
+        }}
+      >
+        Work Centers Overview
+      </span>
       <div className="flex-1" />
 
-      {/* Search */}
-      <div className="flex items-center gap-2 px-3 py-1 rounded border text-xs text-slate-500"
-        style={{ background: '#262A36', borderColor: 'rgba(255,255,255,0.1)', minWidth: 240 }}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <div
+        className="flex items-center gap-2 px-3 py-1 rounded border"
+        style={{ background: '#262A36', borderColor: '#3C3E4B', minWidth: 240 }}
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2">
           <circle cx="11" cy="11" r="8" />
           <path d="M21 21l-4.35-4.35" />
         </svg>
-        <span>Search...</span>
+        <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363' }}>Search...</span>
       </div>
+
       <button className="p-1.5 rounded text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M3 6h18M6 12h12M10 18h4" />
         </svg>
       </button>
 
-      {/* Pagination */}
-      <div className="flex items-center gap-1 text-xs text-slate-400">
+      <div className="flex items-center gap-1" style={{ color: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}>
         <span>1-3 / 3</span>
         <button className="p-0.5 hover:text-white disabled:opacity-30" disabled>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -377,8 +448,16 @@ function SubHeader() {
         </button>
       </div>
 
-      {/* Report Incident button */}
-      <button className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-red-600 hover:bg-red-500 text-white transition-colors">
+      <button
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors hover:brightness-110"
+        style={{
+          background: '#FB5157',
+          fontFamily: "'Segoe UI', sans-serif",
+          fontWeight: 600,
+          fontSize: 13,
+          color: '#fff',
+        }}
+      >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
           <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
           <line x1="12" y1="9" x2="12" y2="13" />
@@ -404,10 +483,17 @@ function Legend() {
       {items.map((item) => (
         <div key={item.label} className="flex items-center gap-2">
           <span
-            className="w-3 h-0.5 rounded-full inline-block"
-            style={{ background: item.color }}
+            style={{
+              width: 12,
+              height: 2,
+              borderRadius: 9999,
+              background: item.color,
+              display: 'inline-block',
+            }}
           />
-          <span className="text-xs text-slate-500">{item.label}</span>
+          <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363' }}>
+            {item.label}
+          </span>
         </div>
       ))}
     </div>
@@ -422,9 +508,8 @@ export default function ManufacturingDashboard() {
       <TopNav />
       <SubHeader />
 
-      {/* Cards grid */}
-      <main className="flex-1 p-4">
-        <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+      <main className="flex-1 p-4 overflow-x-auto">
+        <div className="flex gap-4" style={{ width: 'max-content' }}>
           {workCenters.map((center) => (
             <WorkCenterCard key={center.id} center={center} />
           ))}
