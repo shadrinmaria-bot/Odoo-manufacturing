@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -45,9 +45,9 @@ const workCenters = [
     incidentBadgeHex: '#FB5157',
     incidentArrow: '▼',
     statusLabel: 'Late',
+    statusCount: 3,
     oee: 100,
     data: carpentryData,
-    chartColor: '#FB5157',
   },
   {
     id: 'paint',
@@ -58,9 +58,9 @@ const workCenters = [
     incidentBadgeHex: '#E79A21',
     incidentArrow: '▲',
     statusLabel: 'In Progress',
+    statusCount: 1,
     oee: 100,
     data: paintData,
-    chartColor: '#E79A21',
   },
   {
     id: 'assembly',
@@ -71,15 +71,15 @@ const workCenters = [
     incidentBadgeHex: '#3CC962',
     incidentArrow: '▲',
     statusLabel: null,
+    statusCount: null,
     oee: 100,
     data: assemblyData,
-    chartColor: '#3CC962',
   },
 ]
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function StatusDot({ blocked, accentColor }) {
+function StatusDot({ blocked }) {
   if (blocked) {
     return (
       <span
@@ -87,8 +87,8 @@ function StatusDot({ blocked, accentColor }) {
           width: 12,
           height: 12,
           borderRadius: '50%',
-          background: '#FB5157',
-          boxShadow: '0 0 6px #FB5157',
+          background: '#B83232',
+          border: '1.5px solid #C45A5A',
           flexShrink: 0,
           display: 'inline-block',
         }}
@@ -101,7 +101,7 @@ function StatusDot({ blocked, accentColor }) {
         width: 12,
         height: 12,
         borderRadius: '50%',
-        border: `2px solid ${accentColor}`,
+        border: '2px solid #51545D',
         background: 'transparent',
         flexShrink: 0,
         display: 'inline-block',
@@ -218,7 +218,7 @@ function WorkCenterCard({ center }) {
       {/* Card header row */}
       <div className="flex items-center justify-between pl-5 pr-4 pt-4 pb-2">
         <div className="flex items-center gap-2">
-          <StatusDot blocked={center.blocked} accentColor={center.accentColor} />
+          <StatusDot blocked={center.blocked} />
           <span
             style={{
               fontFamily: "'Segoe UI', sans-serif",
@@ -233,39 +233,60 @@ function WorkCenterCard({ center }) {
         <IncidentBadge center={center} />
       </div>
 
-      {/* Stats row */}
-      <div className="flex items-center pl-5 pr-4 pb-3 gap-5">
+      {/* Stats row: buttons left, status+oee stacked in middle, count+% stacked on right */}
+      <div className="flex items-center pl-5 pr-4 pb-3 gap-6">
         <WorkOrderButtons />
 
-        <div className="flex items-baseline gap-3 ml-1">
-          {center.statusLabel ? (
+        {/* Status label + OEE label stacked */}
+        <div className="flex flex-col" style={{ gap: 2 }}>
+          {center.statusLabel && (
             <span
               style={{
                 fontFamily: "'Segoe UI', sans-serif",
                 fontWeight: 400,
                 fontSize: 15.14,
                 color: '#1AD3BB',
+                lineHeight: 1.2,
               }}
             >
               {center.statusLabel}
             </span>
-          ) : null}
+          )}
           <span
             style={{
               fontFamily: "'Segoe UI', sans-serif",
               fontWeight: 400,
               fontSize: 15.14,
               color: '#1AD3BB',
+              lineHeight: 1.2,
             }}
           >
             OEE
           </span>
+        </div>
+
+        {/* Count + OEE value stacked */}
+        <div className="flex flex-col items-end" style={{ gap: 2 }}>
+          {center.statusCount !== null && (
+            <span
+              style={{
+                fontFamily: "'Segoe UI', sans-serif",
+                fontWeight: 400,
+                fontSize: 15.14,
+                color: '#E2E8F0',
+                lineHeight: 1.2,
+              }}
+            >
+              {center.statusCount}
+            </span>
+          )}
           <span
             style={{
               fontFamily: "'Segoe UI', sans-serif",
               fontWeight: 700,
               fontSize: 15.14,
               color: '#1DC959',
+              lineHeight: 1.2,
             }}
           >
             {center.oee}%
@@ -273,19 +294,10 @@ function WorkCenterCard({ center }) {
         </div>
       </div>
 
-      {/* Divider — Odoo purple */}
-      <div style={{ height: 1, background: '#6B3E66', marginLeft: 5, marginRight: 0 }} />
-
-      {/* Timeline chart */}
+      {/* Timeline chart — Odoo purple line, no fill */}
       <div className="flex-1" style={{ minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={center.data} margin={{ top: 8, right: 16, left: -28, bottom: 2 }}>
-            <defs>
-              <linearGradient id={`grad-${center.id}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={center.chartColor} stopOpacity={0.28} />
-                <stop offset="95%" stopColor={center.chartColor} stopOpacity={0.02} />
-              </linearGradient>
-            </defs>
+          <LineChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }}>
             <XAxis
               dataKey="week"
               tick={{
@@ -303,16 +315,16 @@ function WorkCenterCard({ center }) {
               stroke="rgba(255,255,255,0.12)"
               strokeDasharray="3 3"
             />
-            <Area
+            <Line
               type="monotone"
               dataKey="orders"
-              stroke={center.chartColor}
+              stroke="#6B3E66"
               strokeWidth={2}
-              fill={`url(#grad-${center.id})`}
-              dot={{ r: 3, fill: center.chartColor, strokeWidth: 0 }}
-              activeDot={{ r: 5, fill: center.chartColor }}
+              dot={{ r: 3, fill: '#6B3E66', strokeWidth: 0 }}
+              activeDot={{ r: 5, fill: '#6B3E66' }}
+              isAnimationActive={false}
             />
-          </AreaChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
