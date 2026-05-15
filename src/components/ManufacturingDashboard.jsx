@@ -41,50 +41,50 @@ const workCenters = [
   {
     id: 'carpentry',
     name: 'Carpentry Workshop',
-    statusColor: '#ef4444',
-    indicatorColor: '#ef4444',
+    statusColor: '#FB5157',
+    indicatorColor: '#FB5157',
     incidents: 3,
     incidentLevel: 'critical',
-    incidentBadgeColor: 'bg-red-600',
+    incidentBadgeHex: '#FB5157',
     incidentArrow: '▼',
     statusLabel: 'Late',
     statusLabelColor: 'text-red-400',
     oee: 100,
     data: carpentryData,
-    chartColor: '#f43f5e',
-    chartFill: 'rgba(244,63,94,0.15)',
+    chartColor: '#FB5157',
+    chartFill: 'rgba(251,81,87,0.15)',
   },
   {
     id: 'paint',
     name: 'Paint',
-    statusColor: '#f59e0b',
-    indicatorColor: '#f59e0b',
+    statusColor: '#E79A21',
+    indicatorColor: '#E79A21',
     incidents: 2,
     incidentLevel: 'warning',
-    incidentBadgeColor: 'bg-amber-500',
+    incidentBadgeHex: '#E79A21',
     incidentArrow: '▲',
     statusLabel: 'In Progress',
     statusLabelColor: 'text-teal-400',
     oee: 100,
     data: paintData,
-    chartColor: '#f59e0b',
-    chartFill: 'rgba(245,158,11,0.15)',
+    chartColor: '#E79A21',
+    chartFill: 'rgba(231,154,33,0.15)',
   },
   {
     id: 'assembly',
     name: 'Assembly',
-    statusColor: '#22c55e',
-    indicatorColor: '#22c55e',
+    statusColor: '#3CC962',
+    indicatorColor: '#3CC962',
     incidents: 0,
     incidentLevel: 'ok',
-    incidentBadgeColor: 'bg-green-600',
+    incidentBadgeHex: '#3CC962',
     incidentArrow: '▲',
     statusLabel: null,
     statusLabelColor: '',
     oee: 100,
     data: assemblyData,
-    chartColor: '#22c55e',
-    chartFill: 'rgba(34,197,94,0.15)',
+    chartColor: '#3CC962',
+    chartFill: 'rgba(60,201,98,0.15)',
   },
 ]
 
@@ -93,8 +93,18 @@ const workCenters = [
 function IncidentBadge({ center }) {
   return (
     <span
-      className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-semibold text-white ${center.incidentBadgeColor}`}
-      style={{ border: `1px solid rgba(255,255,255,0.15)` }}
+      className="flex items-center justify-center gap-1.5 font-semibold text-white text-xs whitespace-nowrap"
+      style={{
+        background: center.incidentBadgeHex,
+        height: 20,
+        width: 147,
+        paddingLeft: 14,
+        paddingRight: 14,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 21,
+        flexShrink: 0,
+      }}
     >
       <span className="text-[10px]">{center.incidentArrow}</span>
       {center.incidents} Open incident{center.incidents !== 1 ? 's' : ''}
@@ -110,20 +120,20 @@ function OEEGauge({ value }) {
   return (
     <div className="flex flex-col items-center gap-0.5">
       <svg width="52" height="52" viewBox="0 0 52 52">
-        <circle cx="26" cy="26" r={radius} fill="none" stroke="#1e2a4a" strokeWidth="5" />
+        <circle cx="26" cy="26" r={radius} fill="none" stroke="#343848" strokeWidth="5" />
         <circle
           cx="26"
           cy="26"
           r={radius}
           fill="none"
-          stroke="#22c55e"
+          stroke="#3CC962"
           strokeWidth="5"
           strokeDasharray={circ}
           strokeDashoffset={offset}
           strokeLinecap="round"
           transform="rotate(-90 26 26)"
         />
-        <text x="26" y="30" textAnchor="middle" fill="#22c55e" fontSize="11" fontWeight="bold">
+        <text x="26" y="30" textAnchor="middle" fill="#3CC962" fontSize="11" fontWeight="bold">
           {value}%
         </text>
       </svg>
@@ -134,7 +144,13 @@ function OEEGauge({ value }) {
 function WorkOrderButtons() {
   return (
     <div className="flex items-center gap-2">
-      <button className="px-3 py-1.5 text-xs font-bold border border-teal-500 text-teal-400 rounded hover:bg-teal-500/10 transition-colors tracking-wide">
+      <button
+        className="px-3 py-1.5 text-xs font-bold text-white transition-colors tracking-wide hover:brightness-110"
+        style={{
+          background: '#6B3E66',
+          borderRadius: '3.78px 0 0 3.78px',
+        }}
+      >
         WORK ORDERS
       </button>
       {/* monitor icon */}
@@ -174,7 +190,7 @@ function WorkCenterCard({ center }) {
     <div
       className="flex flex-col rounded-lg overflow-hidden transition-shadow"
       style={{
-        background: 'linear-gradient(180deg, #131b30 0%, #0f1628 100%)',
+        background: '#262A36',
         border: '1px solid rgba(255,255,255,0.07)',
         boxShadow: hovered ? '0 0 0 1px rgba(255,255,255,0.12)' : 'none',
         minWidth: 0,
@@ -271,7 +287,7 @@ function TopNav() {
     <header
       className="flex items-center px-4 h-12 gap-1 border-b"
       style={{
-        background: '#0f1628',
+        background: '#1B1D26',
         borderColor: 'rgba(255,255,255,0.06)',
       }}
     >
@@ -324,7 +340,7 @@ function SubHeader() {
     <div
       className="flex items-center px-4 h-10 gap-3 border-b"
       style={{
-        background: '#0d1221',
+        background: '#1B1D26',
         borderColor: 'rgba(255,255,255,0.06)',
       }}
     >
@@ -333,7 +349,7 @@ function SubHeader() {
 
       {/* Search */}
       <div className="flex items-center gap-2 px-3 py-1 rounded border text-xs text-slate-500"
-        style={{ background: '#0f1628', borderColor: 'rgba(255,255,255,0.1)', minWidth: 240 }}>
+        style={{ background: '#262A36', borderColor: 'rgba(255,255,255,0.1)', minWidth: 240 }}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="11" cy="11" r="8" />
           <path d="M21 21l-4.35-4.35" />
@@ -378,9 +394,9 @@ function SubHeader() {
 
 function Legend() {
   const items = [
-    { color: '#ef4444', label: 'Critical open item' },
-    { color: '#f59e0b', label: 'Needs attention' },
-    { color: '#22c55e', label: 'No open safety items' },
+    { color: '#FB5157', label: 'Critical open item' },
+    { color: '#E79A21', label: 'Needs attention' },
+    { color: '#3CC962', label: 'No open safety items' },
   ]
 
   return (
@@ -402,7 +418,7 @@ function Legend() {
 
 export default function ManufacturingDashboard() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0a0e1a' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#1B1D26' }}>
       <TopNav />
       <SubHeader />
 
