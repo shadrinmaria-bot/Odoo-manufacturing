@@ -189,7 +189,7 @@ function WorkCenterCard({ center }) {
     <div
       className="flex flex-col overflow-hidden transition-all"
       style={{
-        width: 623, height: 263,
+        flex: 1, minWidth: 0, height: 263,
         background: '#262A36',
         border: '0.63px solid #3C3E4A',
         borderRadius: 0,
@@ -261,7 +261,7 @@ function WorkCenterCard({ center }) {
         </div>
 
         {/* Stats row */}
-        <div className="flex items-center pl-5 pr-4 pb-3" style={{ gap: 16 }}>
+        <div className="flex items-center pl-5 pr-4 pb-3" style={{ gap: 98 }}>
           <WorkOrderButtons />
 
           {/* OEE section: label column + number column separated by 163.97px */}
@@ -517,9 +517,8 @@ export default function ManufacturingDashboard() {
     <div className="min-h-screen flex flex-col" style={{ background: '#1B1D26' }}>
       <TopNav />
       <SubHeader />
-      <main className="flex-1 p-4 overflow-x-auto">
-        {/* 10px gap between cards */}
-        <div className="flex" style={{ width: 'max-content', gap: 10 }}>
+      <main className="flex-1 p-4">
+        <div style={{ display: 'flex', gap: 10, width: '100%' }}>
           {workCenters.map((center) => (
             <WorkCenterCard key={center.id} center={center} />
           ))}
