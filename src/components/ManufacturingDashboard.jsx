@@ -315,11 +315,9 @@ function NavIcons() {
 
   return (
     <div className="flex items-center ml-auto" style={{ gap: GAP }}>
-      {/* AI / assistant icon — two angled strokes in amber */}
+      {/* AI icon */}
       <button className="p-0 hover:opacity-80 transition-opacity" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M3 14 L8 4 L10 9 L13 6 L15 14" stroke="#F4A720" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <img src="/aiicon.png" width="18" height="18" alt="AI" style={{ display: 'block' }} />
       </button>
 
       {/* Discuss / chat bubble with badge */}
