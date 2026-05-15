@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -212,13 +212,7 @@ function WorkCenterCard({ center }) {
         {/* Chart */}
         <div style={{ flex: 1, minHeight: 0 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }}>
-              <defs>
-                <linearGradient id={`grad-${center.id}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor="#6B3E66" stopOpacity={0.55} />
-                  <stop offset="100%" stopColor="#6B3E66" stopOpacity={0.04} />
-                </linearGradient>
-              </defs>
+            <LineChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }}>
               <XAxis
                 dataKey="week"
                 tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
@@ -227,18 +221,16 @@ function WorkCenterCard({ center }) {
               <YAxis hide domain={[0, 'auto']} />
               <Tooltip content={<CustomTooltip />} />
               <ReferenceLine x="This Week" stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
-              {/* Fill only — no stroke */}
-              <Area
+              <Line
                 type="monotone"
                 dataKey="orders"
-                stroke="none"
-                strokeWidth={0}
-                fill={`url(#grad-${center.id})`}
-                isAnimationActive={false}
+                stroke="#6B3E66"
+                strokeWidth={1.89}
                 dot={false}
-                activeDot={false}
+                activeDot={{ r: 4, fill: '#6B3E66', strokeWidth: 0 }}
+                isAnimationActive={false}
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
