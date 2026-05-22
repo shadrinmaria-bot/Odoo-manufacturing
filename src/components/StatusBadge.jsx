@@ -30,8 +30,8 @@ const VARIANTS = {
     stroke:        '#FBB945',
     divider:       '#FBB945',
     arrowBg:       'rgba(251,185,69,0.15)',
-    arrowHoverBg:  '#FCD47A',
-    arrowActiveBg: 'rgba(251,185,69,0.30)',
+    arrowHoverBg:  'rgba(251,185,69,0.32)',
+    arrowActiveBg: 'rgba(251,185,69,0.42)',
     arrowText:     '#FBB945',
   },
 }

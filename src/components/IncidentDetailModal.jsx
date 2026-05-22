@@ -356,13 +356,13 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
               background: '#6B3E66', border: 'none', borderRadius: 4,
               padding: '8px 22px', cursor: 'pointer',
               fontFamily: FONT, fontWeight: 600, fontSize: 13,
-              color: '#F5F5F6', letterSpacing: '0.04em',
+              color: '#F5F5F6', letterSpacing: '0.06em',
               transition: 'filter 0.15s',
             }}
             onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
             onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
           >
-            Share
+            SHARE
           </button>
           <button
             style={{
