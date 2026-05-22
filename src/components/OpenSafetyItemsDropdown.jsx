@@ -91,7 +91,7 @@ function IncidentRow({ incident, onView, onRequestDelete }) {
           transition: 'color 0.12s',
           flexShrink: 0,
         }}
-        onMouseEnter={e => e.currentTarget.style.color = '#B83232'}
+        onMouseEnter={e => e.currentTarget.style.color = '#F5F5F6'}
         onMouseLeave={e => e.currentTarget.style.color = hovered ? '#8A8D9A' : 'transparent'}
         aria-label="Delete incident"
       >

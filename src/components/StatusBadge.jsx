@@ -13,15 +13,15 @@ const FONT_W    = 600
 
 const VARIANTS = {
   red: {
-    labelBg:       '#F9464C',
-    labelBgActive: '#FF6267',
-    labelText:     '#ffffff',
-    stroke:        null,
-    divider:       '#C93438',
-    arrowBg:       '#F9464C',
-    arrowHoverBg:  '#FB8F92',
-    arrowActiveBg: '#FF6267',
-    arrowText:     '#ffffff',
+    labelBg:       'transparent',
+    labelBgActive: 'rgba(249,70,76,0.20)',
+    labelText:     '#F9464C',
+    stroke:        '#F9464C',
+    divider:       '#F9464C',
+    arrowBg:       'rgba(249,70,76,0.15)',
+    arrowHoverBg:  'rgba(249,70,76,0.30)',
+    arrowActiveBg: 'rgba(249,70,76,0.35)',
+    arrowText:     '#F9464C',
   },
   orange: {
     labelBg:       'transparent',
@@ -105,6 +105,7 @@ export default function StatusBadge({
         height:     BADGE_H,
         flexShrink: 0,
         userSelect: 'none',
+        gap:        2,
       }}
     >
       {/* ── Label part — left corners rounded only ── */}
@@ -117,8 +118,7 @@ export default function StatusBadge({
           padding:        '5px 10.5px',
           background:     v.labelBg,
           border:         v.stroke ? `1px solid ${v.stroke}` : 'none',
-          borderRight:    'none',
-          borderRadius:   '4px 0 0 4px',
+          borderRadius:   4,
           fontFamily:     FONT,
           fontWeight:     FONT_W,
           fontSize:       FONT_SIZE,
@@ -131,16 +131,7 @@ export default function StatusBadge({
         {label}
       </div>
 
-      {/* ── 1px divider ── */}
-      <div
-        style={{
-          width:      DIVIDER_W,
-          background: v.divider,
-          flexShrink: 0,
-        }}
-      />
-
-      {/* ── Arrow button — right corners rounded only ── */}
+      {/* ── Arrow button ── */}
       <button
         onClick={onToggle}
         onMouseEnter={() => setArrowHovered(true)}
@@ -155,8 +146,7 @@ export default function StatusBadge({
           height:         BADGE_H,
           background:     arrowBg,
           border:         v.stroke ? `1px solid ${v.stroke}` : 'none',
-          borderLeft:     'none',
-          borderRadius:   '0 4px 4px 0',
+          borderRadius:   4,
           padding:        0,
           cursor:         'pointer',
           flexShrink:     0,

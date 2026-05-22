@@ -72,11 +72,10 @@ export default function DeleteConfirmPopover({ isOpen, anchorRect, onClose, onCo
         <button
           onClick={onConfirm}
           style={{
-            width: '100%',
-            background: '#B83232',
+            background: '#6B3E66',
             border: 'none',
             borderRadius: 4,
-            padding: '8px 0',
+            padding: '8px 20px',
             cursor: 'pointer',
             fontFamily: "'Segoe UI', sans-serif",
             fontWeight: 600,
@@ -84,6 +83,7 @@ export default function DeleteConfirmPopover({ isOpen, anchorRect, onClose, onCo
             color: '#F5F5F6',
             letterSpacing: '0.06em',
             transition: 'filter 0.13s',
+            display: 'inline-flex', alignItems: 'center',
           }}
           onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
           onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
