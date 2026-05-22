@@ -320,7 +320,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   }
 
   function handleCloseSuccess() {
-    onSubmit(form.incidentLocation || null, form.severity)
+    onSubmit(form.incidentLocation || null, form.severity, form)
     resetForm()
   }
 

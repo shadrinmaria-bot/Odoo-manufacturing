@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   LineChart,
   Line,
@@ -10,6 +10,8 @@ import {
 } from 'recharts'
 import StatusBadge from './StatusBadge'
 import SafetyIncidentModal from './SafetyIncidentModal'
+import OpenSafetyItemsDropdown from './OpenSafetyItemsDropdown'
+import IncidentDetailModal from './IncidentDetailModal'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -70,6 +72,73 @@ const WORK_CENTER_DEFS = [
   },
 ]
 
+// ── Demo incidents ────────────────────────────────────────────────────────────
+
+const DEMO_INCIDENTS = {
+  carpentry: [
+    {
+      id: 'c1', title: 'Machine guard missing - Saw B',
+      subtitle: 'Linked to MR-0219 - Reported Apr 28', severity: 'critical',
+      reportedBy: 'Emma Granger', incidentDate: 'Apr 25, 3:00 PM',
+      injuredWorker: 'Valeria Kulishov', workerId: '2014321860', jobTitle: 'Chief Executive Officer',
+      incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
+      incidentDetails: "Worker was unloading heavy freight boxes (15–20 kg) from a delivery truck at Warehouse 2. While repositioning a shifted oversized box, it made sudden contact with the worker's upper body, forcing an awkward twisting motion. Worker reported immediate sharp pain in the lower back and right shoulder and was escorted to the on-site medical station. Contributing factors include absence of mechanical lifting aid and time pressure from the delivery schedule.",
+      injuryType: { id: 'overexertion', label: 'Overexertion involving outside sources' },
+      actionsTaken: 'First Aid Provided, Supervisor Notified, Worker Removed from Duty, Ambulance was Called',
+    },
+    {
+      id: 'c2', title: 'PPE signage faded - North entrance',
+      subtitle: 'Flagged during morning walk - Apr 30', severity: 'attention',
+      reportedBy: 'Emma Granger', incidentDate: 'Apr 30, 9:15 AM',
+      injuredWorker: 'John Doe', workerId: '2012380163', jobTitle: 'Machine Operator',
+      incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
+      incidentDetails: 'PPE safety signage at the north entrance has faded to the point of being illegible. Workers may not be aware of required PPE for the area.',
+      injuryType: { id: 'other', label: 'Other' },
+      actionsTaken: 'Area Secured, Supervisor Notified',
+    },
+    {
+      id: 'c3', title: 'Emergency exit check',
+      subtitle: 'Audit - May 20', severity: 'attention',
+      reportedBy: 'Emma Granger', incidentDate: 'May 20, 2:00 PM',
+      injuredWorker: 'Jane Smith', workerId: '2012380164', jobTitle: 'Quality Inspector',
+      incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
+      incidentDetails: 'Emergency exit door on the east side of the carpentry workshop was found partially obstructed during routine audit. Exit path was blocked by stored materials.',
+      injuryType: { id: 'slip', label: 'Slip or trip without fall' },
+      actionsTaken: 'Area Secured, Equipment Shut Down',
+    },
+  ],
+  paint: [
+    {
+      id: 'p1', title: 'Chemical spill near mixing station',
+      subtitle: 'Reported by floor supervisor - Apr 22', severity: 'attention',
+      reportedBy: 'Emma Granger', incidentDate: 'Apr 22, 11:30 AM',
+      injuredWorker: 'Mike Johnson', workerId: '2012380165', jobTitle: 'Forklift Operator',
+      incidentLocation: 'Paint', workCenterLocation: 'Warehouse 2',
+      incidentDetails: 'Minor chemical spill occurred near the paint mixing station. No injuries reported. Area was immediately cordoned off.',
+      injuryType: { id: 'other-exertions', label: 'Other exertions or bodily reactions' },
+      actionsTaken: 'First Aid Administered, Area Secured',
+    },
+    {
+      id: 'p2', title: 'Ventilation system partially blocked',
+      subtitle: 'Maintenance inspection - May 1', severity: 'attention',
+      reportedBy: 'Emma Granger', incidentDate: 'May 1, 8:00 AM',
+      injuredWorker: 'Sara Lee', workerId: '2012380166', jobTitle: 'Assembly Technician',
+      incidentLocation: 'Paint', workCenterLocation: 'Warehouse 2',
+      incidentDetails: 'Routine maintenance inspection found ventilation ducts partially blocked with paint residue. Risk of fume accumulation in the paint booth area.',
+      injuryType: { id: 'repetitive', label: 'Repetitive motions involving microtasks' },
+      actionsTaken: 'Equipment Shut Down, Supervisor Notified',
+    },
+  ],
+  assembly: [],
+}
+
+// ── Derived badge variant ─────────────────────────────────────────────────────
+
+function getVariantFromIncidents(list) {
+  if (!list?.length) return 'grey'
+  if (list.some(i => i.severity === 'critical')) return 'red'
+  return 'orange'
+}
 
 // ── Odoo Logo ─────────────────────────────────────────────────────────────────
 
@@ -149,144 +218,177 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null
 }
 
-function WorkCenterCard({ center }) {
-  const [hovered,    setHovered]    = useState(false)
-  const [badgeOpen,  setBadgeOpen]  = useState(false)
+function WorkCenterCard({
+  center,
+  incidents,
+  isDropdownOpen,
+  onToggleDropdown,
+  onCloseDropdown,
+  onViewIncident,
+  onDeleteIncident,
+}) {
+  const [hovered, setHovered] = useState(false)
+  const badgeRef = useRef(null)
+  const [anchorRect, setAnchorRect] = useState(null)
+
+  const incidentCount = incidents.length
+  const badgeVariant = getVariantFromIncidents(incidents)
+
+  function handleBadgeClick() {
+    if (badgeRef.current) {
+      setAnchorRect(badgeRef.current.getBoundingClientRect())
+    }
+    onToggleDropdown()
+  }
 
   return (
-    <div
-      className="flex flex-col overflow-hidden transition-all"
-      style={{
-        flex: 1, minWidth: 0, height: 263,
-        background: '#262A36',
-        border: '0.63px solid #3C3E4A',
-        borderRadius: 0,
-        boxShadow: hovered ? '0 0 0 1px rgba(255,255,255,0.08)' : 'none',
-        position: 'relative',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Chart area — sits behind the accent line */}
+    <>
       <div
+        className="flex flex-col overflow-hidden transition-all"
         style={{
-          position: 'absolute', inset: 0,
-          display: 'flex', flexDirection: 'column',
-          zIndex: 0,
+          flex: 1, minWidth: 0, height: 263,
+          background: '#262A36',
+          border: '0.63px solid #3C3E4A',
+          borderRadius: 0,
+          boxShadow: hovered ? '0 0 0 1px rgba(255,255,255,0.08)' : 'none',
+          position: 'relative',
         }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        {/* Spacer matching header + stats rows height */}
-        <div style={{ height: 110, flexShrink: 0 }} />
-        {/* Chart */}
-        <div style={{ flex: 1, minHeight: 0 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }}>
-              <XAxis
-                dataKey="week"
-                tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
-                axisLine={false} tickLine={false}
-              />
-              <YAxis hide domain={[0, 'auto']} />
-              <Tooltip content={<CustomTooltip />} />
-              <ReferenceLine x="This Week" stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
-              <Line
-                type="monotone"
-                dataKey="orders"
-                stroke="#6B3E66"
-                strokeWidth={1.89}
-                dot={false}
-                activeDot={{ r: 4, fill: '#6B3E66', strokeWidth: 0 }}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Left accent line — z-index above chart */}
-      <div
-        style={{
-          position: 'absolute', left: 0, top: 0, bottom: 0,
-          width: 2.5, background: center.accentColor,
-          zIndex: 2,
-        }}
-      />
-
-      {/* Content layer — above chart, below accent line overlap */}
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Header row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 8px 20px' }}>
-          <div className="flex items-center gap-2">
-            <StatusDot blocked={center.blocked} />
-            <span style={{
-              fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
-              fontSize: 17.03, color: '#F5F5F6',
-            }}>
-              {center.name}
-            </span>
-          </div>
-          <StatusBadge
-            label={`${center.incidents} Open incident${center.incidents !== 1 ? 's' : ''}`}
-            variant={center.badgeVariant}
-            isOpen={badgeOpen}
-            onToggle={() => setBadgeOpen(o => !o)}
-          />
-        </div>
-
-        {/* Stats row — buttons pinned left, OEE section pinned right */}
+        {/* Chart area — sits behind the accent line */}
         <div
           style={{
-            display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingLeft: 20, paddingRight: 16, paddingBottom: 12,
+            position: 'absolute', inset: 0,
+            display: 'flex', flexDirection: 'column',
+            zIndex: 0,
           }}
         >
-          <WorkOrderButtons />
-
-          {/* OEE section: label column + spacer + number column */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-            {/* Left: status label stacked above OEE */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {center.statusLabel && (
-                <span style={{
-                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
-                  fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2, whiteSpace: 'nowrap',
-                }}>
-                  {center.statusLabel}
-                </span>
-              )}
-              <span style={{
-                fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
-                fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2,
-              }}>
-                OEE
-              </span>
-            </div>
-
-            {/* Right: count stacked above 100% */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-              {center.statusCount !== null && (
-                <span style={{
-                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
-                  fontSize: 15.14, color: '#F5F5F6', lineHeight: 1.2,
-                }}>
-                  {center.statusCount}
-                </span>
-              )}
-              <span style={{
-                fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
-                fontSize: 15.14, color: '#1DC959', lineHeight: 1.2,
-              }}>
-                {center.oee}%
-              </span>
-            </div>
+          {/* Spacer matching header + stats rows height */}
+          <div style={{ height: 110, flexShrink: 0 }} />
+          {/* Chart */}
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }}>
+                <XAxis
+                  dataKey="week"
+                  tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
+                  axisLine={false} tickLine={false}
+                />
+                <YAxis hide domain={[0, 'auto']} />
+                <Tooltip content={<CustomTooltip />} />
+                <ReferenceLine x="This Week" stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
+                <Line
+                  type="monotone"
+                  dataKey="orders"
+                  stroke="#6B3E66"
+                  strokeWidth={1.89}
+                  dot={false}
+                  activeDot={{ r: 4, fill: '#6B3E66', strokeWidth: 0 }}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Flex spacer so date labels sit at the bottom inside the chart */}
-        <div style={{ flex: 1 }} />
+        {/* Left accent line — z-index above chart */}
+        <div
+          style={{
+            position: 'absolute', left: 0, top: 0, bottom: 0,
+            width: 2.5, background: center.accentColor,
+            zIndex: 2,
+          }}
+        />
+
+        {/* Content layer — above chart, below accent line overlap */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {/* Header row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 8px 20px' }}>
+            <div className="flex items-center gap-2">
+              <StatusDot blocked={center.blocked} />
+              <span style={{
+                fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
+                fontSize: 17.03, color: '#F5F5F6',
+              }}>
+                {center.name}
+              </span>
+            </div>
+            <div ref={badgeRef} style={{ cursor: incidentCount > 0 ? 'pointer' : 'default' }}>
+              <StatusBadge
+                label={`${incidentCount} Open incident${incidentCount !== 1 ? 's' : ''}`}
+                variant={badgeVariant}
+                isOpen={isDropdownOpen}
+                onToggle={incidentCount > 0 ? handleBadgeClick : () => {}}
+              />
+            </div>
+          </div>
+
+          {/* Stats row — buttons pinned left, OEE section pinned right */}
+          <div
+            style={{
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingLeft: 20, paddingRight: 16, paddingBottom: 12,
+            }}
+          >
+            <WorkOrderButtons />
+
+            {/* OEE section: label column + spacer + number column */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              {/* Left: status label stacked above OEE */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {center.statusLabel && (
+                  <span style={{
+                    fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
+                    fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2, whiteSpace: 'nowrap',
+                  }}>
+                    {center.statusLabel}
+                  </span>
+                )}
+                <span style={{
+                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
+                  fontSize: 15.14, color: '#1AD3BB', lineHeight: 1.2,
+                }}>
+                  OEE
+                </span>
+              </div>
+
+              {/* Right: count stacked above 100% */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                {center.statusCount !== null && (
+                  <span style={{
+                    fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
+                    fontSize: 15.14, color: '#F5F5F6', lineHeight: 1.2,
+                  }}>
+                    {center.statusCount}
+                  </span>
+                )}
+                <span style={{
+                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
+                  fontSize: 15.14, color: '#1DC959', lineHeight: 1.2,
+                }}>
+                  {center.oee}%
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Flex spacer so date labels sit at the bottom inside the chart */}
+          <div style={{ flex: 1 }} />
+        </div>
       </div>
-    </div>
+
+      <OpenSafetyItemsDropdown
+        isOpen={isDropdownOpen}
+        anchorRect={anchorRect}
+        workCenterName={center.name}
+        incidents={incidents}
+        onClose={onCloseDropdown}
+        onViewIncident={onViewIncident}
+        onDeleteIncident={(incidentId) => onDeleteIncident(center.id, incidentId)}
+      />
+    </>
   )
 }
 
@@ -470,51 +572,88 @@ function SubHeader({ onOpenModal }) {
   )
 }
 
-const SEVERITY_ORDER = { none: 0, attention: 1, critical: 2 }
+// ── Worker / injury label maps ─────────────────────────────────────────────────
 
-function maxSeverity(a, b) {
-  return SEVERITY_ORDER[a] >= SEVERITY_ORDER[b] ? a : b
+const WORKERS_MAP = {
+  'john-doe':     'John Doe',
+  'jane-smith':   'Jane Smith',
+  'mike-johnson': 'Mike Johnson',
+  'sara-lee':     'Sara Lee',
 }
 
-function severityToBadgeVariant(severity) {
-  if (severity === 'critical')  return 'red'
-  if (severity === 'attention') return 'orange'
-  return 'grey'
+const WORK_CENTER_DISPLAY = {
+  carpentry: 'Carpentry Workshop',
+  paint:     'Paint',
+  assembly:  'Assembly',
+  other:     'Other',
+}
+
+const INJURY_LABELS = {
+  overexertion:      'Overexertion involving outside sources',
+  'other-exertions': 'Other exertions or bodily reactions',
+  repetitive:        'Repetitive motions involving microtasks',
+  'fall-same':       'Falls on the same level',
+  roadway:           'Roadway incidents by motorized vehicles',
+  'struck-against':  'Struck against object or equipment',
+  'struck-by':       'Struck by object or equipment',
+  slip:              'Slip or trip without fall',
+  'fall-lower':      'Falls to lower level',
+  caught:            'Caught in equipment or objects',
+  other:             'Other',
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 
-const INITIAL_COUNTS    = { carpentry: 3, paint: 2, assembly: 0 }
-const INITIAL_SEVERITY  = { carpentry: 'critical', paint: 'attention', assembly: 'none' }
-
 export default function ManufacturingDashboard() {
-  const [isModalOpen,      setIsModalOpen]      = useState(false)
-  const [incidentCounts,   setIncidentCounts]   = useState(INITIAL_COUNTS)
-  const [incidentSeverity, setIncidentSeverity] = useState(INITIAL_SEVERITY)
+  const [incidents,      setIncidents]      = useState(DEMO_INCIDENTS)
+  const [openDropdown,   setOpenDropdown]   = useState(null)
+  const [detailIncident, setDetailIncident] = useState(null)
+  const [isModalOpen,    setIsModalOpen]    = useState(false)
 
-  function handleSubmitIncident(workCenterId, severity) {
-    if (workCenterId) {
-      setIncidentCounts(prev => ({ ...prev, [workCenterId]: (prev[workCenterId] ?? 0) + 1 }))
-      if (severity) {
-        setIncidentSeverity(prev => ({
-          ...prev,
-          [workCenterId]: maxSeverity(prev[workCenterId] ?? 'none', severity),
-        }))
-      }
+  function toggleDropdown(id) { setOpenDropdown(p => p === id ? null : id) }
+  function closeDropdown()    { setOpenDropdown(null) }
+
+  function deleteIncident(workCenterId, incidentId) {
+    setIncidents(prev => ({
+      ...prev,
+      [workCenterId]: prev[workCenterId].filter(i => i.id !== incidentId),
+    }))
+  }
+
+  function handleSubmitIncident(workCenterId, severity, formData) {
+    if (!workCenterId || workCenterId === 'other') { setIsModalOpen(false); return }
+    const workerLabel  = WORKERS_MAP[formData.injuredWorker] || formData.injuredWorker
+    const injuryLabel  = INJURY_LABELS[formData.selectedInjuryType] || formData.otherInjuryText || 'Other'
+    const now = new Date()
+    const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
+      ', ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    const newIncident = {
+      id: `${workCenterId}-${Date.now()}`,
+      title: injuryLabel.length > 35 ? injuryLabel.slice(0, 35) + '…' : injuryLabel,
+      subtitle: `Reported by ${workerLabel} — ${dateStr}`,
+      severity,
+      reportedBy: 'Emma Granger',
+      incidentDate: dateStr,
+      injuredWorker: workerLabel,
+      workerId: formData.workerId,
+      jobTitle: formData.jobTitle,
+      incidentLocation: WORK_CENTER_DISPLAY[workCenterId] || workCenterId,
+      workCenterLocation: formData.workCenterLocation || 'Warehouse 2',
+      incidentDetails: formData.incidentDetails,
+      injuryType: { id: formData.selectedInjuryType, label: injuryLabel },
+      actionsTaken: formData.actionsTaken,
     }
+    setIncidents(prev => ({ ...prev, [workCenterId]: [...(prev[workCenterId] || []), newIncident] }))
     setIsModalOpen(false)
   }
 
   function handleReset() {
-    setIncidentCounts(INITIAL_COUNTS)
-    setIncidentSeverity(INITIAL_SEVERITY)
+    setIncidents(DEMO_INCIDENTS)
+    setOpenDropdown(null)
+    setDetailIncident(null)
   }
 
-  const workCenters = WORK_CENTER_DEFS.map(def => ({
-    ...def,
-    incidents:    incidentCounts[def.id] ?? 0,
-    badgeVariant: severityToBadgeVariant(incidentSeverity[def.id] ?? 'none'),
-  }))
+  const workCenters = WORK_CENTER_DEFS.map(def => ({ ...def }))
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#1B1D26' }}>
@@ -523,7 +662,16 @@ export default function ManufacturingDashboard() {
       <main className="flex-1 p-4">
         <div style={{ display: 'flex', gap: 10, width: '100%' }}>
           {workCenters.map((center) => (
-            <WorkCenterCard key={center.id} center={center} />
+            <WorkCenterCard
+              key={center.id}
+              center={center}
+              incidents={incidents[center.id] ?? []}
+              isDropdownOpen={openDropdown === center.id}
+              onToggleDropdown={() => toggleDropdown(center.id)}
+              onCloseDropdown={closeDropdown}
+              onViewIncident={(incident) => { closeDropdown(); setDetailIncident(incident) }}
+              onDeleteIncident={deleteIncident}
+            />
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
@@ -556,6 +704,11 @@ export default function ManufacturingDashboard() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmitIncident}
+      />
+      <IncidentDetailModal
+        incident={detailIncident}
+        isOpen={!!detailIncident}
+        onClose={() => setDetailIncident(null)}
       />
     </div>
   )
