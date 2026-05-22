@@ -125,6 +125,7 @@ const WORK_CENTERS = [
   { id: 'carpentry', label: 'Carpentry Workshop' },
   { id: 'paint',     label: 'Paint' },
   { id: 'assembly',  label: 'Assembly' },
+  { id: 'other',     label: 'Other' },
 ]
 
 const ACTIONS_OPTIONS = [
@@ -620,11 +621,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                     style={{
                       display: 'flex', alignItems: 'center', gap: 8,
                       padding: '8px 18px',
-                      border: `1px solid ${active ? opt.color : err('severity') ? '#B83232' : '#5A5E6B'}`,
-                      background: active ? opt.bg : '#1B1D26',
+                      border: `1px solid ${active ? '#1AD3BB' : err('severity') ? '#B83232' : '#3C3E4A'}`,
+                      background: active ? 'rgba(26,211,187,0.07)' : '#1B1D26',
                       borderRadius: 4, cursor: 'pointer',
                       fontFamily: FONT, fontSize: 13, fontWeight: 600,
-                      color: active ? opt.color : '#8A8D9A',
+                      color: active ? '#1AD3BB' : '#8A8D9A',
                       transition: 'all 0.14s',
                     }}
                   >
