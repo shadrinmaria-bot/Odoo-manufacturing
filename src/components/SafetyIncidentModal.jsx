@@ -297,11 +297,15 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   const [form, setForm] = useState(emptyForm)
   const [showErrors, setShowErrors] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [touched, setTouched] = useState({})
+
+  function touch(key) { setTouched(t => ({ ...t, [key]: true })) }
 
   function resetForm() {
     setForm(emptyForm)
     setShowErrors(false)
     setShowSuccess(false)
+    setTouched({})
   }
 
   function isFormValid() {
@@ -322,7 +326,8 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
 
   function handleClose() { resetForm(); onClose() }
 
-  function err(key) { return showErrors && !form[key] }
+  // Field is in error state if it has been touched (blurred) OR submit was attempted
+  function err(key) { return (showErrors || touched[key]) && !form[key] }
 
   // Worker auto-fill: name → id+title
   function handleWorkerChange(value) {
@@ -490,6 +495,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 style={makeSelectStyle(err('injuredWorker'))}
                 value={form.injuredWorker}
                 onChange={e => handleWorkerChange(e.target.value)}
+                onBlur={() => touch('injuredWorker')}
               >
                 <option value="">Select Worker</option>
                 {WORKERS.map(w => <option key={w.value} value={w.value}>{w.label}</option>)}
@@ -503,6 +509,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 style={makeInputStyle(err('jobTitle'))}
                 value={form.jobTitle}
                 onChange={e => setForm(f => ({ ...f, jobTitle: e.target.value }))}
+                onBlur={() => touch('jobTitle')}
               />
             </div>
             <div>
@@ -513,6 +520,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 style={makeInputStyle(err('workerId'))}
                 value={form.workerId}
                 onChange={e => handleWorkerIdChange(e.target.value)}
+                onBlur={() => touch('workerId')}
               />
             </div>
           </div>
@@ -525,19 +533,21 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 style={makeSelectStyle(err('incidentLocation'))}
                 value={form.incidentLocation}
                 onChange={e => setForm(f => ({ ...f, incidentLocation: e.target.value }))}
+                onBlur={() => touch('incidentLocation')}
               >
                 <option value="">Select Work Center</option>
                 {WORK_CENTERS.map(wc => <option key={wc.id} value={wc.id}>{wc.label}</option>)}
               </select>
               {form.incidentLocation === 'other' && (
                 <div style={{ marginTop: 8 }}>
-                  <FieldLabel error={showErrors && !form.otherLocation}>Specify location</FieldLabel>
+                  <FieldLabel error={(showErrors || touched.otherLocation) && !form.otherLocation}>Specify location</FieldLabel>
                   <input
                     type="text"
                     placeholder="Please specify the location..."
-                    style={makeInputStyle(showErrors && !form.otherLocation)}
+                    style={makeInputStyle((showErrors || touched.otherLocation) && !form.otherLocation)}
                     value={form.otherLocation}
                     onChange={e => setForm(f => ({ ...f, otherLocation: e.target.value }))}
+                    onBlur={() => touch('otherLocation')}
                     autoFocus
                   />
                 </div>
@@ -586,15 +596,16 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             </div>
             {form.selectedInjuryType === 'other' && (
               <div style={{ marginTop: 8 }}>
-                <FieldLabel error={showErrors && !form.otherInjuryText}>
+                <FieldLabel error={(showErrors || touched.otherInjuryText) && !form.otherInjuryText}>
                   Describe the injury type
                 </FieldLabel>
                 <input
                   type="text"
                   placeholder="Please describe the injury type..."
-                  style={makeInputStyle(showErrors && !form.otherInjuryText)}
+                  style={makeInputStyle((showErrors || touched.otherInjuryText) && !form.otherInjuryText)}
                   value={form.otherInjuryText}
                   onChange={e => setForm(f => ({ ...f, otherInjuryText: e.target.value }))}
+                  onBlur={() => touch('otherInjuryText')}
                   autoFocus
                 />
               </div>
@@ -618,6 +629,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 style={makeSelectStyle(err('actionsTaken'))}
                 value={form.actionsTaken}
                 onChange={e => setForm(f => ({ ...f, actionsTaken: e.target.value }))}
+                onBlur={() => touch('actionsTaken')}
               >
                 <option value="">Choose...</option>
                 {ACTIONS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
