@@ -477,13 +477,11 @@ function SubHeader({ onOpenModal }) {
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 
+const INITIAL_COUNTS = { carpentry: 3, paint: 2, assembly: 0 }
+
 export default function ManufacturingDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [incidentCounts, setIncidentCounts] = useState({
-    carpentry: 3,
-    paint: 2,
-    assembly: 0,
-  })
+  const [incidentCounts, setIncidentCounts] = useState(INITIAL_COUNTS)
 
   function handleSubmitIncident(workCenterId) {
     if (workCenterId) {
@@ -510,6 +508,31 @@ export default function ManufacturingDashboard() {
           {workCenters.map((center) => (
             <WorkCenterCard key={center.id} center={center} />
           ))}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+          <button
+            onClick={() => setIncidentCounts(INITIAL_COUNTS)}
+            style={{
+              background: 'none',
+              border: '1px solid #3C3E4A',
+              borderRadius: 4,
+              padding: '6px 14px',
+              cursor: 'pointer',
+              fontFamily: "'Segoe UI', sans-serif",
+              fontSize: 12,
+              fontWeight: 600,
+              color: '#626363',
+              display: 'flex', alignItems: 'center', gap: 6,
+              transition: 'border-color 0.15s, color 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#5A5E6B'; e.currentTarget.style.color = '#A0A4AF' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#3C3E4A'; e.currentTarget.style.color = '#626363' }}
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" />
+            </svg>
+            Reset State
+          </button>
         </div>
       </main>
       <SafetyIncidentModal
