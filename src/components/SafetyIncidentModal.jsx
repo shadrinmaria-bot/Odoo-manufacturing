@@ -305,7 +305,8 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   }
 
   function isFormValid() {
-    return REQUIRED_FIELDS.every(k => form[k]) && form.selectedInjuryType
+    const otherTextOk = form.selectedInjuryType !== 'other' || !!form.otherInjuryText
+    return REQUIRED_FIELDS.every(k => form[k]) && form.selectedInjuryType && otherTextOk
   }
 
   function handleSubmit() {
@@ -571,10 +572,13 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             </div>
             {form.selectedInjuryType === 'other' && (
               <div style={{ marginTop: 8 }}>
+                <FieldLabel error={showErrors && !form.otherInjuryText}>
+                  Describe the injury type
+                </FieldLabel>
                 <input
                   type="text"
                   placeholder="Please describe the injury type..."
-                  style={makeInputStyle(false)}
+                  style={makeInputStyle(showErrors && !form.otherInjuryText)}
                   value={form.otherInjuryText}
                   onChange={e => setForm(f => ({ ...f, otherInjuryText: e.target.value }))}
                   autoFocus
