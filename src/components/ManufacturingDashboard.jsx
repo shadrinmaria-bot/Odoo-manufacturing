@@ -69,7 +69,7 @@ const workCenters = [
     blocked: false,
     accentColor: '#7396EB',
     incidents: 0,
-    badgeVariant: 'green',
+    badgeVariant: 'grey',
     incidentArrow: '▲',
     statusLabel: null,
     statusCount: null,
@@ -474,26 +474,6 @@ function SubHeader() {
   )
 }
 
-// ── Legend ────────────────────────────────────────────────────────────────────
-
-function Legend() {
-  const items = [
-    { color: '#FB5157', label: 'Critical open item' },
-    { color: '#E79A21', label: 'Needs attention' },
-    { color: '#3CC962', label: 'No open safety items' },
-  ]
-  return (
-    <div className="flex items-center gap-6 px-4 py-3">
-      {items.map((item) => (
-        <div key={item.label} className="flex items-center gap-2">
-          <span style={{ width: 12, height: 2, borderRadius: 9999, background: item.color, display: 'inline-block' }} />
-          <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363' }}>{item.label}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // ── Root ──────────────────────────────────────────────────────────────────────
 
 export default function ManufacturingDashboard() {
@@ -508,7 +488,6 @@ export default function ManufacturingDashboard() {
           ))}
         </div>
       </main>
-      <Legend />
     </div>
   )
 }

@@ -17,9 +17,9 @@ const VARIANTS = {
     labelBgActive: '#FF6267',
     labelText:     '#ffffff',
     stroke:        null,
-    divider:       '#C93438',          // slightly darker red
+    divider:       '#C93438',
     arrowBg:       '#F9464C',
-    arrowHoverBg:  '#FB8F92',          // +20% lightness
+    arrowHoverBg:  '#FB8F92',
     arrowActiveBg: '#FF6267',
     arrowText:     '#ffffff',
   },
@@ -30,20 +30,9 @@ const VARIANTS = {
     stroke:        '#FBB945',
     divider:       '#FBB945',
     arrowBg:       'rgba(251,185,69,0.15)',
-    arrowHoverBg:  '#FCD47A',          // +20% lightness
+    arrowHoverBg:  '#FCD47A',
     arrowActiveBg: 'rgba(251,185,69,0.30)',
     arrowText:     '#FBB945',
-  },
-  green: {
-    labelBg:       'transparent',
-    labelBgActive: 'rgba(60,201,98,0.30)',
-    labelText:     '#3CC962',
-    stroke:        '#3CC962',
-    divider:       '#3CC962',
-    arrowBg:       'rgba(60,201,98,0.15)',
-    arrowHoverBg:  '#78D990',          // +20% lightness
-    arrowActiveBg: 'rgba(60,201,98,0.30)',
-    arrowText:     '#3CC962',
   },
 }
 
@@ -70,6 +59,35 @@ export default function StatusBadge({
 }) {
   const [arrowHovered, setArrowHovered] = useState(false)
   const [arrowPressed, setArrowPressed]  = useState(false)
+
+  // Grey zero-state: static pill, no arrow, no divider, full 4px radius
+  if (variant === 'grey') {
+    return (
+      <div
+        style={{
+          display:        'inline-flex',
+          alignItems:     'center',
+          justifyContent: 'center',
+          height:         BADGE_H,
+          width:          TOTAL_W,
+          padding:        '5px 10.5px',
+          background:     '#3A3F4B',
+          borderRadius:   4,
+          fontFamily:     FONT,
+          fontWeight:     FONT_W,
+          fontSize:       FONT_SIZE,
+          color:          '#ffffff',
+          whiteSpace:     'nowrap',
+          lineHeight:     1,
+          boxSizing:      'border-box',
+          userSelect:     'none',
+          flexShrink:     0,
+        }}
+      >
+        {label}
+      </div>
+    )
+  }
 
   const v = VARIANTS[variant] ?? VARIANTS.red
 
@@ -119,7 +137,6 @@ export default function StatusBadge({
           width:      DIVIDER_W,
           background: v.divider,
           flexShrink: 0,
-          // If orange/green has a stroke border, the divider replaces the shared edge
         }}
       />
 
