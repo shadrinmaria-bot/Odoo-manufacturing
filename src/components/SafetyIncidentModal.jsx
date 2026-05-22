@@ -289,7 +289,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
 
   const emptyForm = {
     injuredWorker: '', jobTitle: '', workerId: '',
-    incidentLocation: '', workCenterLocation: '',
+    incidentLocation: '', otherLocation: '', workCenterLocation: '',
     selectedInjuryType: '', otherInjuryText: '',
     actionsTaken: '', incidentDetails: '', severity: '',
   }
@@ -305,8 +305,9 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   }
 
   function isFormValid() {
-    const otherTextOk = form.selectedInjuryType !== 'other' || !!form.otherInjuryText
-    return REQUIRED_FIELDS.every(k => form[k]) && form.selectedInjuryType && otherTextOk
+    const otherTextOk     = form.selectedInjuryType !== 'other' || !!form.otherInjuryText
+    const otherLocationOk = form.incidentLocation !== 'other'   || !!form.otherLocation
+    return REQUIRED_FIELDS.every(k => form[k]) && form.selectedInjuryType && otherTextOk && otherLocationOk
   }
 
   function handleSubmit() {
@@ -528,6 +529,19 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 <option value="">Select Work Center</option>
                 {WORK_CENTERS.map(wc => <option key={wc.id} value={wc.id}>{wc.label}</option>)}
               </select>
+              {form.incidentLocation === 'other' && (
+                <div style={{ marginTop: 8 }}>
+                  <FieldLabel error={showErrors && !form.otherLocation}>Specify location</FieldLabel>
+                  <input
+                    type="text"
+                    placeholder="Please specify the location..."
+                    style={makeInputStyle(showErrors && !form.otherLocation)}
+                    value={form.otherLocation}
+                    onChange={e => setForm(f => ({ ...f, otherLocation: e.target.value }))}
+                    autoFocus
+                  />
+                </div>
+              )}
             </div>
             <div>
               <FieldLabel>Work Center Location</FieldLabel>
