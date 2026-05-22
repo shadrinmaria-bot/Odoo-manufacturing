@@ -12,9 +12,8 @@ const WORKERS = [
 // ── Severity options ──────────────────────────────────────────────────────────
 
 const SEVERITY_OPTIONS = [
-  { value: 'critical',   label: 'Critical',        color: '#B83232', bg: 'rgba(184,50,50,0.12)'  },
-  { value: 'attention',  label: 'Needs Attention',  color: '#E8A100', bg: 'rgba(232,161,0,0.10)'  },
-  { value: 'none',       label: 'Not Serious',      color: '#626363', bg: 'rgba(98,99,99,0.10)'   },
+  { value: 'critical',   label: 'Critical',        color: '#B83232' },
+  { value: 'attention',  label: 'Needs Attention',  color: '#E8A100' },
 ]
 
 // ── Injury type definitions (icons use currentColor) ──────────────────────────
@@ -221,7 +220,7 @@ function InjuryCard({ type, selected, onSelect }) {
         {type.icon}
       </div>
       <span style={{
-        fontFamily: FONT, fontSize: 11, fontWeight: 500,
+        fontFamily: FONT, fontSize: 13, fontWeight: 400,
         color: selected ? '#1AD3BB' : '#8A8D9A',
         lineHeight: 1.4, transition: 'color 0.14s',
       }}>
@@ -266,7 +265,7 @@ function SuccessPopup({ onClose }) {
           style={{
             background: '#6B3E66', border: 'none', borderRadius: 4,
             padding: '9px 28px', cursor: 'pointer',
-            fontFamily: FONT, fontWeight: 700, fontSize: 13,
+            fontFamily: FONT, fontWeight: 600, fontSize: 13,
             color: '#F5F5F6', letterSpacing: '0.06em',
           }}
           onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.14)'}
@@ -655,7 +654,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             style={{
               background: '#6B3E66', border: 'none', borderRadius: 4,
               padding: '8px 22px', cursor: 'pointer',
-              fontFamily: FONT, fontWeight: 700, fontSize: 13,
+              fontFamily: FONT, fontWeight: 600, fontSize: 13,
               color: '#F5F5F6', letterSpacing: '0.04em',
               transition: 'filter 0.15s',
             }}
