@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts'
+import StatusBadge from './StatusBadge'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -42,7 +43,7 @@ const workCenters = [
     blocked: true,
     accentColor: '#FF71A7',
     incidents: 3,
-    incidentBadgeHex: '#FB5157',
+    badgeVariant: 'red',
     incidentArrow: '▲',
     statusLabel: 'Late',
     statusCount: 3,
@@ -55,7 +56,7 @@ const workCenters = [
     blocked: false,
     accentColor: '#ADFFFE',
     incidents: 2,
-    incidentBadgeHex: '#E79A21',
+    badgeVariant: 'orange',
     incidentArrow: '▲',
     statusLabel: 'In Progress',
     statusCount: 1,
@@ -68,7 +69,7 @@ const workCenters = [
     blocked: false,
     accentColor: '#7396EB',
     incidents: 0,
-    incidentBadgeHex: '#3CC962',
+    badgeVariant: 'green',
     incidentArrow: '▲',
     statusLabel: null,
     statusCount: null,
@@ -104,24 +105,6 @@ function StatusDot({ blocked }) {
   )
 }
 
-function IncidentBadge({ center }) {
-  return (
-    <span
-      className="flex items-center justify-center gap-1 whitespace-nowrap"
-      style={{
-        background: center.incidentBadgeHex,
-        height: 20, width: 147,
-        paddingLeft: 14, paddingRight: 14, paddingTop: 2, paddingBottom: 2,
-        borderRadius: 21, flexShrink: 0,
-        fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
-        fontSize: 11.87, lineHeight: 1, color: '#0A0A0A',
-      }}
-    >
-      <span style={{ fontSize: 9 }}>{center.incidentArrow}</span>
-      {center.incidents} Open incident{center.incidents !== 1 ? 's' : ''}
-    </span>
-  )
-}
 
 const iconBtnStyle = {
   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -174,7 +157,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 function WorkCenterCard({ center }) {
-  const [hovered, setHovered] = useState(false)
+  const [hovered,    setHovered]    = useState(false)
+  const [badgeOpen,  setBadgeOpen]  = useState(false)
 
   return (
     <div
@@ -248,7 +232,12 @@ function WorkCenterCard({ center }) {
               {center.name}
             </span>
           </div>
-          <IncidentBadge center={center} />
+          <StatusBadge
+            label={`${center.incidents} Open incident${center.incidents !== 1 ? 's' : ''}`}
+            variant={center.badgeVariant}
+            isOpen={badgeOpen}
+            onToggle={() => setBadgeOpen(o => !o)}
+          />
         </div>
 
         {/* Stats row — buttons pinned left, OEE section pinned right */}
