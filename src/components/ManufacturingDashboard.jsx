@@ -70,11 +70,6 @@ const WORK_CENTER_DEFS = [
   },
 ]
 
-function getBadgeVariant(count) {
-  if (count === 0) return 'grey'
-  if (count >= 3) return 'red'
-  return 'orange'
-}
 
 // ── Odoo Logo ─────────────────────────────────────────────────────────────────
 
@@ -475,28 +470,50 @@ function SubHeader({ onOpenModal }) {
   )
 }
 
+const SEVERITY_ORDER = { none: 0, attention: 1, critical: 2 }
+
+function maxSeverity(a, b) {
+  return SEVERITY_ORDER[a] >= SEVERITY_ORDER[b] ? a : b
+}
+
+function severityToBadgeVariant(severity) {
+  if (severity === 'critical')  return 'red'
+  if (severity === 'attention') return 'orange'
+  return 'grey'
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
 
-const INITIAL_COUNTS = { carpentry: 3, paint: 2, assembly: 0 }
+const INITIAL_COUNTS    = { carpentry: 3, paint: 2, assembly: 0 }
+const INITIAL_SEVERITY  = { carpentry: 'critical', paint: 'attention', assembly: 'none' }
 
 export default function ManufacturingDashboard() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [incidentCounts, setIncidentCounts] = useState(INITIAL_COUNTS)
+  const [isModalOpen,      setIsModalOpen]      = useState(false)
+  const [incidentCounts,   setIncidentCounts]   = useState(INITIAL_COUNTS)
+  const [incidentSeverity, setIncidentSeverity] = useState(INITIAL_SEVERITY)
 
-  function handleSubmitIncident(workCenterId) {
+  function handleSubmitIncident(workCenterId, severity) {
     if (workCenterId) {
-      setIncidentCounts(prev => ({
-        ...prev,
-        [workCenterId]: (prev[workCenterId] ?? 0) + 1,
-      }))
+      setIncidentCounts(prev => ({ ...prev, [workCenterId]: (prev[workCenterId] ?? 0) + 1 }))
+      if (severity) {
+        setIncidentSeverity(prev => ({
+          ...prev,
+          [workCenterId]: maxSeverity(prev[workCenterId] ?? 'none', severity),
+        }))
+      }
     }
     setIsModalOpen(false)
   }
 
+  function handleReset() {
+    setIncidentCounts(INITIAL_COUNTS)
+    setIncidentSeverity(INITIAL_SEVERITY)
+  }
+
   const workCenters = WORK_CENTER_DEFS.map(def => ({
     ...def,
-    incidents: incidentCounts[def.id] ?? 0,
-    badgeVariant: getBadgeVariant(incidentCounts[def.id] ?? 0),
+    incidents:    incidentCounts[def.id] ?? 0,
+    badgeVariant: severityToBadgeVariant(incidentSeverity[def.id] ?? 'none'),
   }))
 
   return (
@@ -511,7 +528,7 @@ export default function ManufacturingDashboard() {
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
           <button
-            onClick={() => setIncidentCounts(INITIAL_COUNTS)}
+            onClick={handleReset}
             style={{
               background: 'none',
               border: '1px solid #3C3E4A',
