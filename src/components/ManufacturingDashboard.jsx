@@ -9,6 +9,7 @@ import {
   ReferenceLine,
 } from 'recharts'
 import StatusBadge from './StatusBadge'
+import SafetyIncidentModal from './SafetyIncidentModal'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -36,15 +37,12 @@ const assemblyData = [
   { week: '17-23 May', orders: 2 },
 ]
 
-const workCenters = [
+const WORK_CENTER_DEFS = [
   {
     id: 'carpentry',
     name: 'Carpentry Workshop',
     blocked: true,
     accentColor: '#FF71A7',
-    incidents: 3,
-    badgeVariant: 'red',
-    incidentArrow: '▲',
     statusLabel: 'Late',
     statusCount: 3,
     oee: 100,
@@ -55,9 +53,6 @@ const workCenters = [
     name: 'Paint',
     blocked: false,
     accentColor: '#ADFFFE',
-    incidents: 2,
-    badgeVariant: 'orange',
-    incidentArrow: '▲',
     statusLabel: 'In Progress',
     statusCount: 1,
     oee: 100,
@@ -68,15 +63,18 @@ const workCenters = [
     name: 'Assembly',
     blocked: false,
     accentColor: '#7396EB',
-    incidents: 0,
-    badgeVariant: 'grey',
-    incidentArrow: '▲',
     statusLabel: null,
     statusCount: null,
     oee: 100,
     data: assemblyData,
   },
 ]
+
+function getBadgeVariant(count) {
+  if (count === 0) return 'grey'
+  if (count >= 3) return 'red'
+  return 'orange'
+}
 
 // ── Odoo Logo ─────────────────────────────────────────────────────────────────
 
@@ -417,7 +415,7 @@ function TopNav() {
 
 // ── Sub-header ────────────────────────────────────────────────────────────────
 
-function SubHeader() {
+function SubHeader({ onOpenModal }) {
   return (
     <div
       className="flex items-center px-4 h-10 gap-3"
@@ -456,11 +454,14 @@ function SubHeader() {
 
       {/* Report Incident */}
       <button
-        className="flex items-center gap-1.5 px-3 py-1.5 hover:brightness-110 transition-all"
+        onClick={onOpenModal}
+        className="flex items-center gap-1.5 px-3 hover:brightness-110 transition-all"
         style={{
           background: '#B83232', borderRadius: 4,
           fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
           fontSize: 13, color: '#F5F5F6', border: 'none', cursor: 'pointer',
+          height: 33, whiteSpace: 'nowrap', minWidth: 158,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -474,20 +475,90 @@ function SubHeader() {
   )
 }
 
+// ── Legend bar ────────────────────────────────────────────────────────────────
+
+const LEGEND_ITEMS = [
+  { color: '#B83232', bg: 'rgba(184,50,50,0.15)', label: 'Critical open item' },
+  { color: '#E8A100', bg: 'rgba(232,161,0,0.12)', label: 'Needs attention' },
+  { color: '#1AD3BB', bg: 'rgba(26,211,187,0.10)', label: 'No open safety items' },
+]
+
+function LegendBar() {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 20,
+      padding: '10px 16px',
+      marginTop: 10,
+      background: '#262A36',
+      border: '0.63px solid #3C3E4A',
+    }}>
+      <span style={{
+        fontFamily: "'Segoe UI', sans-serif", fontSize: 11.5, fontWeight: 600,
+        color: '#626363', textTransform: 'uppercase', letterSpacing: '0.06em', marginRight: 4,
+      }}>
+        Legend:
+      </span>
+      {LEGEND_ITEMS.map(item => (
+        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div style={{
+            width: 10, height: 10, borderRadius: '50%',
+            background: item.bg, border: `2px solid ${item.color}`,
+            flexShrink: 0,
+          }} />
+          <span style={{
+            fontFamily: "'Segoe UI', sans-serif", fontSize: 12, color: '#A0A4AF',
+          }}>
+            {item.label}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
 
 export default function ManufacturingDashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [incidentCounts, setIncidentCounts] = useState({
+    carpentry: 3,
+    paint: 2,
+    assembly: 0,
+  })
+
+  function handleSubmitIncident(workCenterId) {
+    if (workCenterId) {
+      setIncidentCounts(prev => ({
+        ...prev,
+        [workCenterId]: (prev[workCenterId] ?? 0) + 1,
+      }))
+    }
+    setIsModalOpen(false)
+  }
+
+  const workCenters = WORK_CENTER_DEFS.map(def => ({
+    ...def,
+    incidents: incidentCounts[def.id] ?? 0,
+    badgeVariant: getBadgeVariant(incidentCounts[def.id] ?? 0),
+  }))
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#1B1D26' }}>
       <TopNav />
-      <SubHeader />
+      <SubHeader onOpenModal={() => setIsModalOpen(true)} />
       <main className="flex-1 p-4">
         <div style={{ display: 'flex', gap: 10, width: '100%' }}>
           {workCenters.map((center) => (
             <WorkCenterCard key={center.id} center={center} />
           ))}
         </div>
+        <LegendBar />
       </main>
+      <SafetyIncidentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmitIncident}
+      />
     </div>
   )
 }
