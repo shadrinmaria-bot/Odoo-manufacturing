@@ -475,47 +475,6 @@ function SubHeader({ onOpenModal }) {
   )
 }
 
-// ── Legend bar ────────────────────────────────────────────────────────────────
-
-const LEGEND_ITEMS = [
-  { color: '#B83232', bg: 'rgba(184,50,50,0.15)', label: 'Critical open item' },
-  { color: '#E8A100', bg: 'rgba(232,161,0,0.12)', label: 'Needs attention' },
-  { color: '#1AD3BB', bg: 'rgba(26,211,187,0.10)', label: 'No open safety items' },
-]
-
-function LegendBar() {
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 20,
-      padding: '10px 16px',
-      marginTop: 10,
-      background: '#262A36',
-      border: '0.63px solid #3C3E4A',
-    }}>
-      <span style={{
-        fontFamily: "'Segoe UI', sans-serif", fontSize: 11.5, fontWeight: 600,
-        color: '#626363', textTransform: 'uppercase', letterSpacing: '0.06em', marginRight: 4,
-      }}>
-        Legend:
-      </span>
-      {LEGEND_ITEMS.map(item => (
-        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <div style={{
-            width: 10, height: 10, borderRadius: '50%',
-            background: item.bg, border: `2px solid ${item.color}`,
-            flexShrink: 0,
-          }} />
-          <span style={{
-            fontFamily: "'Segoe UI', sans-serif", fontSize: 12, color: '#A0A4AF',
-          }}>
-            {item.label}
-          </span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // ── Root ──────────────────────────────────────────────────────────────────────
 
 export default function ManufacturingDashboard() {
@@ -552,7 +511,6 @@ export default function ManufacturingDashboard() {
             <WorkCenterCard key={center.id} center={center} />
           ))}
         </div>
-        <LegendBar />
       </main>
       <SafetyIncidentModal
         isOpen={isModalOpen}

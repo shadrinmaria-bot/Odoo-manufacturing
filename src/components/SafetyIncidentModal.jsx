@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-// ── Injury type definitions ────────────────────────────────────────────────────
+// ── Injury type definitions (icons use currentColor) ──────────────────────────
 
 const INJURY_TYPES = [
   {
     id: 'overexertion',
     label: 'Overexertion involving outside sources',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="5" r="2" /><path d="M12 7v5l3 3" /><path d="M9 12l-3 2" /><path d="M12 12l3 2" /><path d="M9 17l-1 3" /><path d="M15 17l1 3" />
       </svg>
     ),
@@ -16,7 +16,7 @@ const INJURY_TYPES = [
     id: 'other-exertions',
     label: 'Other exertions or bodily reactions',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="5" r="2" /><path d="M12 7v6" /><path d="M9 10l3 2 3-2" /><path d="M10 20l2-7 2 7" />
       </svg>
     ),
@@ -25,7 +25,7 @@ const INJURY_TYPES = [
     id: 'repetitive',
     label: 'Repetitive motions involving microtasks',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" />
       </svg>
     ),
@@ -34,16 +34,16 @@ const INJURY_TYPES = [
     id: 'fall-same',
     label: 'Falls on the same level',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="4" r="2" /><path d="M8 9l4 3-4 4" /><path d="M3 20h18" /><path d="M16 14l-4-2" />
       </svg>
     ),
   },
   {
     id: 'roadway',
-    label: 'Roadway incidents involving motorized vehicles',
+    label: 'Roadway incidents by motorized vehicles',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="1" y="10" width="22" height="8" rx="2" /><path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" />
       </svg>
     ),
@@ -52,7 +52,7 @@ const INJURY_TYPES = [
     id: 'struck-against',
     label: 'Struck against object or equipment',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="8" cy="5" r="2" /><path d="M8 7v5l5 3" /><rect x="15" y="12" width="7" height="7" rx="1" /><path d="M6 17l2 3" />
       </svg>
     ),
@@ -61,7 +61,7 @@ const INJURY_TYPES = [
     id: 'struck-by',
     label: 'Struck by object or equipment',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="16" cy="5" r="2" /><path d="M16 7v5l-5 3" /><path d="M2 12l5 2" /><path d="M2 12l2-2m-2 2l2 2" /><path d="M18 17l-2 3" />
       </svg>
     ),
@@ -70,7 +70,7 @@ const INJURY_TYPES = [
     id: 'slip',
     label: 'Slip or trip without fall',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="4" r="2" /><path d="M10 8l-3 5 4 1" /><path d="M11 14l1 4 3-1" /><path d="M4 21c2-2 6-3 10-1" />
       </svg>
     ),
@@ -79,7 +79,7 @@ const INJURY_TYPES = [
     id: 'fall-lower',
     label: 'Falls to lower level',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="4" r="2" /><path d="M12 6v4" /><path d="M9 10l3 2 3-2" /><path d="M12 12v3l-3 2" /><path d="M12 15l3 2" /><path d="M3 22h18" /><path d="M12 17l1 3" />
       </svg>
     ),
@@ -88,7 +88,7 @@ const INJURY_TYPES = [
     id: 'caught',
     label: 'Caught in equipment or objects',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
       </svg>
     ),
@@ -97,7 +97,7 @@ const INJURY_TYPES = [
     id: 'other',
     label: 'Other...',
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
         <path d="M12 5v14M5 12h14" />
       </svg>
     ),
@@ -119,49 +119,55 @@ const ACTIONS_OPTIONS = [
   'Supervisor Notified',
 ]
 
-// ── Form field helpers ────────────────────────────────────────────────────────
+const REQUIRED_FIELDS = ['injuredWorker', 'jobTitle', 'workerId', 'incidentLocation', 'actionsTaken']
 
-function FormLabel({ children }) {
+// ── Shared styles ─────────────────────────────────────────────────────────────
+
+function makeInputStyle(hasError) {
+  return {
+    width: '100%',
+    background: '#1B1D26',
+    border: `1px solid ${hasError ? '#B83232' : '#5A5E6B'}`,
+    borderRadius: 4,
+    padding: '7px 10px',
+    color: '#F5F5F6',
+    fontFamily: "'Segoe UI', sans-serif",
+    fontSize: 13,
+    outline: 'none',
+    boxSizing: 'border-box',
+  }
+}
+
+function makeSelectStyle(hasError) {
+  return {
+    ...makeInputStyle(hasError),
+    appearance: 'none',
+    cursor: 'pointer',
+    backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23626363' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round'/%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 10px center',
+    paddingRight: 28,
+  }
+}
+
+function FieldLabel({ children, error }) {
   return (
     <span style={{
       fontFamily: "'Segoe UI', sans-serif",
-      fontSize: 12,
+      fontSize: 11.5,
       fontWeight: 600,
-      color: '#A0A4AF',
+      color: error ? '#B83232' : '#8A8D9A',
       display: 'block',
-      marginBottom: 4,
+      marginBottom: 5,
       textTransform: 'uppercase',
-      letterSpacing: '0.04em',
+      letterSpacing: '0.05em',
     }}>
       {children}
     </span>
   )
 }
 
-const inputStyle = {
-  width: '100%',
-  background: '#1B1D26',
-  border: '1px solid #3C3E4A',
-  borderRadius: 4,
-  padding: '7px 10px',
-  color: '#F5F5F6',
-  fontFamily: "'Segoe UI', sans-serif",
-  fontSize: 13,
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const selectStyle = {
-  ...inputStyle,
-  appearance: 'none',
-  cursor: 'pointer',
-  backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23626363' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round'/%3E%3C/svg%3E")`,
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'right 10px center',
-  paddingRight: 28,
-}
-
-// ── InjuryCard ─────────────────────────────────────────────────────────────────
+// ── InjuryCard — horizontal layout, square icon, teal selection ───────────────
 
 function InjuryCard({ type, selected, onSelect }) {
   const [hovered, setHovered] = useState(false)
@@ -173,41 +179,101 @@ function InjuryCard({ type, selected, onSelect }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        padding: '14px 8px',
-        background: selected ? 'rgba(184,50,50,0.12)' : hovered ? 'rgba(255,255,255,0.04)' : '#1B1D26',
-        border: selected ? '1.5px solid #B83232' : '1.5px solid #3C3E4A',
-        borderRadius: 6,
+        gap: 10,
+        padding: '10px 12px',
+        background: selected
+          ? 'rgba(26,211,187,0.07)'
+          : hovered ? 'rgba(255,255,255,0.03)' : '#1B1D26',
+        border: `1px solid ${selected ? '#1AD3BB' : '#3C3E4A'}`,
+        borderRadius: 4,
         cursor: 'pointer',
-        transition: 'background 0.15s, border-color 0.15s',
-        minHeight: 90,
+        transition: 'background 0.14s, border-color 0.14s',
+        textAlign: 'left',
+        width: '100%',
       }}
     >
       <div style={{
-        width: 40, height: 40,
-        borderRadius: '50%',
-        border: `2px solid ${selected ? '#E8A100' : '#C89000'}`,
-        background: selected ? 'rgba(232,161,0,0.15)' : 'rgba(200,144,0,0.08)',
+        width: 34, height: 34,
+        border: `1.5px solid ${selected ? '#1AD3BB' : '#5A5E6B'}`,
+        background: selected ? 'rgba(26,211,187,0.12)' : 'rgba(255,255,255,0.04)',
+        borderRadius: 4,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
-        transition: 'border-color 0.15s, background 0.15s',
+        color: selected ? '#1AD3BB' : '#8A8D9A',
+        transition: 'border-color 0.14s, background 0.14s, color 0.14s',
       }}>
         {type.icon}
       </div>
       <span style={{
         fontFamily: "'Segoe UI', sans-serif",
-        fontSize: 10.5,
+        fontSize: 11,
         fontWeight: 500,
-        color: selected ? '#F5F5F6' : '#A0A4AF',
-        textAlign: 'center',
-        lineHeight: 1.35,
+        color: selected ? '#1AD3BB' : '#8A8D9A',
+        lineHeight: 1.4,
+        transition: 'color 0.14s',
       }}>
         {type.label}
       </span>
     </button>
+  )
+}
+
+// ── Success popup ─────────────────────────────────────────────────────────────
+
+function SuccessPopup({ onClose }) {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      background: 'rgba(0,0,0,0.55)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 10,
+      borderRadius: 6,
+      animation: 'fadeIn 0.15s ease',
+    }}>
+      <div style={{
+        background: '#2A2E3A',
+        border: '1px solid #5A5E6B',
+        borderRadius: 6,
+        padding: '32px 40px',
+        textAlign: 'center',
+        minWidth: 320,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        animation: 'scaleIn 0.15s ease',
+      }}>
+        <div style={{
+          width: 44, height: 44, borderRadius: '50%',
+          background: 'rgba(26,211,187,0.12)',
+          border: '2px solid #1AD3BB',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 16px',
+        }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1AD3BB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+        <p style={{
+          fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
+          fontSize: 15, color: '#F5F5F6', margin: '0 0 20px',
+        }}>
+          Report was sent successfully!
+        </p>
+        <button
+          onClick={onClose}
+          style={{
+            background: '#6B3E66', border: 'none', borderRadius: 4,
+            padding: '9px 28px', cursor: 'pointer',
+            fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
+            fontSize: 13, color: '#F5F5F6', letterSpacing: '0.06em',
+          }}
+          onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.14)'}
+          onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
+        >
+          CLOSE
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -220,36 +286,57 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   const incidentDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
     ', ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
-  const [form, setForm] = useState({
-    injuredWorker: '',
-    jobTitle: '',
-    workerId: '',
-    incidentLocation: '',
-    workCenterLocation: '',
-    selectedInjuryType: '',
-    otherInjuryText: '',
-    actionsTaken: '',
-    incidentDetails: '',
-  })
-
-  function resetForm() {
-    setForm({
-      injuredWorker: '', jobTitle: '', workerId: '',
-      incidentLocation: '', workCenterLocation: '',
-      selectedInjuryType: '', otherInjuryText: '',
-      actionsTaken: '', incidentDetails: '',
-    })
+  const emptyForm = {
+    injuredWorker: '', jobTitle: '', workerId: '',
+    incidentLocation: '', workCenterLocation: '',
+    selectedInjuryType: '', otherInjuryText: '',
+    actionsTaken: '', incidentDetails: '',
   }
 
-  // Close on Escape
+  const [form, setForm] = useState(emptyForm)
+  const [showErrors, setShowErrors] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+
+  function resetForm() {
+    setForm(emptyForm)
+    setShowErrors(false)
+    setShowSuccess(false)
+  }
+
+  function isFormValid() {
+    return REQUIRED_FIELDS.every(k => form[k]) && form.selectedInjuryType
+  }
+
+  function handleSubmit() {
+    if (!isFormValid()) {
+      setShowErrors(true)
+      return
+    }
+    setShowSuccess(true)
+  }
+
+  function handleCloseSuccess() {
+    onSubmit(form.incidentLocation || null)
+    resetForm()
+  }
+
+  function handleClose() {
+    resetForm()
+    onClose()
+  }
+
+  function err(key) {
+    return showErrors && !form[key]
+  }
+
+  // Escape key + focus trap
   useEffect(() => {
     if (!isOpen) return
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose()
-      // Basic focus trap: keep Tab inside modal
+      if (e.key === 'Escape' && !showSuccess) handleClose()
       if (e.key === 'Tab' && modalRef.current) {
         const focusable = modalRef.current.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button:not([disabled]), input, select, textarea'
         )
         const first = focusable[0]
         const last = focusable[focusable.length - 1]
@@ -262,26 +349,22 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  }, [isOpen, showSuccess])
 
-  // Focus modal on open
   useEffect(() => {
     if (isOpen && modalRef.current) {
-      const firstFocusable = modalRef.current.querySelector('button, input, select, textarea')
-      if (firstFocusable) firstFocusable.focus()
+      const first = modalRef.current.querySelector('button, input, select, textarea')
+      if (first) first.focus()
     }
   }, [isOpen])
 
-  function handleSubmit() {
-    onSubmit(form.incidentLocation || null)
-    resetForm()
-  }
-
   if (!isOpen) return null
+
+  const injuryGridError = showErrors && !form.selectedInjuryType
 
   return (
     <div
-      onClick={onClose}
+      onClick={handleClose}
       style={{
         position: 'fixed', inset: 0,
         background: 'rgba(0,0,0,0.72)',
@@ -290,17 +373,17 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
         animation: 'fadeIn 0.18s ease',
       }}
     >
-      {/* Modal box */}
       <div
         ref={modalRef}
         onClick={e => e.stopPropagation()}
         style={{
-          width: '95vw', maxWidth: 1215,
-          maxHeight: '92vh',
-          background: '#1E2132',
-          border: '1px solid #3C3E4A',
+          position: 'relative',
+          width: '95vw', maxWidth: 1064,
+          height: 'min(869px, 94vh)',
+          background: '#2A2E3A',
+          border: '1px solid #5A5E6B',
           borderRadius: 6,
-          boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.65)',
           display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
           animation: 'scaleIn 0.18s ease',
@@ -309,87 +392,96 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
         aria-modal="true"
         aria-labelledby="modal-title"
       >
+        {/* ── Success popup overlay ── */}
+        {showSuccess && <SuccessPopup onClose={handleCloseSuccess} />}
+
         {/* ── Header ── */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 20px',
-          borderBottom: '1px solid #3C3E4A',
+          padding: '14px 20px',
+          borderBottom: '1px solid #5A5E6B',
           flexShrink: 0,
+          background: '#2A2E3A',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
-              width: 28, height: 28, borderRadius: 4, background: 'rgba(184,50,50,0.2)',
-              border: '1px solid rgba(184,50,50,0.5)',
+              width: 26, height: 26, borderRadius: 4,
+              background: 'rgba(184,50,50,0.18)',
+              border: '1px solid rgba(184,50,50,0.45)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
             }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B83232" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B83232" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
             </div>
             <span id="modal-title" style={{
               fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
-              fontSize: 17, color: '#F5F5F6',
+              fontSize: 16, color: '#F5F5F6',
             }}>
               Safety Incident Report
             </span>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              color: '#A0A4AF', padding: 4, borderRadius: 4,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#8A8D9A', padding: 4, borderRadius: 4,
+              display: 'flex', alignItems: 'center',
             }}
-            aria-label="Close modal"
+            aria-label="Close"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* ── Scrollable body ── */}
-        <div style={{ overflowY: 'auto', flex: 1, padding: '20px 20px 0' }}>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '18px 20px 0' }}>
 
-          {/* ── Reporter info row ── */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-            {/* Reported By */}
-            <div>
-              <FormLabel>Reported By</FormLabel>
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                background: '#1B1D26', border: '1px solid #3C3E4A',
-                borderRadius: 4, padding: '7px 10px',
+          {/* ── Reporter info — compact inline ── */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 36,
+            marginBottom: 18,
+            padding: '10px 14px',
+            background: '#1B1D26',
+            border: '1px solid #5A5E6B',
+            borderRadius: 4,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{
+                fontFamily: "'Segoe UI', sans-serif", fontSize: 11.5, fontWeight: 600,
+                color: '#8A8D9A', textTransform: 'uppercase', letterSpacing: '0.05em',
               }}>
+                Reported By
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                 <div style={{
-                  width: 24, height: 24, borderRadius: '50%',
-                  background: '#875A7B',
+                  width: 22, height: 22, borderRadius: '50%', background: '#875A7B',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
-                  fontSize: 11, color: '#F5F5F6', flexShrink: 0,
-                }}>
-                  E
-                </div>
-                <span style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: 13, color: '#A0A4AF' }}>
+                  fontFamily: "'Segoe UI', sans-serif", fontWeight: 700, fontSize: 10,
+                  color: '#F5F5F6', flexShrink: 0,
+                }}>E</div>
+                <span style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: 13, color: '#F5F5F6' }}>
                   Emma Granger
                 </span>
               </div>
             </div>
-
-            {/* Incident Date */}
-            <div>
-              <FormLabel>Incident Date</FormLabel>
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                background: '#1B1D26', border: '1px solid #3C3E4A',
-                borderRadius: 4, padding: '7px 10px',
+            <div style={{ width: 1, height: 16, background: '#5A5E6B' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{
+                fontFamily: "'Segoe UI', sans-serif", fontSize: 11.5, fontWeight: 600,
+                color: '#8A8D9A', textTransform: 'uppercase', letterSpacing: '0.05em',
               }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2" strokeLinecap="round">
+                Incident Date
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
                 </svg>
-                <span style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: 13, color: '#A0A4AF' }}>
+                <span style={{ fontFamily: "'Segoe UI', sans-serif", fontSize: 13, color: '#F5F5F6' }}>
                   {incidentDate}
                 </span>
               </div>
@@ -397,18 +489,18 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
           </div>
 
           {/* ── Injured worker row ── */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 14 }}>
             <div>
-              <FormLabel>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B83232" strokeWidth="2" strokeLinecap="round">
+              <FieldLabel error={err('injuredWorker')}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <circle cx="12" cy="7" r="4" /><path d="M20 21a8 8 0 10-16 0" />
                   </svg>
                   Injured Worker
                 </span>
-              </FormLabel>
+              </FieldLabel>
               <select
-                style={selectStyle}
+                style={makeSelectStyle(err('injuredWorker'))}
                 value={form.injuredWorker}
                 onChange={e => setForm(f => ({ ...f, injuredWorker: e.target.value }))}
               >
@@ -420,21 +512,21 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               </select>
             </div>
             <div>
-              <FormLabel>Job Title</FormLabel>
+              <FieldLabel error={err('jobTitle')}>Job Title</FieldLabel>
               <input
                 type="text"
                 placeholder="Title"
-                style={inputStyle}
+                style={makeInputStyle(err('jobTitle'))}
                 value={form.jobTitle}
                 onChange={e => setForm(f => ({ ...f, jobTitle: e.target.value }))}
               />
             </div>
             <div>
-              <FormLabel>Worker ID</FormLabel>
+              <FieldLabel error={err('workerId')}>Worker ID</FieldLabel>
               <input
                 type="text"
                 placeholder="2012380163"
-                style={inputStyle}
+                style={makeInputStyle(err('workerId'))}
                 value={form.workerId}
                 onChange={e => setForm(f => ({ ...f, workerId: e.target.value }))}
               />
@@ -442,11 +534,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
           </div>
 
           {/* ── Location row ── */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
             <div>
-              <FormLabel>Incident Location</FormLabel>
+              <FieldLabel error={err('incidentLocation')}>Incident Location</FieldLabel>
               <select
-                style={selectStyle}
+                style={makeSelectStyle(err('incidentLocation'))}
                 value={form.incidentLocation}
                 onChange={e => setForm(f => ({ ...f, incidentLocation: e.target.value }))}
               >
@@ -457,11 +549,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               </select>
             </div>
             <div>
-              <FormLabel>Work Center Location</FormLabel>
+              <FieldLabel>Work Center Location</FieldLabel>
               <input
                 type="text"
                 placeholder="Warehouse 2"
-                style={inputStyle}
+                style={makeInputStyle(false)}
                 value={form.workCenterLocation}
                 onChange={e => setForm(f => ({ ...f, workCenterLocation: e.target.value }))}
               />
@@ -469,17 +561,23 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
           </div>
 
           {/* ── Type of Injury ── */}
-          <div style={{ marginBottom: 20 }}>
+          <div style={{ marginBottom: 18 }}>
             <span style={{
               fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
-              fontSize: 14, color: '#F5F5F6', display: 'block', marginBottom: 12,
+              fontSize: 13.5, color: injuryGridError ? '#B83232' : '#F5F5F6',
+              display: 'block', marginBottom: 10,
             }}>
-              Type Of Injury
+              Type Of Injury{injuryGridError && (
+                <span style={{ fontWeight: 400, fontSize: 11.5, marginLeft: 8 }}>— please select one</span>
+              )}
             </span>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 8,
+              gap: 6,
+              padding: injuryGridError ? 6 : 0,
+              border: injuryGridError ? '1px solid #B83232' : '1px solid transparent',
+              borderRadius: 5,
             }}>
               {INJURY_TYPES.map(type => (
                 <InjuryCard
@@ -495,11 +593,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               ))}
             </div>
             {form.selectedInjuryType === 'other' && (
-              <div style={{ marginTop: 10 }}>
+              <div style={{ marginTop: 8 }}>
                 <input
                   type="text"
                   placeholder="Please describe the injury type..."
-                  style={inputStyle}
+                  style={makeInputStyle(false)}
                   value={form.otherInjuryText}
                   onChange={e => setForm(f => ({ ...f, otherInjuryText: e.target.value }))}
                   autoFocus
@@ -508,79 +606,89 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             )}
           </div>
 
-          {/* ── Actions Taken ── */}
-          <div style={{ marginBottom: 16 }}>
-            <FormLabel>Actions Taken</FormLabel>
-            <select
-              style={selectStyle}
-              value={form.actionsTaken}
-              onChange={e => setForm(f => ({ ...f, actionsTaken: e.target.value }))}
-            >
-              <option value="">Choose...</option>
-              {ACTIONS_OPTIONS.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* ── Incident Details ── */}
-          <div style={{ marginBottom: 20 }}>
-            <FormLabel>Incident Details</FormLabel>
-            <textarea
-              placeholder="Describe what happened, conditions at the time, and any other relevant details..."
-              style={{
-                ...inputStyle,
-                height: 120,
-                resize: 'vertical',
-                minHeight: 80,
-              }}
-              value={form.incidentDetails}
-              onChange={e => setForm(f => ({ ...f, incidentDetails: e.target.value }))}
-            />
+          {/* ── Bottom row: Incident Details + Actions Taken ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 14, marginBottom: 18 }}>
+            <div>
+              <FieldLabel>Incident Details</FieldLabel>
+              <textarea
+                placeholder="Describe what happened, conditions at the time, and any other relevant details..."
+                style={{
+                  ...makeInputStyle(false),
+                  height: 100,
+                  resize: 'vertical',
+                  minHeight: 70,
+                  lineHeight: 1.5,
+                }}
+                value={form.incidentDetails}
+                onChange={e => setForm(f => ({ ...f, incidentDetails: e.target.value }))}
+              />
+            </div>
+            <div>
+              <FieldLabel error={err('actionsTaken')}>Actions Taken</FieldLabel>
+              <select
+                style={makeSelectStyle(err('actionsTaken'))}
+                value={form.actionsTaken}
+                onChange={e => setForm(f => ({ ...f, actionsTaken: e.target.value }))}
+              >
+                <option value="">Choose...</option>
+                {ACTIONS_OPTIONS.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+              {showErrors && !isFormValid() && (
+                <p style={{
+                  marginTop: 10, fontFamily: "'Segoe UI', sans-serif",
+                  fontSize: 11.5, color: '#B83232',
+                }}>
+                  Please fill in all required fields before submitting.
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* ── Footer with submit ── */}
+        {/* ── Footer ── */}
         <div style={{
           display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-          padding: '14px 20px',
-          borderTop: '1px solid #3C3E4A',
+          padding: '12px 20px',
+          borderTop: '1px solid #5A5E6B',
           flexShrink: 0,
           gap: 10,
+          background: '#2A2E3A',
         }}>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             style={{
-              background: 'none', border: '1px solid #3C3E4A', borderRadius: 4,
-              padding: '8px 18px', cursor: 'pointer',
+              background: 'none', border: '1px solid #5A5E6B', borderRadius: 4,
+              padding: '8px 20px', cursor: 'pointer',
               fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
-              fontSize: 13, color: '#A0A4AF',
+              fontSize: 13, color: '#8A8D9A',
             }}
           >
-            Cancel
+            Discard
           </button>
           <button
             onClick={handleSubmit}
             style={{
-              background: '#B83232', border: 'none', borderRadius: 4,
-              padding: '8px 20px', cursor: 'pointer',
+              background: '#6B3E66', border: 'none', borderRadius: 4,
+              padding: '8px 22px', cursor: 'pointer',
               fontFamily: "'Segoe UI', sans-serif", fontWeight: 700,
               fontSize: 13, color: '#F5F5F6',
               letterSpacing: '0.04em',
               transition: 'filter 0.15s',
             }}
-            onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.12)'}
+            onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
             onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
           >
-            SUBMIT REPORT
+            Submit Report
           </button>
         </div>
       </div>
 
-      {/* CSS animations */}
       <style>{`
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn  { from { opacity: 0; }                       to { opacity: 1; } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+        select option { background: #2A2E3A; color: #F5F5F6; }
       `}</style>
     </div>
   )
