@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 
 // ── Design tokens ──────────────────────────────────────────────────────────────
 
-const TOTAL_W   = 123
 const ARROW_W   = 19.33
-const DIVIDER_W = 1
-const LABEL_W   = TOTAL_W - ARROW_W - DIVIDER_W   // ≈ 102.67
 const BADGE_H   = 22
 const FONT      = "'Segoe UI', sans-serif"
 const FONT_SIZE = 11.87
@@ -69,8 +66,7 @@ export default function StatusBadge({
           alignItems:     'center',
           justifyContent: 'center',
           height:         BADGE_H,
-          width:          TOTAL_W,
-          padding:        '5px 10.5px',
+          padding:        '5px 10px',
           background:     '#3A3F4B',
           borderRadius:   4,
           fontFamily:     FONT,
@@ -114,8 +110,7 @@ export default function StatusBadge({
           display:        'flex',
           alignItems:     'center',
           justifyContent: 'center',
-          width:          LABEL_W,
-          padding:        '5px 10.5px',
+          padding:        '5px 10px',
           background:     v.labelBg,
           border:         v.stroke ? `1px solid ${v.stroke}` : 'none',
           borderRadius:   '4px 0 0 4px',
