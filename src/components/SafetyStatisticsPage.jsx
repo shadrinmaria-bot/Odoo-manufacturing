@@ -168,26 +168,6 @@ function StatsToolbar({
         <ToolbarButton char={''} active={graphType === 'pie'}  onClick={() => onGraphTypeChange('pie')}  title="Pie chart"  />
       </div>
 
-      {filteredCenter && (
-        <div
-          onClick={onClearFilter}
-          title="Clear filter"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '6px 10px',
-            background: 'rgba(26,211,187,0.08)',
-            border: '1px solid rgba(26,211,187,0.4)',
-            borderRadius: 999,
-            cursor: 'pointer',
-            fontFamily: FONT, fontSize: 12.5, color: '#1AD3BB',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Filter: {filteredCenter}
-          <Icon char={'×'} size={10} />
-        </div>
-      )}
-
       {/* Sort makes no visual difference on a pie — hide there. */}
       {graphType !== 'pie' && (
         <div style={{ display: 'flex', gap: 3 }}>
@@ -340,29 +320,59 @@ const pieChartChildren = (data) => (
 
 // ── Page sub-header (matches Overview sub-header layout) ──────────────────────
 
-function StatsSubHeader() {
+function StatsSubHeader({ filteredCenter, onClearFilter }) {
   return (
     <div
-      className="flex items-center px-4 h-10 gap-3"
+      className="flex items-center h-10"
       style={{ background: '#262A36', borderBottom: '1px solid #3C3E4A' }}
     >
-      <span style={{
-        fontFamily: FONT, fontWeight: 400, fontSize: 16.51, color: '#F5F5F6',
-      }}>
-        Work Centers Overview
-      </span>
-      <div className="flex-1" />
+      {/* Left: title (flex 1) so the centered search stays geometrically centered */}
+      <div style={{ flex: 1, padding: '0 16px', display: 'flex', alignItems: 'center' }}>
+        <span style={{
+          fontFamily: FONT, fontWeight: 400, fontSize: 16.51, color: '#F5F5F6',
+        }}>
+          Work Centers Overview
+        </span>
+      </div>
 
-      {/* Search */}
+      {/* Center: search bar (with inline filter chip when active) */}
       <div className="flex items-center gap-2 px-3 py-1 border"
-        style={{ background: '#1B1D26', borderColor: '#3C3E4A', borderRadius: 4, minWidth: 280 }}>
+        style={{ background: '#1B1D26', borderColor: '#3C3E4A', borderRadius: 4, width: 420 }}>
         <Icon char={''} size={13} color="#626363" />
+        {filteredCenter && (
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '3px 6px 3px 8px',
+            background: '#6B3E66',
+            border: '1px solid rgba(167,116,160,0.55)',
+            borderRadius: 3,
+            fontFamily: FONT, fontSize: 12, color: '#F5F5F6',
+            whiteSpace: 'nowrap',
+          }}>
+            <Icon char={''} size={11} color="#D7B3D3" />
+            <span>{filteredCenter}</span>
+            <button
+              onClick={onClearFilter}
+              title="Clear filter"
+              aria-label="Clear filter"
+              style={{
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                padding: 0, marginLeft: 2,
+                color: '#D7B3D3',
+                display: 'inline-flex', alignItems: 'center', lineHeight: 1,
+                fontSize: 14,
+              }}
+            >
+              ×
+            </button>
+          </div>
+        )}
         <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363', flex: 1 }}>Search...</span>
         <Icon char={''} size={11} color="#626363" />
       </div>
 
-      {/* View-switcher icons (placeholders — codes to be supplied later) */}
-      <div className="flex items-center gap-1" style={{ color: '#A0A4AF' }}>
+      {/* Right: view-switcher icons + Report Incident shortcut (flex 1) */}
+      <div style={{ flex: 1, padding: '0 16px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 4, color: '#A0A4AF' }}>
         {[
           { label: 'Graph view',  path: <><rect x="3" y="11" width="4" height="8" rx="1" /><rect x="10" y="6" width="4" height="13" rx="1" /><rect x="17" y="9" width="4" height="10" rx="1" /></> },
           { label: 'Pivot view',  path: <><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="3" y1="15" x2="21" y2="15" /><line x1="9" y1="3" x2="9" y2="21" /><line x1="15" y1="3" x2="15" y2="21" /></> },
@@ -383,7 +393,6 @@ function StatsSubHeader() {
           </button>
         ))}
 
-        {/* Report Incident shortcut */}
         <button
           title="Report Incident"
           style={{
@@ -423,7 +432,7 @@ export default function SafetyStatisticsPage({ initialParams = null }) {
 
   return (
     <>
-      <StatsSubHeader />
+      <StatsSubHeader filteredCenter={filteredCenter} onClearFilter={() => setFilteredCenter(null)} />
       <main className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
         <StatsToolbar
           metric={metric}
