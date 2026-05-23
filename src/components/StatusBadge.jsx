@@ -11,26 +11,22 @@ const FONT_W    = 600
 
 const VARIANTS = {
   red: {
-    labelBg:       'transparent',
-    labelBgActive: 'rgba(249,70,76,0.20)',
-    labelText:     '#F9464C',
+    labelBg:       '#F9464C',
+    labelText:     '#FFFFFF',
     stroke:        '#F9464C',
-    divider:       '#F9464C',
-    arrowBg:       'rgba(249,70,76,0.15)',
-    arrowHoverBg:  'rgba(249,70,76,0.30)',
-    arrowActiveBg: 'rgba(249,70,76,0.35)',
-    arrowText:     '#F9464C',
+    arrowBg:       '#F9464C',
+    arrowHoverBg:  '#E0444A',
+    arrowOpenBg:   '#C7393D',
+    arrowText:     '#FFFFFF',
   },
   orange: {
-    labelBg:       'transparent',
-    labelBgActive: 'rgba(251,185,69,0.30)',
-    labelText:     '#FBB945',
+    labelBg:       '#FBB945',
+    labelText:     '#1B1D26',
     stroke:        '#FBB945',
-    divider:       '#FBB945',
-    arrowBg:       'rgba(251,185,69,0.15)',
-    arrowHoverBg:  'rgba(251,185,69,0.32)',
-    arrowActiveBg: 'rgba(251,185,69,0.42)',
-    arrowText:     '#FBB945',
+    arrowBg:       '#FBB945',
+    arrowHoverBg:  '#E8AA3D',
+    arrowOpenBg:   '#D49733',
+    arrowText:     '#1B1D26',
   },
 }
 
@@ -75,8 +71,11 @@ export default function StatusBadge({
 
   const v = VARIANTS[variant] ?? VARIANTS.red
 
-  const arrowBg = arrowPressed
-    ? v.arrowActiveBg
+  // Arrow gets the darker "open" shade when the dropdown is open or while
+  // the user is mid-click. Closed + idle keeps the same fill as the label so
+  // the badge reads as one continuous shape.
+  const arrowBg = (isOpen || arrowPressed)
+    ? v.arrowOpenBg
     : arrowHovered
       ? v.arrowHoverBg
       : v.arrowBg
@@ -119,7 +118,7 @@ export default function StatusBadge({
         onClick={onToggle}
         onMouseEnter={() => setArrowHovered(true)}
         onMouseLeave={() => { setArrowHovered(false); setArrowPressed(false) }}
-        onMouseDown={() => setArrowPressed(true)}
+        onMouseDown={(e) => { e.stopPropagation(); setArrowPressed(true) }}
         onMouseUp={() => setArrowPressed(false)}
         style={{
           display:        'flex',
