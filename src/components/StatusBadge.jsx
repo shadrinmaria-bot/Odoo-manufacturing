@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Icon from './Icon'
 
 // ── Design tokens ──────────────────────────────────────────────────────────────
 
@@ -31,19 +32,6 @@ const VARIANTS = {
     arrowActiveBg: 'rgba(251,185,69,0.42)',
     arrowText:     '#FBB945',
   },
-}
-
-// ── Chevron ───────────────────────────────────────────────────────────────────
-
-function Chevron({ up, color }) {
-  return (
-    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{ display: 'block', flexShrink: 0 }}>
-      {up
-        ? <path d="M1 4.5L4 1.5L7 4.5" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-        : <path d="M1 1L4 4L7 1"        stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-      }
-    </svg>
-  )
 }
 
 // ── StatusBadge ───────────────────────────────────────────────────────────────
@@ -150,7 +138,7 @@ export default function StatusBadge({
         }}
         aria-label={isOpen ? 'Collapse' : 'Expand'}
       >
-        <Chevron up={isOpen} color={v.arrowText} />
+        <Icon char={isOpen ? '' : ''} size={10} color={v.arrowText} />
       </button>
     </div>
   )

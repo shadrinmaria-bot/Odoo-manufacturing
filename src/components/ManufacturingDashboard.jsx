@@ -12,6 +12,8 @@ import StatusBadge from './StatusBadge'
 import SafetyIncidentModal from './SafetyIncidentModal'
 import OpenSafetyItemsDropdown from './OpenSafetyItemsDropdown'
 import IncidentDetailModal from './IncidentDetailModal'
+import SafetyStatisticsPage from './SafetyStatisticsPage'
+import Icon from './Icon'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -144,33 +146,6 @@ function getVariantFromIncidents(list) {
 
 function OdooLogo({ size = 24 }) {
   return <img src="/logo.png" width={size} height={size} alt="Manufacturing logo" style={{ display: 'block' }} />
-}
-
-// ── Icon (Font Awesome / Odoo UI icon font glyph) ─────────────────────────────
-
-function Icon({ char, font = 'fa', size = 16, color, style = {} }) {
-  const fontFamily = font === 'odoo' ? '"odoo_ui_icons"' : '"fontawesome"'
-  return (
-    <span
-      aria-hidden="true"
-      style={{
-        fontFamily,
-        fontSize: size,
-        color: color ?? 'currentColor',
-        lineHeight: 1,
-        display: 'inline-block',
-        fontStyle: 'normal',
-        fontWeight: 'normal',
-        fontVariant: 'normal',
-        textTransform: 'none',
-        WebkitFontSmoothing: 'antialiased',
-        MozOsxFontSmoothing: 'grayscale',
-        ...style,
-      }}
-    >
-      {char}
-    </span>
-  )
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -486,13 +461,16 @@ const NAV_STRUCTURE = [
   { label: 'Configuration', items: ['Settings', 'Work Centers', 'Operations'] },
 ]
 
+// Only sub-items in this set are clickable. Everything else is rendered
+// dimmed/inert until its destination page is built.
+const ENABLED_SUB_ITEMS = new Set([
+  'Reporting/Safety Statistics',
+])
+
 function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSelect }) {
   const isActive = activePage.section === section.label
   const isOpen = openDropdown === section.label
   const hasItems = !!section.items
-  // Dropdown sub-items are inert for now — clicking shows nothing happens.
-  // Flip this to `true` once the sub-pages are built.
-  const subItemsEnabled = false
 
   function handleClick() {
     if (!hasItems) onSelect(section.label, null)
@@ -532,28 +510,29 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
           {section.items.map(item => {
             const isSubActive =
               activePage.section === section.label && activePage.subItem === item
+            const itemEnabled = ENABLED_SUB_ITEMS.has(`${section.label}/${item}`)
             return (
               <button
                 key={item}
-                onClick={subItemsEnabled ? () => onSelect(section.label, item) : undefined}
-                disabled={!subItemsEnabled}
+                onClick={itemEnabled ? () => onSelect(section.label, item) : undefined}
+                disabled={!itemEnabled}
                 style={{
                   display: 'block', width: '100%', textAlign: 'left',
                   background: isSubActive ? 'rgba(26,211,187,0.07)' : 'transparent',
                   border: 'none',
-                  cursor: subItemsEnabled ? 'pointer' : 'default',
+                  cursor: itemEnabled ? 'pointer' : 'default',
                   padding: '8px 14px',
                   fontFamily: "'Segoe UI', sans-serif", fontSize: 13.5,
                   color: isSubActive ? '#1AD3BB' : '#F5F5F6',
-                  opacity: subItemsEnabled ? 1 : 0.55,
+                  opacity: itemEnabled ? 1 : 0.55,
                   transition: 'background 0.12s',
                   whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => {
-                  if (subItemsEnabled && !isSubActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                  if (itemEnabled && !isSubActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
                 }}
                 onMouseLeave={e => {
-                  if (subItemsEnabled && !isSubActive) e.currentTarget.style.background = 'transparent'
+                  if (itemEnabled && !isSubActive) e.currentTarget.style.background = 'transparent'
                 }}
               >
                 {item}
@@ -689,9 +668,7 @@ function SubHeader({ onOpenModal }) {
         style={{ background: '#1B1D26', borderColor: '#3C3E4A', borderRadius: 4, minWidth: 280 }}>
         <Icon char={""} size={13} color="#626363" />
         <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363', flex: 1 }}>Search...</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2">
-          <path d="M6 9l6 6 6-6" />
-        </svg>
+        <Icon char={''} size={11} color="#626363" />
       </div>
 
       {/* Pagination */}
@@ -809,6 +786,8 @@ export default function ManufacturingDashboard() {
   const workCenters = WORK_CENTER_DEFS.map(def => ({ ...def }))
 
   const isOverview = activePage.section === 'Overview'
+  const isSafetyStats =
+    activePage.section === 'Reporting' && activePage.subItem === 'Safety Statistics'
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#1B1D26' }}>
@@ -862,6 +841,8 @@ export default function ManufacturingDashboard() {
             </div>
           </main>
         </>
+      ) : isSafetyStats ? (
+        <SafetyStatisticsPage />
       ) : (
         <PlaceholderPage section={activePage.section} subItem={activePage.subItem} />
       )}

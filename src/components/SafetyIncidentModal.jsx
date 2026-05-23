@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import Icon from './Icon'
 
 // ── Workers lookup (for auto-fill) ────────────────────────────────────────────
 
@@ -161,12 +162,28 @@ function makeSelectStyle(hasError) {
   return {
     ...makeInputStyle(hasError),
     appearance: 'none',
+    MozAppearance: 'none',
+    WebkitAppearance: 'none',
     cursor: 'pointer',
-    backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23626363' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round'/%3E%3C/svg%3E")`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right 10px center',
     paddingRight: 28,
   }
+}
+
+// Wraps a <select> with a Font Awesome caret-down () overlay so all
+// dropdowns share the same icon language as the rest of the app.
+function SelectWithCaret({ style, children, ...rest }) {
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      <select {...rest} style={style}>{children}</select>
+      <Icon
+        char={''} size={10} color="#626363"
+        style={{
+          position: 'absolute', right: 12, top: '50%',
+          transform: 'translateY(-50%)', pointerEvents: 'none',
+        }}
+      />
+    </div>
+  )
 }
 
 function FieldLabel({ children, error }) {
@@ -491,7 +508,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                   Injured Worker
                 </span>
               </FieldLabel>
-              <select
+              <SelectWithCaret
                 style={makeSelectStyle(err('injuredWorker'))}
                 value={form.injuredWorker}
                 onChange={e => handleWorkerChange(e.target.value)}
@@ -499,7 +516,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               >
                 <option value="">Select Worker</option>
                 {WORKERS.map(w => <option key={w.value} value={w.value}>{w.label}</option>)}
-              </select>
+              </SelectWithCaret>
             </div>
             <div>
               <FieldLabel error={err('jobTitle')}>Job Title</FieldLabel>
@@ -529,7 +546,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
             <div>
               <FieldLabel error={err('incidentLocation')}>Incident Location</FieldLabel>
-              <select
+              <SelectWithCaret
                 style={makeSelectStyle(err('incidentLocation'))}
                 value={form.incidentLocation}
                 onChange={e => setForm(f => ({ ...f, incidentLocation: e.target.value }))}
@@ -537,7 +554,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               >
                 <option value="">Select Work Center</option>
                 {WORK_CENTERS.map(wc => <option key={wc.id} value={wc.id}>{wc.label}</option>)}
-              </select>
+              </SelectWithCaret>
               {form.incidentLocation === 'other' && (
                 <div style={{ marginTop: 8 }}>
                   <FieldLabel error={(showErrors || touched.otherLocation) && !form.otherLocation}>Specify location</FieldLabel>
@@ -625,7 +642,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             </div>
             <div>
               <FieldLabel error={err('actionsTaken')}>Actions Taken</FieldLabel>
-              <select
+              <SelectWithCaret
                 style={makeSelectStyle(err('actionsTaken'))}
                 value={form.actionsTaken}
                 onChange={e => setForm(f => ({ ...f, actionsTaken: e.target.value }))}
@@ -633,7 +650,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               >
                 <option value="">Choose...</option>
                 {ACTIONS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-              </select>
+              </SelectWithCaret>
             </div>
           </div>
 
