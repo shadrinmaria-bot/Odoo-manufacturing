@@ -490,16 +490,13 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
   const isActive = activePage.section === section.label
   const isOpen = openDropdown === section.label
   const hasItems = !!section.items
-  // Sub-page navigation is intentionally disabled for now — only Overview routes.
-  // Re-enable by switching this to `true` once the sub-pages are built.
-  const dropdownsEnabled = false
+  // Dropdown sub-items are inert for now — clicking shows nothing happens.
+  // Flip this to `true` once the sub-pages are built.
+  const subItemsEnabled = false
 
   function handleClick() {
-    if (!hasItems) {
-      onSelect(section.label, null)
-    } else if (dropdownsEnabled) {
-      onToggleDropdown(section.label)
-    }
+    if (!hasItems) onSelect(section.label, null)
+    else onToggleDropdown(section.label)
   }
 
   return (
@@ -512,7 +509,7 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
           fontSize: 14.55, color: isActive ? '#1AD3BB' : '#F5F5F6',
           border: isActive ? '1px solid rgba(26,211,187,0.4)' : '1px solid transparent',
           background: isActive ? 'rgba(26,211,187,0.05)' : 'transparent',
-          cursor: hasItems && !dropdownsEnabled ? 'default' : 'pointer',
+          cursor: 'pointer',
         }}
       >
         {section.label}
@@ -538,22 +535,25 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
             return (
               <button
                 key={item}
-                onClick={() => onSelect(section.label, item)}
+                onClick={subItemsEnabled ? () => onSelect(section.label, item) : undefined}
+                disabled={!subItemsEnabled}
                 style={{
                   display: 'block', width: '100%', textAlign: 'left',
                   background: isSubActive ? 'rgba(26,211,187,0.07)' : 'transparent',
-                  border: 'none', cursor: 'pointer',
+                  border: 'none',
+                  cursor: subItemsEnabled ? 'pointer' : 'default',
                   padding: '8px 14px',
                   fontFamily: "'Segoe UI', sans-serif", fontSize: 13.5,
                   color: isSubActive ? '#1AD3BB' : '#F5F5F6',
+                  opacity: subItemsEnabled ? 1 : 0.55,
                   transition: 'background 0.12s',
                   whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => {
-                  if (!isSubActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                  if (subItemsEnabled && !isSubActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
                 }}
                 onMouseLeave={e => {
-                  if (!isSubActive) e.currentTarget.style.background = 'transparent'
+                  if (subItemsEnabled && !isSubActive) e.currentTarget.style.background = 'transparent'
                 }}
               >
                 {item}
