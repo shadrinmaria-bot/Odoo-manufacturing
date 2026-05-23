@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Icon from './Icon'
+import { Button } from './Button'
 
 // ── Workers lookup (for auto-fill) ────────────────────────────────────────────
 
@@ -277,19 +278,17 @@ function SuccessPopup({ onClose }) {
         <p style={{ fontFamily: FONT, fontWeight: 600, fontSize: 15, color: '#F5F5F6', margin: '0 0 20px' }}>
           Report was sent successfully!
         </p>
-        <button
+        <Button
+          variant="purple"
           onClick={onClose}
           style={{
-            background: '#6B3E66', border: 'none', borderRadius: 4,
-            padding: '9px 28px', cursor: 'pointer',
+            padding: '9px 28px',
             fontFamily: FONT, fontWeight: 600, fontSize: 13,
-            color: '#F5F5F6', letterSpacing: '0.06em',
+            letterSpacing: '0.06em',
           }}
-          onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.14)'}
-          onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
         >
           CLOSE
-        </button>
+        </Button>
       </div>
     </div>
   )
@@ -696,30 +695,26 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
           borderTop: '1px solid #5A5E6B',
           flexShrink: 0, gap: 10, background: '#2A2E3A',
         }}>
-          <button
+          <Button
+            variant="purple"
             onClick={handleSubmit}
             style={{
-              background: '#6B3E66', border: 'none', borderRadius: 4,
-              padding: '8px 22px', cursor: 'pointer',
+              padding: '8px 22px',
               fontFamily: FONT, fontWeight: 600, fontSize: 13,
-              color: '#F5F5F6', letterSpacing: '0.04em',
-              transition: 'filter 0.15s',
+              letterSpacing: '0.04em',
             }}
-            onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
-            onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
           >
             SUBMIT REPORT
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleClose}
             style={{
-              background: 'none', border: '1px solid #5A5E6B', borderRadius: 4,
-              padding: '8px 20px', cursor: 'pointer',
-              fontFamily: FONT, fontWeight: 600, fontSize: 13, color: '#8A8D9A',
+              padding: '8px 20px',
+              fontFamily: FONT, fontWeight: 600, fontSize: 13,
             }}
           >
             Discard
-          </button>
+          </Button>
         </div>
       </div>
 

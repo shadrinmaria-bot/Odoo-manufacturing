@@ -14,6 +14,7 @@ import OpenSafetyItemsDropdown from './OpenSafetyItemsDropdown'
 import IncidentDetailModal from './IncidentDetailModal'
 import SafetyStatisticsPage from './SafetyStatisticsPage'
 import Icon from './Icon'
+import { Button, ButtonGroup } from './Button'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -170,37 +171,30 @@ function StatusDot({ blocked }) {
 }
 
 
-const iconBtnStyle = {
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  width: 32, height: 32, background: '#3C3E4A',
-  borderRadius: '0 3.78px 3.78px 0', color: '#A0A4AF',
-  border: 'none', cursor: 'pointer',
-}
-
 function WorkOrderButtons({ onShowChart }) {
+  // Three-button group: purple WORK ORDERS on the left, then two gray icon
+  // buttons. The grouping rule auto-rounds corners (left/middle/right).
   return (
-    <div className="flex items-center" style={{ gap: 3 }}>
-      <button
-        className="px-3 text-white hover:brightness-110 transition-all"
-        style={{
-          background: '#6B3E66', borderRadius: '3.78px 0 0 3.78px',
-          fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
-          fontSize: 14.5, height: 32, lineHeight: 1, whiteSpace: 'nowrap',
-          border: 'none', cursor: 'pointer',
-        }}
+    <ButtonGroup gap={3}>
+      <Button
+        variant="purple"
+        style={{ padding: '0 12px', height: 32, fontWeight: 600, fontSize: 14.5, whiteSpace: 'nowrap', fontFamily: "'Segoe UI', sans-serif" }}
       >
         WORK ORDERS
-      </button>
-      <button style={iconBtnStyle} className="hover:brightness-125 transition-all">
-        <Icon char={""} size={13} />
-      </button>
-      <button
+      </Button>
+      <Button
+        style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Icon char={''} size={13} />
+      </Button>
+      <Button
         onClick={onShowChart}
         title="View on Safety Statistics"
-        style={iconBtnStyle} className="hover:brightness-125 transition-all">
-        <Icon char={""} size={13} />
-      </button>
-    </div>
+        style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Icon char={''} size={13} />
+      </Button>
+    </ButtonGroup>
   )
 }
 

@@ -7,6 +7,7 @@ import {
   CartesianGrid, Legend,
 } from 'recharts'
 import Icon from './Icon'
+import { Button, ButtonGroup } from './Button'
 
 const FONT = "'Segoe UI', sans-serif"
 
@@ -58,23 +59,20 @@ function MetricDropdown({ metric, onChange }) {
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      <button
+      <Button
+        variant="purple"
+        active={open}
         onClick={() => setOpen(o => !o)}
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          background: '#6B3E66', border: 'none', borderRadius: 4,
           padding: '7px 14px', height: 32,
-          cursor: 'pointer',
           fontFamily: FONT, fontWeight: 600, fontSize: 13.5,
-          color: '#F5F5F6', whiteSpace: 'nowrap',
-          transition: 'filter 0.12s',
+          whiteSpace: 'nowrap',
         }}
-        onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.12)'}
-        onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
       >
         {current.label}
         <Icon char={open ? '' : ''} size={11} />
-      </button>
+      </Button>
 
       {open && (
         <div
@@ -117,32 +115,7 @@ function MetricDropdown({ metric, onChange }) {
   )
 }
 
-// ── Small icon button (toolbar) ───────────────────────────────────────────────
-
-function ToolbarButton({ char, active, onClick, title }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: 32, height: 32,
-        background: active
-          ? 'rgba(26,211,187,0.07)'
-          : hovered ? '#4A4D58' : '#3C3E4A',
-        border: active ? '1px solid rgba(26,211,187,0.45)' : '1px solid transparent',
-        borderRadius: 4, cursor: 'pointer',
-        color: active ? '#1AD3BB' : '#A0A4AF',
-        transition: 'all 0.12s',
-      }}
-    >
-      <Icon char={char} size={14} />
-    </button>
-  )
-}
+const iconBtn = { width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }
 
 // ── Stats toolbar ─────────────────────────────────────────────────────────────
 
@@ -162,28 +135,28 @@ function StatsToolbar({
     >
       <MetricDropdown metric={metric} onChange={onMetricChange} />
 
-      <div style={{ display: 'flex', gap: 3, marginLeft: 4 }}>
-        <ToolbarButton char={''} active={graphType === 'bar'}  onClick={() => onGraphTypeChange('bar')}  title="Bar chart"  />
-        <ToolbarButton char={''} active={graphType === 'line'} onClick={() => onGraphTypeChange('line')} title="Line chart" />
-        <ToolbarButton char={''} active={graphType === 'pie'}  onClick={() => onGraphTypeChange('pie')}  title="Pie chart"  />
-      </div>
+      <ButtonGroup gap={3} style={{ marginLeft: 4 }}>
+        <Button active={graphType === 'bar'}  onClick={() => onGraphTypeChange('bar')}  title="Bar chart"  style={iconBtn}><Icon char={''} size={14} /></Button>
+        <Button active={graphType === 'line'} onClick={() => onGraphTypeChange('line')} title="Line chart" style={iconBtn}><Icon char={''} size={14} /></Button>
+        <Button active={graphType === 'pie'}  onClick={() => onGraphTypeChange('pie')}  title="Pie chart"  style={iconBtn}><Icon char={''} size={14} /></Button>
+      </ButtonGroup>
 
       {/* Sort makes no visual difference on a pie — hide there. */}
       {graphType !== 'pie' && (
-        <div style={{ display: 'flex', gap: 3 }}>
-          <ToolbarButton
-            char={''}
+        <ButtonGroup gap={3}>
+          <Button
             active={sortOrder === 'desc'}
             onClick={() => onSortChange(sortOrder === 'desc' ? null : 'desc')}
             title="Sort descending"
-          />
-          <ToolbarButton
-            char={''}
+            style={iconBtn}
+          ><Icon char={''} size={14} /></Button>
+          <Button
             active={sortOrder === 'asc'}
             onClick={() => onSortChange(sortOrder === 'asc' ? null : 'asc')}
             title="Sort ascending"
-          />
-        </div>
+            style={iconBtn}
+          ><Icon char={''} size={14} /></Button>
+        </ButtonGroup>
       )}
     </div>
   )
@@ -373,25 +346,19 @@ function StatsSubHeader({ filteredCenter, onClearFilter }) {
 
       {/* Right: view-switcher icons + Report Incident shortcut (flex 1) */}
       <div style={{ flex: 1, padding: '0 16px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 4, color: '#A0A4AF' }}>
-        {[
-          { label: 'Graph view',  path: <><rect x="3" y="11" width="4" height="8" rx="1" /><rect x="10" y="6" width="4" height="13" rx="1" /><rect x="17" y="9" width="4" height="10" rx="1" /></> },
-          { label: 'Pivot view',  path: <><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="3" y1="15" x2="21" y2="15" /><line x1="9" y1="3" x2="9" y2="21" /><line x1="15" y1="3" x2="15" y2="21" /></> },
-          { label: 'List view',   path: <><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><circle cx="3.5" cy="6" r="1" /><circle cx="3.5" cy="12" r="1" /><circle cx="3.5" cy="18" r="1" /></> },
-        ].map(v => (
-          <button
-            key={v.label}
-            title={v.label}
-            style={{
-              width: 32, height: 32, background: 'transparent', border: '1px solid #3C3E4A',
-              borderRadius: 4, color: '#A0A4AF', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {v.path}
-            </svg>
-          </button>
-        ))}
+        <ButtonGroup gap={3}>
+          {[
+            { label: 'Graph view',  path: <><rect x="3" y="11" width="4" height="8" rx="1" /><rect x="10" y="6" width="4" height="13" rx="1" /><rect x="17" y="9" width="4" height="10" rx="1" /></> },
+            { label: 'Pivot view',  path: <><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="3" y1="15" x2="21" y2="15" /><line x1="9" y1="3" x2="9" y2="21" /><line x1="15" y1="3" x2="15" y2="21" /></> },
+            { label: 'List view',   path: <><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><circle cx="3.5" cy="6" r="1" /><circle cx="3.5" cy="12" r="1" /><circle cx="3.5" cy="18" r="1" /></> },
+          ].map(v => (
+            <Button key={v.label} title={v.label} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                {v.path}
+              </svg>
+            </Button>
+          ))}
+        </ButtonGroup>
 
         <button
           title="Report Incident"
