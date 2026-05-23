@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   LineChart,
   Line,
@@ -477,10 +477,116 @@ function NavIcons() {
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
 
-const navItems = ['Overview', 'Operations', 'Planning', 'Products', 'Reporting', 'Configuration']
+const NAV_STRUCTURE = [
+  { label: 'Overview',      items: null },
+  { label: 'Operations',    items: ['Manufacturing Orders', 'Work Orders', 'Unbuild Orders', 'Scrap'] },
+  { label: 'Planning',      items: ['Gantt', 'Kanban', 'Employee Planning'] },
+  { label: 'Products',      items: ['Products', 'Bills of Materials'] },
+  { label: 'Reporting',     items: ['Work Orders', 'Safety Statistics', 'Overall Equipment Effectiveness'] },
+  { label: 'Configuration', items: ['Settings', 'Work Centers', 'Operations'] },
+]
 
-function TopNav() {
-  const [active, setActive] = useState('Reporting')
+function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSelect }) {
+  const isActive = activePage.section === section.label
+  const isOpen = openDropdown === section.label
+  const hasItems = !!section.items
+
+  function handleClick() {
+    if (!hasItems) onSelect(section.label, null)
+    else onToggleDropdown(section.label)
+  }
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        onClick={handleClick}
+        className="px-3 py-1.5 rounded transition-colors"
+        style={{
+          fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
+          fontSize: 14.55, color: isActive ? '#1AD3BB' : '#F5F5F6',
+          border: isActive ? '1px solid rgba(26,211,187,0.4)' : '1px solid transparent',
+          background: isActive ? 'rgba(26,211,187,0.05)' : 'transparent',
+          cursor: 'pointer',
+        }}
+      >
+        {section.label}
+      </button>
+
+      {isOpen && hasItems && (
+        <div
+          style={{
+            position: 'absolute', top: 'calc(100% + 4px)', left: 0,
+            background: '#2A2E3A',
+            border: '1px solid #3C3E4A',
+            borderRadius: 4,
+            minWidth: 200,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+            zIndex: 100,
+            padding: '4px 0',
+            animation: 'navDropdownFadeIn 0.12s ease',
+          }}
+        >
+          {section.items.map(item => {
+            const isSubActive =
+              activePage.section === section.label && activePage.subItem === item
+            return (
+              <button
+                key={item}
+                onClick={() => onSelect(section.label, item)}
+                style={{
+                  display: 'block', width: '100%', textAlign: 'left',
+                  background: isSubActive ? 'rgba(26,211,187,0.07)' : 'transparent',
+                  border: 'none', cursor: 'pointer',
+                  padding: '8px 14px',
+                  fontFamily: "'Segoe UI', sans-serif", fontSize: 13.5,
+                  color: isSubActive ? '#1AD3BB' : '#F5F5F6',
+                  transition: 'background 0.12s',
+                  whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={e => {
+                  if (!isSubActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                }}
+                onMouseLeave={e => {
+                  if (!isSubActive) e.currentTarget.style.background = 'transparent'
+                }}
+              >
+                {item}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TopNav({ activePage, onSelect }) {
+  const [openDropdown, setOpenDropdown] = useState(null)
+  const navRef = useRef(null)
+
+  function toggle(label) {
+    setOpenDropdown(prev => (prev === label ? null : label))
+  }
+
+  function handleSelect(section, subItem) {
+    onSelect(section, subItem)
+    setOpenDropdown(null)
+  }
+
+  useEffect(() => {
+    function handleMouseDown(e) {
+      if (navRef.current && !navRef.current.contains(e.target)) setOpenDropdown(null)
+    }
+    function handleKey(e) {
+      if (e.key === 'Escape') setOpenDropdown(null)
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [])
 
   return (
     <header
@@ -499,27 +605,60 @@ function TopNav() {
       </div>
 
       {/* Nav items */}
-      <nav className="flex items-center gap-0.5">
-        {navItems.map((item) => (
-          <button
-            key={item}
-            onClick={() => setActive(item)}
-            className="px-3 py-1.5 rounded transition-colors"
-            style={{
-              fontFamily: "'Segoe UI', sans-serif", fontWeight: 400,
-              fontSize: 14.55, color: active === item ? '#1AD3BB' : '#F5F5F6',
-              border: active === item ? '1px solid rgba(26,211,187,0.4)' : '1px solid transparent',
-              background: active === item ? 'rgba(26,211,187,0.05)' : 'transparent',
-              cursor: 'pointer',
-            }}
-          >
-            {item}
-          </button>
+      <nav ref={navRef} className="flex items-center gap-0.5">
+        {NAV_STRUCTURE.map(section => (
+          <NavSection
+            key={section.label}
+            section={section}
+            activePage={activePage}
+            openDropdown={openDropdown}
+            onToggleDropdown={toggle}
+            onSelect={handleSelect}
+          />
         ))}
       </nav>
 
       <NavIcons />
+
+      <style>{`
+        @keyframes navDropdownFadeIn {
+          from { opacity: 0; transform: translateY(-3px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </header>
+  )
+}
+
+// ── Placeholder page (non-Overview routes) ────────────────────────────────────
+
+function PlaceholderPage({ section, subItem }) {
+  return (
+    <main
+      className="flex-1"
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+    >
+      <div style={{ textAlign: 'center', maxWidth: 520 }}>
+        <div style={{
+          fontFamily: "'Segoe UI', sans-serif", fontSize: 12, fontWeight: 600,
+          letterSpacing: '0.08em', color: '#626363',
+          textTransform: 'uppercase', marginBottom: 12,
+        }}>
+          {section}
+        </div>
+        <h1 style={{
+          fontFamily: "'Segoe UI', sans-serif", fontWeight: 600, fontSize: 30,
+          color: '#F5F5F6', margin: 0, lineHeight: 1.2,
+        }}>
+          {subItem}
+        </h1>
+        <p style={{
+          fontFamily: "'Segoe UI', sans-serif", fontSize: 13, color: '#626363', marginTop: 18,
+        }}>
+          This page hasn't been built yet.
+        </p>
+      </div>
+    </main>
   )
 }
 
@@ -616,6 +755,7 @@ export default function ManufacturingDashboard() {
   const [openDropdown,   setOpenDropdown]   = useState(null)
   const [detailIncident, setDetailIncident] = useState(null)
   const [isModalOpen,    setIsModalOpen]    = useState(false)
+  const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null })
 
   function toggleDropdown(id) { setOpenDropdown(p => p === id ? null : id) }
   function closeDropdown()    { setOpenDropdown(null) }
@@ -662,51 +802,63 @@ export default function ManufacturingDashboard() {
 
   const workCenters = WORK_CENTER_DEFS.map(def => ({ ...def }))
 
+  const isOverview = activePage.section === 'Overview'
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#1B1D26' }}>
-      <TopNav />
-      <SubHeader onOpenModal={() => setIsModalOpen(true)} />
-      <main className="flex-1 p-4">
-        <div style={{ display: 'flex', gap: 10, width: '100%' }}>
-          {workCenters.map((center) => (
-            <WorkCenterCard
-              key={center.id}
-              center={center}
-              incidents={incidents[center.id] ?? []}
-              isDropdownOpen={openDropdown === center.id}
-              onToggleDropdown={() => toggleDropdown(center.id)}
-              onCloseDropdown={closeDropdown}
-              onViewIncident={(incident) => { closeDropdown(); setDetailIncident(incident) }}
-              onDeleteIncident={deleteIncident}
-            />
-          ))}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
-          <button
-            onClick={handleReset}
-            style={{
-              background: 'none',
-              border: '1px solid #3C3E4A',
-              borderRadius: 4,
-              padding: '6px 14px',
-              cursor: 'pointer',
-              fontFamily: "'Segoe UI', sans-serif",
-              fontSize: 12,
-              fontWeight: 600,
-              color: '#626363',
-              display: 'flex', alignItems: 'center', gap: 6,
-              transition: 'border-color 0.15s, color 0.15s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#5A5E6B'; e.currentTarget.style.color = '#A0A4AF' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = '#3C3E4A'; e.currentTarget.style.color = '#626363' }}
-          >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" />
-            </svg>
-            Reset State
-          </button>
-        </div>
-      </main>
+      <TopNav
+        activePage={activePage}
+        onSelect={(section, subItem) => setActivePage({ section, subItem })}
+      />
+
+      {isOverview ? (
+        <>
+          <SubHeader onOpenModal={() => setIsModalOpen(true)} />
+          <main className="flex-1 p-4">
+            <div style={{ display: 'flex', gap: 10, width: '100%' }}>
+              {workCenters.map((center) => (
+                <WorkCenterCard
+                  key={center.id}
+                  center={center}
+                  incidents={incidents[center.id] ?? []}
+                  isDropdownOpen={openDropdown === center.id}
+                  onToggleDropdown={() => toggleDropdown(center.id)}
+                  onCloseDropdown={closeDropdown}
+                  onViewIncident={(incident) => { closeDropdown(); setDetailIncident(incident) }}
+                  onDeleteIncident={deleteIncident}
+                />
+              ))}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+              <button
+                onClick={handleReset}
+                style={{
+                  background: 'none',
+                  border: '1px solid #3C3E4A',
+                  borderRadius: 4,
+                  padding: '6px 14px',
+                  cursor: 'pointer',
+                  fontFamily: "'Segoe UI', sans-serif",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: '#626363',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  transition: 'border-color 0.15s, color 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#5A5E6B'; e.currentTarget.style.color = '#A0A4AF' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#3C3E4A'; e.currentTarget.style.color = '#626363' }}
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" />
+                </svg>
+                Reset State
+              </button>
+            </div>
+          </main>
+        </>
+      ) : (
+        <PlaceholderPage section={activePage.section} subItem={activePage.subItem} />
+      )}
       <SafetyIncidentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
