@@ -490,10 +490,16 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
   const isActive = activePage.section === section.label
   const isOpen = openDropdown === section.label
   const hasItems = !!section.items
+  // Sub-page navigation is intentionally disabled for now — only Overview routes.
+  // Re-enable by switching this to `true` once the sub-pages are built.
+  const dropdownsEnabled = false
 
   function handleClick() {
-    if (!hasItems) onSelect(section.label, null)
-    else onToggleDropdown(section.label)
+    if (!hasItems) {
+      onSelect(section.label, null)
+    } else if (dropdownsEnabled) {
+      onToggleDropdown(section.label)
+    }
   }
 
   return (
@@ -506,7 +512,7 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
           fontSize: 14.55, color: isActive ? '#1AD3BB' : '#F5F5F6',
           border: isActive ? '1px solid rgba(26,211,187,0.4)' : '1px solid transparent',
           background: isActive ? 'rgba(26,211,187,0.05)' : 'transparent',
-          cursor: 'pointer',
+          cursor: hasItems && !dropdownsEnabled ? 'default' : 'pointer',
         }}
       >
         {section.label}
