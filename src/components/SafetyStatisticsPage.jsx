@@ -150,6 +150,7 @@ function StatsToolbar({
   metric, onMetricChange,
   graphType, onGraphTypeChange,
   sortOrder, onSortChange,
+  filteredCenter, onClearFilter,
 }) {
   return (
     <div
@@ -166,6 +167,26 @@ function StatsToolbar({
         <ToolbarButton char={''} active={graphType === 'line'} onClick={() => onGraphTypeChange('line')} title="Line chart" />
         <ToolbarButton char={''} active={graphType === 'pie'}  onClick={() => onGraphTypeChange('pie')}  title="Pie chart"  />
       </div>
+
+      {filteredCenter && (
+        <div
+          onClick={onClearFilter}
+          title="Clear filter"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '6px 10px',
+            background: 'rgba(26,211,187,0.08)',
+            border: '1px solid rgba(26,211,187,0.4)',
+            borderRadius: 999,
+            cursor: 'pointer',
+            fontFamily: FONT, fontSize: 12.5, color: '#1AD3BB',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Filter: {filteredCenter}
+          <Icon char={'×'} size={10} />
+        </div>
+      )}
 
       {/* Sort makes no visual difference on a pie — hide there. */}
       {graphType !== 'pie' && (
@@ -246,7 +267,9 @@ const barChartChildren = (data) => (
   </>
 )
 
-const lineChartChildren = (
+// Line mode supports click-to-isolate: clicking a line filters down to that
+// work center; clicking it again (or the chip in the toolbar) clears the filter.
+const lineChartChildren = (filteredCenter, onLineClick) => (
   <>
     <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
     <XAxis
@@ -268,18 +291,22 @@ const lineChartChildren = (
       wrapperStyle={{ fontFamily: FONT, fontSize: 13, paddingTop: 8, color: '#F5F5F6' }}
       iconType="rect"
     />
-    {Object.entries(WORK_CENTER_COLORS).map(([center, color]) => (
-      <Line
-        key={center}
-        type="linear"
-        dataKey={center}
-        stroke={color}
-        strokeWidth={2.2}
-        dot={{ r: 4, fill: color, strokeWidth: 0 }}
-        activeDot={{ r: 5, fill: color, strokeWidth: 0 }}
-        isAnimationActive={false}
-      />
-    ))}
+    {Object.entries(WORK_CENTER_COLORS)
+      .filter(([center]) => !filteredCenter || filteredCenter === center)
+      .map(([center, color]) => (
+        <Line
+          key={center}
+          type="linear"
+          dataKey={center}
+          stroke={color}
+          strokeWidth={filteredCenter === center ? 2.8 : 2.2}
+          dot={{ r: 4, fill: color, strokeWidth: 0, style: { cursor: 'pointer' } }}
+          activeDot={{ r: 5, fill: color, strokeWidth: 0, style: { cursor: 'pointer' } }}
+          isAnimationActive={false}
+          onClick={() => onLineClick(center)}
+          style={{ cursor: 'pointer' }}
+        />
+      ))}
   </>
 )
 
@@ -375,15 +402,20 @@ function StatsSubHeader() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default function SafetyStatisticsPage() {
+export default function SafetyStatisticsPage({ initialParams = null }) {
   const [metric, setMetric]       = useState('incident-count')
-  const [graphType, setGraphType] = useState('bar')
+  const [graphType, setGraphType] = useState(initialParams?.initialGraphType ?? 'bar')
   const [sortOrder, setSortOrder] = useState(null)
+  // null = all centers visible; otherwise only that center's series is shown.
+  // Toggled on by clicking a line in line mode, or by deep-link from the
+  // Overview work-center card's chart icon. Cleared via the chip.
+  const [filteredCenter, setFilteredCenter] = useState(initialParams?.initialFilter ?? null)
 
   // Sorting only applies to per-center aggregated data (bar + pie).
   // Line mode is time-series so sort is ignored.
   const aggregated = (() => {
-    const arr = [...INCIDENT_COUNTS]
+    let arr = [...INCIDENT_COUNTS]
+    if (filteredCenter) arr = arr.filter(d => d.center === filteredCenter)
     if (sortOrder === 'desc') arr.sort((a, b) => b.count - a.count)
     if (sortOrder === 'asc')  arr.sort((a, b) => a.count - b.count)
     return arr
@@ -400,6 +432,8 @@ export default function SafetyStatisticsPage() {
           onGraphTypeChange={setGraphType}
           sortOrder={sortOrder}
           onSortChange={setSortOrder}
+          filteredCenter={filteredCenter}
+          onClearFilter={() => setFilteredCenter(null)}
         />
 
         {/* Explicit height — `flex: 1` doesn't propagate through min-h-screen on the root */}
@@ -411,7 +445,9 @@ export default function SafetyStatisticsPage() {
               </BarChart>
             ) : graphType === 'line' ? (
               <LineChart data={INCIDENT_OVER_TIME} margin={{ top: 20, right: 32, left: 8, bottom: 24 }}>
-                {lineChartChildren}
+                {lineChartChildren(filteredCenter, (center) =>
+                  setFilteredCenter(filteredCenter === center ? null : center)
+                )}
               </LineChart>
             ) : (
               <PieChart>

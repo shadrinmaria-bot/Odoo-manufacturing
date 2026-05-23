@@ -177,7 +177,7 @@ const iconBtnStyle = {
   border: 'none', cursor: 'pointer',
 }
 
-function WorkOrderButtons() {
+function WorkOrderButtons({ onShowChart }) {
   return (
     <div className="flex items-center" style={{ gap: 3 }}>
       <button
@@ -194,7 +194,10 @@ function WorkOrderButtons() {
       <button style={iconBtnStyle} className="hover:brightness-125 transition-all">
         <Icon char={""} size={13} />
       </button>
-      <button style={iconBtnStyle} className="hover:brightness-125 transition-all">
+      <button
+        onClick={onShowChart}
+        title="View on Safety Statistics"
+        style={iconBtnStyle} className="hover:brightness-125 transition-all">
         <Icon char={""} size={13} />
       </button>
     </div>
@@ -222,6 +225,7 @@ function WorkCenterCard({
   onCloseDropdown,
   onViewIncident,
   onDeleteIncident,
+  onShowStats,
 }) {
   const [hovered, setHovered] = useState(false)
   const badgeRef = useRef(null)
@@ -328,7 +332,7 @@ function WorkCenterCard({
               paddingLeft: 20, paddingRight: 16, paddingBottom: 12,
             }}
           >
-            <WorkOrderButtons />
+            <WorkOrderButtons onShowChart={onShowStats} />
 
             {/* OEE section: label column + spacer + number column */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
@@ -738,7 +742,17 @@ export default function ManufacturingDashboard() {
   const [openDropdown,   setOpenDropdown]   = useState(null)
   const [detailIncident, setDetailIncident] = useState(null)
   const [isModalOpen,    setIsModalOpen]    = useState(false)
-  const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null })
+  const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null, params: null })
+
+  // Jump from an Overview work-center card straight to the Stats page,
+  // line mode, with that center's series pre-filtered.
+  function goToWorkCenterStats(workCenterName) {
+    setActivePage({
+      section: 'Reporting',
+      subItem: 'Safety Statistics',
+      params: { initialFilter: workCenterName, initialGraphType: 'line' },
+    })
+  }
 
   function toggleDropdown(id) { setOpenDropdown(p => p === id ? null : id) }
   function closeDropdown()    { setOpenDropdown(null) }
@@ -793,7 +807,7 @@ export default function ManufacturingDashboard() {
     <div className="min-h-screen flex flex-col" style={{ background: '#1B1D26' }}>
       <TopNav
         activePage={activePage}
-        onSelect={(section, subItem) => setActivePage({ section, subItem })}
+        onSelect={(section, subItem) => setActivePage({ section, subItem, params: null })}
       />
 
       {isOverview ? (
@@ -811,6 +825,7 @@ export default function ManufacturingDashboard() {
                   onCloseDropdown={closeDropdown}
                   onViewIncident={(incident) => { closeDropdown(); setDetailIncident(incident) }}
                   onDeleteIncident={deleteIncident}
+                  onShowStats={() => goToWorkCenterStats(center.name)}
                 />
               ))}
             </div>
@@ -842,7 +857,10 @@ export default function ManufacturingDashboard() {
           </main>
         </>
       ) : isSafetyStats ? (
-        <SafetyStatisticsPage />
+        <SafetyStatisticsPage
+          key={activePage.params?.initialFilter ?? 'all'}
+          initialParams={activePage.params}
+        />
       ) : (
         <PlaceholderPage section={activePage.section} subItem={activePage.subItem} />
       )}
