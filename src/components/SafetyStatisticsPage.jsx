@@ -167,33 +167,56 @@ function StatsToolbar({
         <ToolbarButton char={''} active={graphType === 'pie'}  onClick={() => onGraphTypeChange('pie')}  title="Pie chart"  />
       </div>
 
-      <div style={{ display: 'flex', gap: 3 }}>
-        <ToolbarButton
-          char={''}
-          active={sortOrder === 'desc'}
-          onClick={() => onSortChange(sortOrder === 'desc' ? null : 'desc')}
-          title="Sort descending"
-        />
-        <ToolbarButton
-          char={''}
-          active={sortOrder === 'asc'}
-          onClick={() => onSortChange(sortOrder === 'asc' ? null : 'asc')}
-          title="Sort ascending"
-        />
-      </div>
+      {/* Sort makes no visual difference on a pie — hide there. */}
+      {graphType !== 'pie' && (
+        <div style={{ display: 'flex', gap: 3 }}>
+          <ToolbarButton
+            char={''}
+            active={sortOrder === 'desc'}
+            onClick={() => onSortChange(sortOrder === 'desc' ? null : 'desc')}
+            title="Sort descending"
+          />
+          <ToolbarButton
+            char={''}
+            active={sortOrder === 'asc'}
+            onClick={() => onSortChange(sortOrder === 'asc' ? null : 'asc')}
+            title="Sort ascending"
+          />
+        </div>
+      )}
     </div>
   )
 }
 
 // ── Chart renderers ───────────────────────────────────────────────────────────
 
-const tooltipStyle = {
+const tooltipContentStyle = {
   background: '#262A36',
   border: '1px solid #3C3E4A',
   borderRadius: 4,
+  padding: '8px 12px',
   fontFamily: FONT,
   fontSize: 12.5,
+  color: '#F5F5F6',
+  boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
 }
+const tooltipLabelStyle = {
+  color: '#F5F5F6',
+  fontFamily: FONT,
+  fontWeight: 700,
+  fontSize: 12.5,
+  marginBottom: 4,
+}
+const tooltipItemStyle = {
+  color: '#F5F5F6',
+  fontFamily: FONT,
+  fontSize: 12.5,
+  padding: 0,
+}
+// Pin the tooltip to the top of the chart area (y: 0). The x value 0
+// keeps it from sliding off-screen at the right edge — recharts clamps
+// it within the chart bounds when needed.
+const tooltipFixedPosition = { y: 0 }
 
 // Chart bodies. These return the chart's *contents* (axes, series, etc.) —
 // callers wrap them in BarChart/LineChart/PieChart so ResponsiveContainer can
@@ -210,7 +233,13 @@ const barChartChildren = (data) => (
       tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
       axisLine={false} tickLine={false} allowDecimals={false}
     />
-    <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={tooltipStyle} />
+    <Tooltip
+      cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+      contentStyle={tooltipContentStyle}
+      labelStyle={tooltipLabelStyle}
+      itemStyle={tooltipItemStyle}
+      position={tooltipFixedPosition}
+    />
     <Bar dataKey="count" radius={[2, 2, 0, 0]} isAnimationActive={false}>
       {data.map(d => <Cell key={d.center} fill={WORK_CENTER_COLORS[d.center]} />)}
     </Bar>
@@ -229,7 +258,12 @@ const lineChartChildren = (
       tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
       axisLine={false} tickLine={false} allowDecimals={false}
     />
-    <Tooltip contentStyle={tooltipStyle} />
+    <Tooltip
+      contentStyle={tooltipContentStyle}
+      labelStyle={tooltipLabelStyle}
+      itemStyle={tooltipItemStyle}
+      position={tooltipFixedPosition}
+    />
     <Legend
       wrapperStyle={{ fontFamily: FONT, fontSize: 13, paddingTop: 8, color: '#F5F5F6' }}
       iconType="rect"
@@ -251,7 +285,12 @@ const lineChartChildren = (
 
 const pieChartChildren = (data) => (
   <>
-    <Tooltip contentStyle={tooltipStyle} />
+    <Tooltip
+      contentStyle={tooltipContentStyle}
+      labelStyle={tooltipLabelStyle}
+      itemStyle={tooltipItemStyle}
+      position={tooltipFixedPosition}
+    />
     <Legend
       layout="vertical" verticalAlign="top" align="right"
       wrapperStyle={{ fontFamily: FONT, fontSize: 13, color: '#F5F5F6' }}
