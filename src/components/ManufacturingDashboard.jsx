@@ -217,10 +217,10 @@ function WorkOrderButtons() {
         WORK ORDERS
       </button>
       <button style={iconBtnStyle} className="hover:brightness-125 transition-all">
-        <Icon char={''} size={13} />
+        <Icon char={""} size={13} />
       </button>
       <button style={iconBtnStyle} className="hover:brightness-125 transition-all">
-        <Icon char={''} size={13} />
+        <Icon char={""} size={13} />
       </button>
     </div>
   )
@@ -427,7 +427,7 @@ function NavIcons() {
 
       {/* Discuss / chat bubble with badge */}
       <button className="p-0 hover:opacity-80 transition-opacity relative" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <Icon char={''} size={18} color="#F5F5F6" style={{ display: 'block' }} />
+        <Icon char={""} size={18} color="#F5F5F6" style={{ display: 'block' }} />
         <span
           style={{
             position: 'absolute', top: -4, right: -6,
@@ -444,12 +444,12 @@ function NavIcons() {
 
       {/* Clock / activity icon */}
       <button className="p-0 hover:opacity-80 transition-opacity" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <Icon char={''} size={18} color="#F5F5F6" style={{ display: 'block' }} />
+        <Icon char={""} size={18} color="#F5F5F6" style={{ display: 'block' }} />
       </button>
 
       {/* Wrench + cross (settings/debug) icon */}
       <button className="p-0 hover:opacity-80 transition-opacity" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <Icon char={''} font="odoo" size={18} color="#F5F5F6" style={{ display: 'block' }} />
+        <Icon char={""} font="odoo" size={18} color="#F5F5F6" style={{ display: 'block' }} />
       </button>
 
       {/* Separator */}
@@ -542,7 +542,7 @@ function SubHeader({ onOpenModal }) {
       {/* Search */}
       <div className="flex items-center gap-2 px-3 py-1 border"
         style={{ background: '#1B1D26', borderColor: '#3C3E4A', borderRadius: 4, minWidth: 280 }}>
-        <Icon char={''} size={13} color="#626363" />
+        <Icon char={""} size={13} color="#626363" />
         <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363', flex: 1 }}>Search...</span>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2">
           <path d="M6 9l6 6 6-6" />
@@ -572,7 +572,7 @@ function SubHeader({ onOpenModal }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
       >
-        <Icon char={''} size={12} />
+        <Icon char={""} size={12} />
         Report Incident
       </button>
     </div>
