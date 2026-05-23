@@ -146,6 +146,33 @@ function OdooLogo({ size = 24 }) {
   return <img src="/logo.png" width={size} height={size} alt="Manufacturing logo" style={{ display: 'block' }} />
 }
 
+// ── Icon (Font Awesome / Odoo UI icon font glyph) ─────────────────────────────
+
+function Icon({ char, font = 'fa', size = 16, color, style = {} }) {
+  const fontFamily = font === 'odoo' ? '"odoo_ui_icons"' : '"fontawesome"'
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        fontFamily,
+        fontSize: size,
+        color: color ?? 'currentColor',
+        lineHeight: 1,
+        display: 'inline-block',
+        fontStyle: 'normal',
+        fontWeight: 'normal',
+        fontVariant: 'normal',
+        textTransform: 'none',
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
+        ...style,
+      }}
+    >
+      {char}
+    </span>
+  )
+}
+
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
 function StatusDot({ blocked }) {
@@ -190,16 +217,10 @@ function WorkOrderButtons() {
         WORK ORDERS
       </button>
       <button style={iconBtnStyle} className="hover:brightness-125 transition-all">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="2" y="3" width="20" height="14" rx="2" />
-          <path d="M8 21h8M12 17v4" />
-        </svg>
+        <Icon char={''} size={13} />
       </button>
       <button style={iconBtnStyle} className="hover:brightness-125 transition-all">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-          <polyline points="16 7 22 7 22 13" />
-        </svg>
+        <Icon char={''} size={13} />
       </button>
     </div>
   )
@@ -406,9 +427,7 @@ function NavIcons() {
 
       {/* Discuss / chat bubble with badge */}
       <button className="p-0 hover:opacity-80 transition-opacity relative" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F5F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-        </svg>
+        <Icon char={''} size={18} color="#F5F5F6" style={{ display: 'block' }} />
         <span
           style={{
             position: 'absolute', top: -4, right: -6,
@@ -425,18 +444,12 @@ function NavIcons() {
 
       {/* Clock / activity icon */}
       <button className="p-0 hover:opacity-80 transition-opacity" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5F5F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
+        <Icon char={''} size={18} color="#F5F5F6" style={{ display: 'block' }} />
       </button>
 
       {/* Wrench + cross (settings/debug) icon */}
       <button className="p-0 hover:opacity-80 transition-opacity" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5F5F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="4" y1="4" x2="20" y2="20" />
-          <line x1="20" y1="4" x2="4" y2="20" />
-        </svg>
+        <Icon char={''} font="odoo" size={18} color="#F5F5F6" style={{ display: 'block' }} />
       </button>
 
       {/* Separator */}
@@ -529,9 +542,7 @@ function SubHeader({ onOpenModal }) {
       {/* Search */}
       <div className="flex items-center gap-2 px-3 py-1 border"
         style={{ background: '#1B1D26', borderColor: '#3C3E4A', borderRadius: 4, minWidth: 280 }}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2">
-          <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-        </svg>
+        <Icon char={''} size={13} color="#626363" />
         <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363', flex: 1 }}>Search...</span>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#626363" strokeWidth="2">
           <path d="M6 9l6 6 6-6" />
@@ -561,11 +572,7 @@ function SubHeader({ onOpenModal }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
       >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-          <line x1="12" y1="9" x2="12" y2="13" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
-        </svg>
+        <Icon char={''} size={12} />
         Report Incident
       </button>
     </div>

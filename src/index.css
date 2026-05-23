@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'fontawesome';
+  src: url('/web.fontawesome.min.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'odoo_ui_icons';
+  src: url('/web.odoo_ui_icons.min.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
 body {
   background-color: #0a0e1a;
   color: #e2e8f0;
