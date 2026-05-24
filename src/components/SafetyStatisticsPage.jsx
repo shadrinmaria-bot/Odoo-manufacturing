@@ -264,7 +264,7 @@ function pieRows(rows, seriesKeys) {
 
 // ── Page sub-header ──────────────────────────────────────────────────────────
 
-function StatsSubHeader({ filteredCenter, onClearFilter }) {
+function StatsSubHeader({ filteredCenter, onClearFilter, onOpenModal }) {
   return (
     <div className="flex items-center h-10" style={{ background: '#262A36', borderBottom: '1px solid #3C3E4A' }}>
       <div style={{ flex: 1, padding: '0 16px', display: 'flex', alignItems: 'center' }}>
@@ -318,7 +318,7 @@ function StatsSubHeader({ filteredCenter, onClearFilter }) {
           ))}
         </ButtonGroup>
 
-        <button title="Report Incident" style={{
+        <button onClick={onOpenModal} title="Report Incident" style={{
           width: 32, height: 32, background: '#B83232', border: 'none', borderRadius: 4,
           color: '#F5F5F6', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 4,
@@ -332,7 +332,7 @@ function StatsSubHeader({ filteredCenter, onClearFilter }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default function SafetyStatisticsPage({ initialParams = null }) {
+export default function SafetyStatisticsPage({ initialParams = null, onOpenModal }) {
   const [groupById, setGroupById]       = useState(initialParams?.initialGroupBy ?? 'workCenter')
   const [compareById, setCompareById]   = useState(initialParams?.initialCompareBy ?? null)
   const [dateFilterId, setDateFilterId] = useState(initialParams?.initialDate ?? 'last90')
@@ -370,7 +370,7 @@ export default function SafetyStatisticsPage({ initialParams = null }) {
 
   return (
     <>
-      <StatsSubHeader filteredCenter={filteredCenter} onClearFilter={() => setFilteredCenter(null)} />
+      <StatsSubHeader filteredCenter={filteredCenter} onClearFilter={() => setFilteredCenter(null)} onOpenModal={onOpenModal} />
       <main className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
         <StatsToolbar
           groupById={groupById}     onGroupByChange={setGroupById}

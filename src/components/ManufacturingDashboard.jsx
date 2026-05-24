@@ -388,7 +388,7 @@ function WorkCenterCard({
 
 // ── Top-right nav icons (replicated from screenshot) ─────────────────────────
 
-function NavIcons({ onOpenModal }) {
+function NavIcons() {
   const GAP = 13
 
   return (
@@ -445,26 +445,6 @@ function NavIcons({ onOpenModal }) {
         P
       </div>
 
-      {/* Report Incident — compact square */}
-      <button
-        onClick={onOpenModal}
-        title="Report Incident"
-        style={{
-          width: 28, height: 28, borderRadius: 4,
-          background: '#B83232', border: 'none', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0, transition: 'filter 0.13s',
-        }}
-        onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
-        onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
-        aria-label="Report Incident"
-      >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5F5F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-          <line x1="12" y1="9" x2="12" y2="13" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
-        </svg>
-      </button>
     </div>
   )
 }
@@ -564,7 +544,7 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
   )
 }
 
-function TopNav({ activePage, onSelect, onOpenModal }) {
+function TopNav({ activePage, onSelect }) {
   const [openDropdown, setOpenDropdown] = useState(null)
   const navRef = useRef(null)
 
@@ -622,7 +602,7 @@ function TopNav({ activePage, onSelect, onOpenModal }) {
         ))}
       </nav>
 
-      <NavIcons onOpenModal={onOpenModal} />
+      <NavIcons />
 
       <style>{`
         @keyframes navDropdownFadeIn {
@@ -842,7 +822,6 @@ export default function ManufacturingDashboard() {
       <TopNav
         activePage={activePage}
         onSelect={(section, subItem) => setActivePage({ section, subItem, params: null })}
-        onOpenModal={() => setIsModalOpen(true)}
       />
 
       {isOverview ? (
@@ -895,6 +874,7 @@ export default function ManufacturingDashboard() {
         <SafetyStatisticsPage
           key={activePage.params?.initialFilter ?? 'all'}
           initialParams={activePage.params}
+          onOpenModal={() => setIsModalOpen(true)}
         />
       ) : (
         <PlaceholderPage section={activePage.section} subItem={activePage.subItem} />
