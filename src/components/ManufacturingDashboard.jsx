@@ -220,6 +220,7 @@ function WorkCenterCard({
   onViewIncident,
   onDeleteIncident,
   onShowStats,
+  onReportIncident,
 }) {
   const [hovered, setHovered] = useState(false)
   const badgeRef = useRef(null)
@@ -381,6 +382,7 @@ function WorkCenterCard({
         onClose={onCloseDropdown}
         onViewIncident={onViewIncident}
         onDeleteIncident={(incidentId) => onDeleteIncident(center.id, incidentId)}
+        onReportIncident={onReportIncident}
       />
     </>
   )
@@ -688,7 +690,7 @@ function SubHeader({ onOpenModal }) {
           onClick={onOpenModal}
           className="flex items-center gap-1.5 px-3 hover:brightness-110 transition-all"
           style={{
-            background: '#B83232', borderRadius: 4,
+            background: '#F9464C', borderRadius: 4,
             fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
             fontSize: 13, color: '#F5F5F6', border: 'none', cursor: 'pointer',
             height: 33, whiteSpace: 'nowrap', minWidth: 158,
@@ -696,7 +698,7 @@ function SubHeader({ onOpenModal }) {
           }}
         >
           <Icon char={''} size={12} />
-          Report Incident
+          REPORT INCIDENT
         </button>
       </div>
     </div>
@@ -840,6 +842,7 @@ export default function ManufacturingDashboard() {
                   onViewIncident={(incident) => { closeDropdown(); setDetailIncident(incident) }}
                   onDeleteIncident={deleteIncident}
                   onShowStats={() => goToWorkCenterStats(center.name)}
+                  onReportIncident={() => setIsModalOpen(true)}
                 />
               ))}
             </div>

@@ -26,6 +26,37 @@ function CheckIcon() {
   return <Icon char={''} size={12} />
 }
 
+function ReportIncidentRow({ onReportIncident }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      onClick={onReportIncident}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '9px 14px',
+        cursor: 'pointer',
+        background: hovered ? 'rgba(249,70,76,0.10)' : 'transparent',
+        transition: 'background 0.12s',
+      }}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="#F9464C" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+        <path d="M7.131 2.5a1 1 0 0 1 1.738 0l5.642 9.75A1 1 0 0 1 13.642 14H2.358a1 1 0 0 1-.869-1.5L7.131 2.5z" />
+        <line x1="8" y1="6" x2="8" y2="9.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
+        <circle cx="8" cy="11.5" r="0.7" fill="white" />
+      </svg>
+      <span style={{
+        fontFamily: "'Segoe UI', sans-serif",
+        fontWeight: 600, fontSize: 13, color: '#F9464C',
+        whiteSpace: 'nowrap',
+      }}>
+        REPORT INCIDENT
+      </span>
+    </div>
+  )
+}
+
 function IncidentRow({ incident, onView, onMarkAsDone }) {
   const [hovered, setHovered] = useState(false)
 
@@ -99,6 +130,7 @@ export default function OpenSafetyItemsDropdown({
   onClose,
   onViewIncident,
   onDeleteIncident,
+  onReportIncident,
 }) {
   const dropdownRef = useRef(null)
   // (no confirm step — mark as done is non-destructive)
@@ -187,6 +219,12 @@ export default function OpenSafetyItemsDropdown({
             </div>
           ))
         )}
+
+        {/* Divider before footer action */}
+        <div style={{ height: 1, background: '#5A5E6B' }} />
+
+        {/* Report Incident footer */}
+        <ReportIncidentRow onReportIncident={() => { onClose(); onReportIncident?.() }} />
       </div>
 </>,
     document.body
