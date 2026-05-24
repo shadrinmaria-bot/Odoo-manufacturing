@@ -308,6 +308,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
     incidentLocation: '', otherLocation: '', workCenterLocation: '',
     selectedInjuryType: '', otherInjuryText: '',
     actionsTaken: '', incidentDetails: '', severity: '',
+    timeOfIncident: '',
   }
 
   const [form, setForm] = useState(emptyForm)
@@ -485,7 +486,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             <div style={{ width: 1, height: 16, background: '#5A5E6B' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontFamily: FONT, fontSize: 11.5, fontWeight: 600, color: '#8A8D9A', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Incident Date
+                Report Date
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
@@ -651,6 +652,17 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 {ACTIONS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </SelectWithCaret>
             </div>
+          </div>
+
+          {/* Time of Incident */}
+          <div style={{ marginBottom: 18 }}>
+            <FieldLabel>Time of Incident</FieldLabel>
+            <input
+              type="time"
+              style={{ ...makeInputStyle(false), maxWidth: 200, colorScheme: 'dark' }}
+              value={form.timeOfIncident}
+              onChange={e => setForm(f => ({ ...f, timeOfIncident: e.target.value }))}
+            />
           </div>
 
           {/* Incident Severity */}
