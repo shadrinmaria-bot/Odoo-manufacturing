@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
-import DeleteConfirmPopover from './DeleteConfirmPopover'
+import Icon from './Icon'
 
 function CriticalIcon() {
   return (
@@ -22,25 +22,16 @@ function AttentionIcon() {
   )
 }
 
-function TrashIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-      <path d="M10 11v6M14 11v6" />
-      <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-    </svg>
-  )
+function CheckIcon() {
+  return <Icon char={''} size={12} />
 }
 
-function IncidentRow({ incident, onView, onRequestDelete }) {
+function IncidentRow({ incident, onView, onMarkAsDone }) {
   const [hovered, setHovered] = useState(false)
-  const trashRef = useRef(null)
 
-  function handleTrashClick(e) {
+  function handleMarkDoneClick(e) {
     e.stopPropagation()
-    const rect = trashRef.current.getBoundingClientRect()
-    onRequestDelete(incident.id, rect)
+    onMarkAsDone(incident.id)
   }
 
   return (
@@ -79,10 +70,9 @@ function IncidentRow({ incident, onView, onRequestDelete }) {
         </span>
       </div>
 
-      {/* Trash button */}
+      {/* Mark-as-done button */}
       <button
-        ref={trashRef}
-        onClick={handleTrashClick}
+        onClick={handleMarkDoneClick}
         style={{
           background: 'none', border: 'none', cursor: 'pointer',
           color: hovered ? '#8A8D9A' : 'transparent',
@@ -93,9 +83,9 @@ function IncidentRow({ incident, onView, onRequestDelete }) {
         }}
         onMouseEnter={e => e.currentTarget.style.color = '#F5F5F6'}
         onMouseLeave={e => e.currentTarget.style.color = hovered ? '#8A8D9A' : 'transparent'}
-        aria-label="Delete incident"
+        aria-label="Mark as done"
       >
-        <TrashIcon />
+        <CheckIcon />
       </button>
     </div>
   )
@@ -111,24 +101,18 @@ export default function OpenSafetyItemsDropdown({
   onDeleteIncident,
 }) {
   const dropdownRef = useRef(null)
-  const [deleteTarget, setDeleteTarget] = useState(null)
+  // (no confirm step — mark as done is non-destructive)
 
   useEffect(() => {
     if (!isOpen) return
     function handleMouseDown(e) {
-      if (deleteTarget) return
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         onClose()
       }
     }
     document.addEventListener('mousedown', handleMouseDown)
     return () => document.removeEventListener('mousedown', handleMouseDown)
-  }, [isOpen, onClose, deleteTarget])
-
-  // Reset deleteTarget when dropdown closes
-  useEffect(() => {
-    if (!isOpen) setDeleteTarget(null)
-  }, [isOpen])
+  }, [isOpen, onClose])
 
   if (!isOpen || !anchorRect) return null
 
@@ -198,24 +182,13 @@ export default function OpenSafetyItemsDropdown({
               <IncidentRow
                 incident={incident}
                 onView={(inc) => { onViewIncident(inc); onClose() }}
-                onRequestDelete={(incidentId, rect) => setDeleteTarget({ incidentId, anchorRect: rect })}
+                onMarkAsDone={(incidentId) => { onDeleteIncident(incidentId); onClose() }}
               />
             </div>
           ))
         )}
       </div>
-
-      {/* Delete confirm popover — rendered in same portal fragment */}
-      <DeleteConfirmPopover
-        isOpen={!!deleteTarget}
-        anchorRect={deleteTarget?.anchorRect}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={() => {
-          onDeleteIncident(deleteTarget.incidentId)
-          setDeleteTarget(null)
-        }}
-      />
-    </>,
+</>,
     document.body
   )
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { Button } from './Button'
 
 const FONT = "'Segoe UI', sans-serif"
 
@@ -102,7 +103,7 @@ function DetailValue({ children }) {
 
 // ── IncidentDetailModal ───────────────────────────────────────────────────────
 
-export default function IncidentDetailModal({ incident, isOpen, onClose }) {
+export default function IncidentDetailModal({ incident, isOpen, onClose, onMarkAsDone }) {
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -351,28 +352,36 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
           borderTop: '1px solid #5A5E6B',
           flexShrink: 0, gap: 10, background: '#2A2E3A',
         }}>
-          <button
-            style={{
-              background: '#6B3E66', border: 'none', borderRadius: 4,
-              padding: '8px 22px', cursor: 'pointer',
-              fontFamily: FONT, fontWeight: 600, fontSize: 13,
-              color: '#F5F5F6', letterSpacing: '0.06em',
-              transition: 'filter 0.15s',
+          <Button
+            variant="purple"
+            onClick={() => {
+              if (incident && onMarkAsDone) onMarkAsDone(incident.id)
+              onClose()
             }}
-            onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
-            onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
-          >
-            SHARE
-          </button>
-          <button
             style={{
-              background: 'none', border: '1px solid #5A5E6B', borderRadius: 4,
-              padding: '8px 20px', cursor: 'pointer',
-              fontFamily: FONT, fontWeight: 600, fontSize: 13, color: '#8A8D9A',
+              padding: '8px 22px',
+              fontFamily: FONT, fontWeight: 600, fontSize: 13,
+              letterSpacing: '0.04em',
+            }}
+          >
+            MARK AS DONE
+          </Button>
+          <Button
+            style={{
+              padding: '8px 20px',
+              fontFamily: FONT, fontWeight: 600, fontSize: 13,
+            }}
+          >
+            Share
+          </Button>
+          <Button
+            style={{
+              padding: '8px 20px',
+              fontFamily: FONT, fontWeight: 600, fontSize: 13,
             }}
           >
             Print
-          </button>
+          </Button>
         </div>
       </div>
 

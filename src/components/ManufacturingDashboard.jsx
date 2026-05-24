@@ -759,6 +759,17 @@ export default function ManufacturingDashboard() {
     }))
   }
 
+  // Used by the IncidentDetailModal's "Mark as done" button — that view
+  // doesn't carry the work-center key, so we strip the incident from every
+  // bucket. Functionally identical to delete for now.
+  function markIncidentAsDone(incidentId) {
+    setIncidents(prev => {
+      const next = {}
+      for (const key in prev) next[key] = prev[key].filter(i => i.id !== incidentId)
+      return next
+    })
+  }
+
   function handleSubmitIncident(workCenterId, severity, formData) {
     if (!workCenterId || workCenterId === 'other') { setIsModalOpen(false); return }
     const workerLabel  = WORKERS_MAP[formData.injuredWorker] || formData.injuredWorker
@@ -868,6 +879,7 @@ export default function ManufacturingDashboard() {
         incident={detailIncident}
         isOpen={!!detailIncident}
         onClose={() => setDetailIncident(null)}
+        onMarkAsDone={markIncidentAsDone}
       />
     </div>
   )
