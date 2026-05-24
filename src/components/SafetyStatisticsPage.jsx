@@ -64,14 +64,6 @@ const METRICS_DATA = {
       ],
     },
   },
-  'incident-per-type': {
-    label: 'Incident Per Type',
-    items: workCenterItems,
-  },
-  'incident-rate': {
-    label: 'Incident Rate',
-    items: workCenterItems,
-  },
   'recurrence-by-location': {
     label: 'Recurrence by Location',
     items: [
