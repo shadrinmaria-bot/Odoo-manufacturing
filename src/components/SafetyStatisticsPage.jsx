@@ -8,142 +8,37 @@ import {
 } from 'recharts'
 import Icon from './Icon'
 import { Button, ButtonGroup } from './Button'
+import {
+  INCIDENTS, DIMENSIONS, DATE_FILTERS,
+  findDimension, findDateFilter,
+  aggregate, colorFor,
+  WORK_CENTER_COLORS, PALETTE,
+} from '../data/incidents'
 
 const FONT = "'Segoe UI', sans-serif"
 
-// ── Mock data (one record per metric) ─────────────────────────────────────────
+// ── Tooltip styling ──────────────────────────────────────────────────────────
 
-// Colors used across the prototype for the three work centers — kept for the
-// multi-line Incident Count chart and any work-center-keyed bar/pie.
-const WORK_CENTER_COLORS = {
-  'Carpentry Workshop': '#7FBFEF',
-  'Paint':              '#EF6A82',
-  'Assembly':           '#5DD3B0',
+const tooltipContentStyle = {
+  background: '#262A36', border: '1px solid #3C3E4A', borderRadius: 4,
+  padding: '8px 12px', fontFamily: FONT, fontSize: 12.5,
+  color: '#F5F5F6', boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
 }
-
-// Varied palette for metrics whose keys aren't work centers (job titles,
-// time-of-day buckets, injury types, …).
-const PALETTE = [
-  '#7FBFEF', '#EF6A82', '#5DD3B0', '#FBB945', '#B79CDF',
-  '#F5946D', '#E26370', '#7AC7F1', '#9BE3C1', '#B5D49D',
-]
-const pal = i => PALETTE[i % PALETTE.length]
-
-// Original time-series (used by the Incident Count metric in line mode so
-// each work center keeps its own line over the last 5 weeks).
-const INCIDENT_OVER_TIME = [
-  { key: '19 - 25 Apr',    'Carpentry Workshop': 5, 'Paint': 2, 'Assembly': 8 },
-  { key: '26 Apr - 2 May', 'Carpentry Workshop': 0, 'Paint': 2, 'Assembly': 7 },
-  { key: '3 - 9 May',      'Carpentry Workshop': 2, 'Paint': 1, 'Assembly': 0 },
-  { key: '10 - 16 May',    'Carpentry Workshop': 2, 'Paint': 0, 'Assembly': 4 },
-  { key: '17 - 23 May',    'Carpentry Workshop': 1, 'Paint': 1, 'Assembly': 10 },
-]
-
-const workCenterItems = [
-  { key: 'Carpentry Workshop', value: 6,  color: WORK_CENTER_COLORS['Carpentry Workshop'] },
-  { key: 'Paint',              value: 10, color: WORK_CENTER_COLORS['Paint'] },
-  { key: 'Assembly',           value: 3,  color: WORK_CENTER_COLORS['Assembly'] },
-]
-
-// Each metric carries everything needed to render bar / pie / line.
-//   - items: aggregated rows used by bar + pie (and the fallback single-line)
-//   - multiLine: optional; if present, line mode draws one series per entry
-//     over the supplied time-series data (used for Incident Count).
-//   - unit: optional suffix shown in the tooltip value (e.g. " days").
-const METRICS_DATA = {
-  'incident-count': {
-    label: 'Incident Count',
-    items: workCenterItems,
-    multiLine: {
-      data: INCIDENT_OVER_TIME,
-      xKey: 'key',
-      series: [
-        { name: 'Carpentry Workshop', color: WORK_CENTER_COLORS['Carpentry Workshop'] },
-        { name: 'Paint',              color: WORK_CENTER_COLORS['Paint'] },
-        { name: 'Assembly',           color: WORK_CENTER_COLORS['Assembly'] },
-      ],
-    },
-  },
-  'recurrence-by-location': {
-    label: 'Recurrence by Location',
-    items: [
-      { key: 'Warehouse 1', value: 8,  color: pal(0) },
-      { key: 'Warehouse 2', value: 14, color: pal(1) },
-      { key: 'Warehouse 3', value: 3,  color: pal(2) },
-    ],
-  },
-  'recurrence-by-work-center': {
-    label: 'Recurrence by Work Center',
-    items: [
-      { key: 'Carpentry Workshop', value: 12, color: WORK_CENTER_COLORS['Carpentry Workshop'] },
-      { key: 'Paint',              value: 9,  color: WORK_CENTER_COLORS['Paint'] },
-      { key: 'Assembly',           value: 4,  color: WORK_CENTER_COLORS['Assembly'] },
-    ],
-  },
-  'recurring-trend': {
-    label: 'Recurring Trend',
-    items: [
-      { key: 'Dec', value: 3, color: pal(0) },
-      { key: 'Jan', value: 5, color: pal(0) },
-      { key: 'Feb', value: 4, color: pal(0) },
-      { key: 'Mar', value: 7, color: pal(0) },
-      { key: 'Apr', value: 6, color: pal(0) },
-      { key: 'May', value: 8, color: pal(0) },
-    ],
-  },
-  'report-to-resolution-gap': {
-    label: 'Report-to-Resolution Gap',
-    unit: ' days',
-    items: [
-      { key: 'Carpentry Workshop', value: 4.2, color: WORK_CENTER_COLORS['Carpentry Workshop'] },
-      { key: 'Paint',              value: 2.8, color: WORK_CENTER_COLORS['Paint'] },
-      { key: 'Assembly',           value: 1.1, color: WORK_CENTER_COLORS['Assembly'] },
-    ],
-  },
-  'by-job-title': {
-    label: 'By Job Title',
-    items: [
-      { key: 'Machine Operator',  value: 9, color: pal(0) },
-      { key: 'Warehouse Worker',  value: 7, color: pal(1) },
-      { key: 'Shift Supervisor',  value: 2, color: pal(2) },
-      { key: 'Maintenance Tech',  value: 4, color: pal(3) },
-      { key: 'Quality Inspector', value: 1, color: pal(4) },
-    ],
-  },
-  'by-time-of-day': {
-    label: 'By Time of Day',
-    items: [
-      { key: 'Morning (6-12)',    value: 10, color: pal(0) },
-      { key: 'Afternoon (12-18)', value: 8,  color: pal(1) },
-      { key: 'Evening (18-24)',  value: 5,  color: pal(2) },
-      { key: 'Night (0-6)',      value: 2,  color: pal(3) },
-    ],
-  },
-  'by-injury-type': {
-    label: 'By Injury Type',
-    items: [
-      { key: 'Overexertion',          value: 6, color: pal(0) },
-      { key: 'Falls (same level)',    value: 4, color: pal(1) },
-      { key: 'Struck by object',      value: 5, color: pal(2) },
-      { key: 'Falls to lower level',  value: 2, color: pal(3) },
-      { key: 'Other exertions',       value: 3, color: pal(4) },
-      { key: 'Slip/trip (no fall)',   value: 2, color: pal(5) },
-      { key: 'Caught in equipment',   value: 1, color: pal(6) },
-      { key: 'Repetitive motions',    value: 1, color: pal(7) },
-      { key: 'Struck against',        value: 1, color: pal(8) },
-      { key: 'Roadway',               value: 0, color: pal(9) },
-    ],
-  },
+const tooltipLabelStyle = {
+  color: '#F5F5F6', fontFamily: FONT, fontWeight: 700, fontSize: 12.5, marginBottom: 4,
 }
+const tooltipItemStyle = {
+  color: '#F5F5F6', fontFamily: FONT, fontSize: 12.5, padding: 0,
+}
+const tooltipFixedPosition = { y: 0 }
 
-const METRICS = Object.entries(METRICS_DATA).map(([id, def]) => ({ id, label: def.label }))
+// ── Generic configuration dropdown (Group By, Compare By, Date) ──────────────
 
-// ── Metric dropdown (purple, matches WORK ORDERS button style) ────────────────
-
-function MetricDropdown({ metric, onChange }) {
+function ConfigDropdown({ prefix, value, options, onChange, includeNone = false, variant = 'purple', minWidth = 200 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
-  const current = METRICS.find(m => m.id === metric) ?? METRICS[0]
+  const current = value ? options.find(o => o.id === value) : null
+  const labelText = current ? current.label : 'None'
 
   useEffect(() => {
     if (!open) return
@@ -157,17 +52,18 @@ function MetricDropdown({ metric, onChange }) {
   return (
     <div ref={ref} style={{ position: 'relative' }}>
       <Button
-        variant="purple"
+        variant={variant}
         active={open}
         onClick={() => setOpen(o => !o)}
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
           padding: '7px 14px', height: 32,
-          fontFamily: FONT, fontWeight: 600, fontSize: 13.5,
+          fontFamily: FONT, fontWeight: 600, fontSize: 13,
           whiteSpace: 'nowrap',
         }}
       >
-        {current.label}
+        <span style={{ opacity: 0.7, fontWeight: 500 }}>{prefix}:</span>
+        <span>{labelText}</span>
         <Icon char={open ? '' : ''} size={11} />
       </Button>
 
@@ -178,59 +74,94 @@ function MetricDropdown({ metric, onChange }) {
             background: '#2A2E3A',
             border: '1px solid #3C3E4A',
             borderRadius: 4,
-            minWidth: 220,
+            minWidth,
             padding: '4px 0',
             zIndex: 100,
             boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
           }}
         >
-          {METRICS.map(m => {
-            const isSelected = m.id === metric
-            return (
-              <button
-                key={m.id}
-                onClick={() => { onChange(m.id); setOpen(false) }}
-                style={{
-                  display: 'block', width: '100%', textAlign: 'left',
-                  background: isSelected ? 'rgba(26,211,187,0.07)' : 'transparent',
-                  color: isSelected ? '#1AD3BB' : '#F5F5F6',
-                  border: 'none', cursor: 'pointer',
-                  padding: '8px 14px',
-                  fontFamily: FONT, fontSize: 13.5,
-                  transition: 'background 0.12s',
-                }}
-                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
-                onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = 'transparent' }}
-              >
-                {m.label}
-              </button>
-            )
-          })}
+          {includeNone && (
+            <DropdownItem
+              label="None"
+              selected={!value}
+              onClick={() => { onChange(null); setOpen(false) }}
+            />
+          )}
+          {options.map(opt => (
+            <DropdownItem
+              key={opt.id}
+              label={opt.label}
+              selected={opt.id === value}
+              onClick={() => { onChange(opt.id); setOpen(false) }}
+            />
+          ))}
         </div>
       )}
     </div>
   )
 }
 
+function DropdownItem({ label, selected, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: 'block', width: '100%', textAlign: 'left',
+        background: selected ? 'rgba(26,211,187,0.07)' : 'transparent',
+        color: selected ? '#1AD3BB' : '#F5F5F6',
+        border: 'none', cursor: 'pointer',
+        padding: '8px 14px',
+        fontFamily: FONT, fontSize: 13,
+        transition: 'background 0.12s',
+        whiteSpace: 'nowrap',
+      }}
+      onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+      onMouseLeave={e => { if (!selected) e.currentTarget.style.background = 'transparent' }}
+    >
+      {label}
+    </button>
+  )
+}
+
+// ── Stats toolbar ────────────────────────────────────────────────────────────
+
 const iconBtn = { width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }
 
-// ── Stats toolbar ─────────────────────────────────────────────────────────────
-
 function StatsToolbar({
-  metric, onMetricChange,
+  groupById, onGroupByChange,
+  compareById, onCompareByChange,
+  dateFilterId, onDateChange,
   graphType, onGraphTypeChange,
+  stacked, onStackedToggle,
   sortOrder, onSortChange,
-  filteredCenter, onClearFilter,
 }) {
+  // Compare By options exclude whatever Group By currently is
+  const compareByOptions = DIMENSIONS.filter(d => d.id !== groupById)
+  const showStackedToggle = graphType === 'bar' && !!compareById
+  const showSort = graphType !== 'pie'
+
   return (
-    <div
-      style={{
-        display: 'flex', alignItems: 'center',
-        padding: '14px 16px',
-        gap: 10,
-      }}
-    >
-      <MetricDropdown metric={metric} onChange={onMetricChange} />
+    <div style={{ display: 'flex', alignItems: 'center', padding: '14px 16px', gap: 8, flexWrap: 'wrap' }}>
+      <ConfigDropdown
+        prefix="Group by"
+        value={groupById}
+        options={DIMENSIONS}
+        onChange={onGroupByChange}
+      />
+      <ConfigDropdown
+        prefix="Compare by"
+        value={compareById}
+        options={compareByOptions}
+        onChange={onCompareByChange}
+        includeNone
+      />
+      <ConfigDropdown
+        prefix="Date"
+        value={dateFilterId}
+        options={DATE_FILTERS}
+        onChange={onDateChange}
+        minWidth={180}
+      />
 
       <ButtonGroup gap={3} style={{ marginLeft: 4 }}>
         <Button active={graphType === 'bar'}  onClick={() => onGraphTypeChange('bar')}  title="Bar chart"  style={iconBtn}><Icon char={''} size={14} /></Button>
@@ -238,8 +169,19 @@ function StatsToolbar({
         <Button active={graphType === 'pie'}  onClick={() => onGraphTypeChange('pie')}  title="Pie chart"  style={iconBtn}><Icon char={''} size={14} /></Button>
       </ButtonGroup>
 
-      {/* Sort makes no visual difference on a pie — hide there. */}
-      {graphType !== 'pie' && (
+      {showStackedToggle && (
+        <Button
+          active={stacked}
+          onClick={onStackedToggle}
+          title="Stack series"
+          style={{ ...iconBtn, width: 'auto', padding: '0 12px', gap: 6, fontFamily: FONT, fontSize: 13, fontWeight: 600 }}
+        >
+          <Icon char={''} size={13} />
+          <span>Stacked</span>
+        </Button>
+      )}
+
+      {showSort && (
         <ButtonGroup gap={3}>
           <Button
             active={sortOrder === 'desc'}
@@ -259,179 +201,78 @@ function StatsToolbar({
   )
 }
 
-// ── Chart renderers ───────────────────────────────────────────────────────────
+// ── Chart bodies ─────────────────────────────────────────────────────────────
 
-const tooltipContentStyle = {
-  background: '#262A36',
-  border: '1px solid #3C3E4A',
-  borderRadius: 4,
-  padding: '8px 12px',
-  fontFamily: FONT,
-  fontSize: 12.5,
-  color: '#F5F5F6',
-  boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
-}
-const tooltipLabelStyle = {
-  color: '#F5F5F6',
-  fontFamily: FONT,
-  fontWeight: 700,
-  fontSize: 12.5,
-  marginBottom: 4,
-}
-const tooltipItemStyle = {
-  color: '#F5F5F6',
-  fontFamily: FONT,
-  fontSize: 12.5,
-  padding: 0,
-}
-// Pin the tooltip to the top of the chart area (y: 0). The x value 0
-// keeps it from sliding off-screen at the right edge — recharts clamps
-// it within the chart bounds when needed.
-const tooltipFixedPosition = { y: 0 }
-
-// Chart bodies. These return the chart's *contents* (axes, series, etc.) —
-// callers wrap them in BarChart/LineChart/PieChart so ResponsiveContainer can
-// inject width/height onto the chart element directly via cloneElement.
-
-const barChartChildren = (items) => (
-  <>
-    <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-    <XAxis
-      dataKey="key"
-      tick={{ fill: '#A0A4AF', fontSize: 12, fontFamily: FONT }}
-      axisLine={false} tickLine={false} tickMargin={12}
-      interval={0}
-    />
-    <YAxis
-      tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-      axisLine={false} tickLine={false}
-    />
-    <Tooltip
-      cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-      contentStyle={tooltipContentStyle}
-      labelStyle={tooltipLabelStyle}
-      itemStyle={tooltipItemStyle}
-      position={tooltipFixedPosition}
-    />
-    <Bar dataKey="value" radius={[2, 2, 0, 0]} isAnimationActive={false}>
-      {items.map(d => <Cell key={d.key} fill={d.color} />)}
-    </Bar>
-  </>
-)
-
-// Line mode — two branches:
-//   * If multiLine is set on the metric (Incident Count), draw one line per
-//     series over the time-series data. Clicking a line filters down to just
-//     that series.
-//   * Otherwise (single-series metrics like By Job Title or Recurring Trend),
-//     plot one line connecting the metric's items; no click-to-isolate.
-const lineChartChildren = (current, items, filteredCenter, onLineClick) => {
-  if (current.multiLine) {
-    const { xKey, series } = current.multiLine
+// Builds the bar series children. When seriesKeys is empty we render a single
+// Bar with per-cell colors (the "single dimension" view). When seriesKeys is
+// present each series becomes its own Bar — stacked via stackId if requested.
+function renderBars(rows, seriesKeys, stacked, compareDim) {
+  if (!seriesKeys.length) {
     return (
-      <>
-        <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-        <XAxis
-          dataKey={xKey}
-          tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-          axisLine={false} tickLine={false} tickMargin={12}
-        />
-        <YAxis
-          tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-          axisLine={false} tickLine={false} allowDecimals={false}
-        />
-        <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
-        <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 13, paddingTop: 8, color: '#F5F5F6' }} iconType="rect" />
-        {series
-          .filter(s => !filteredCenter || filteredCenter === s.name)
-          .map(s => (
-            <Line
-              key={s.name}
-              type="linear"
-              dataKey={s.name}
-              stroke={s.color}
-              strokeWidth={filteredCenter === s.name ? 2.8 : 2.2}
-              dot={{ r: 4, fill: s.color, strokeWidth: 0, style: { cursor: 'pointer' } }}
-              activeDot={{ r: 5, fill: s.color, strokeWidth: 0, style: { cursor: 'pointer' } }}
-              isAnimationActive={false}
-              onClick={() => onLineClick(s.name)}
-              style={{ cursor: 'pointer' }}
-            />
-          ))}
-      </>
+      <Bar dataKey="value" radius={[2, 2, 0, 0]} isAnimationActive={false}>
+        {rows.map((r, i) => (
+          <Cell key={r.key} fill={PALETTE[i % PALETTE.length]} />
+        ))}
+      </Bar>
     )
   }
+  return seriesKeys.map((s, i) => (
+    <Bar
+      key={s}
+      dataKey={s}
+      stackId={stacked ? 'stack' : undefined}
+      fill={colorFor(compareDim, s, i)}
+      radius={stacked ? 0 : [2, 2, 0, 0]}
+      isAnimationActive={false}
+    />
+  ))
+}
 
-  // Single-series line for aggregated metrics
-  const stroke = items[0]?.color || PALETTE[0]
-  return (
-    <>
-      <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-      <XAxis
-        dataKey="key"
-        tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-        axisLine={false} tickLine={false} tickMargin={12}
-        interval={0}
-      />
-      <YAxis
-        tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-        axisLine={false} tickLine={false}
-      />
-      <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+function renderLines(rows, seriesKeys, compareDim) {
+  if (!seriesKeys.length) {
+    const stroke = PALETTE[0]
+    return (
       <Line
-        type="linear"
-        dataKey="value"
-        stroke={stroke}
-        strokeWidth={2.4}
+        type="linear" dataKey="value" stroke={stroke} strokeWidth={2.4}
         dot={{ r: 4, fill: stroke, strokeWidth: 0 }}
         activeDot={{ r: 5, fill: stroke, strokeWidth: 0 }}
         isAnimationActive={false}
       />
-    </>
-  )
+    )
+  }
+  return seriesKeys.map((s, i) => {
+    const stroke = colorFor(compareDim, s, i)
+    return (
+      <Line
+        key={s} type="linear" dataKey={s} stroke={stroke} strokeWidth={2.2}
+        dot={{ r: 4, fill: stroke, strokeWidth: 0 }}
+        activeDot={{ r: 5, fill: stroke, strokeWidth: 0 }}
+        isAnimationActive={false}
+      />
+    )
+  })
 }
 
-const pieChartChildren = (items) => (
-  <>
-    <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
-    <Legend
-      layout="vertical" verticalAlign="top" align="right"
-      wrapperStyle={{ fontFamily: FONT, fontSize: 13, color: '#F5F5F6' }}
-      iconType="rect"
-    />
-    <Pie
-      data={items}
-      dataKey="value"
-      nameKey="key"
-      cx="45%"
-      outerRadius="80%"
-      innerRadius={0}
-      isAnimationActive={false}
-      labelLine={false}
-    >
-      {items.map(d => <Cell key={d.key} fill={d.color} />)}
-    </Pie>
-  </>
-)
+// Pie ignores compareBy — collapse rows into one slice per group bucket.
+function pieRows(rows, seriesKeys) {
+  if (!seriesKeys.length) return rows
+  return rows.map(r => ({
+    key: r.key,
+    value: seriesKeys.reduce((sum, s) => sum + (r[s] || 0), 0),
+  }))
+}
 
-// ── Page sub-header (matches Overview sub-header layout) ──────────────────────
+// ── Page sub-header ──────────────────────────────────────────────────────────
 
 function StatsSubHeader({ filteredCenter, onClearFilter }) {
   return (
-    <div
-      className="flex items-center h-10"
-      style={{ background: '#262A36', borderBottom: '1px solid #3C3E4A' }}
-    >
-      {/* Left: title (flex 1) so the centered search stays geometrically centered */}
+    <div className="flex items-center h-10" style={{ background: '#262A36', borderBottom: '1px solid #3C3E4A' }}>
       <div style={{ flex: 1, padding: '0 16px', display: 'flex', alignItems: 'center' }}>
-        <span style={{
-          fontFamily: FONT, fontWeight: 400, fontSize: 16.51, color: '#F5F5F6',
-        }}>
+        <span style={{ fontFamily: FONT, fontWeight: 400, fontSize: 16.51, color: '#F5F5F6' }}>
           Work Centers Overview
         </span>
       </div>
 
-      {/* Center: search bar (with inline filter chip when active) */}
       <div className="flex items-center gap-2 px-3 py-1 border"
         style={{ background: '#1B1D26', borderColor: '#3C3E4A', borderRadius: 4, width: 420 }}>
         <Icon char={''} size={13} color="#626363" />
@@ -449,25 +290,19 @@ function StatsSubHeader({ filteredCenter, onClearFilter }) {
             <span>{filteredCenter}</span>
             <button
               onClick={onClearFilter}
-              title="Clear filter"
-              aria-label="Clear filter"
+              title="Clear filter" aria-label="Clear filter"
               style={{
                 background: 'transparent', border: 'none', cursor: 'pointer',
-                padding: 0, marginLeft: 2,
-                color: '#D7B3D3',
-                display: 'inline-flex', alignItems: 'center', lineHeight: 1,
-                fontSize: 14,
+                padding: 0, marginLeft: 2, color: '#D7B3D3',
+                display: 'inline-flex', alignItems: 'center', lineHeight: 1, fontSize: 14,
               }}
-            >
-              ×
-            </button>
+            >×</button>
           </div>
         )}
         <span style={{ fontFamily: 'Arial, sans-serif', fontSize: 12, color: '#626363', flex: 1 }}>Search...</span>
         <Icon char={''} size={11} color="#626363" />
       </div>
 
-      {/* Right: view-switcher icons + Report Incident shortcut (flex 1) */}
       <div style={{ flex: 1, padding: '0 16px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 4, color: '#A0A4AF' }}>
         <ButtonGroup gap={3}>
           {[
@@ -483,15 +318,11 @@ function StatsSubHeader({ filteredCenter, onClearFilter }) {
           ))}
         </ButtonGroup>
 
-        <button
-          title="Report Incident"
-          style={{
-            width: 32, height: 32, background: '#B83232', border: 'none',
-            borderRadius: 4, color: '#F5F5F6', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            marginLeft: 4,
-          }}
-        >
+        <button title="Report Incident" style={{
+          width: 32, height: 32, background: '#B83232', border: 'none', borderRadius: 4,
+          color: '#F5F5F6', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 4,
+        }}>
           <Icon char={''} size={13} />
         </button>
       </div>
@@ -499,63 +330,87 @@ function StatsSubHeader({ filteredCenter, onClearFilter }) {
   )
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function SafetyStatisticsPage({ initialParams = null }) {
-  const [metric, setMetric]       = useState('incident-count')
-  const [graphType, setGraphType] = useState(initialParams?.initialGraphType ?? 'bar')
-  const [sortOrder, setSortOrder] = useState(null)
-  // Filter keyed by item-name (e.g. 'Paint'). Click a line in line mode to
-  // isolate, or arrive here from the Overview work-center chart icon.
+  const [groupById, setGroupById]       = useState(initialParams?.initialGroupBy ?? 'workCenter')
+  const [compareById, setCompareById]   = useState(initialParams?.initialCompareBy ?? null)
+  const [dateFilterId, setDateFilterId] = useState(initialParams?.initialDate ?? 'last90')
+  const [graphType, setGraphType]       = useState(initialParams?.initialGraphType ?? 'bar')
+  const [stacked, setStacked]           = useState(false)
+  const [sortOrder, setSortOrder]       = useState(null)
   const [filteredCenter, setFilteredCenter] = useState(initialParams?.initialFilter ?? null)
 
-  // Switching metrics invalidates the filter (different item-keys).
-  useEffect(() => { setFilteredCenter(null) }, [metric])
+  // If compare-by ends up matching group-by (e.g. after a group-by change),
+  // clear compare-by so the chart stays well-defined.
+  useEffect(() => {
+    if (compareById && compareById === groupById) setCompareById(null)
+  }, [groupById, compareById])
 
-  const current = METRICS_DATA[metric] ?? METRICS_DATA['incident-count']
+  const groupBy   = findDimension(groupById)
+  const compareBy = compareById ? findDimension(compareById) : null
+  const dateFilter = findDateFilter(dateFilterId) ?? DATE_FILTERS[2]
 
-  const items = (() => {
-    let arr = [...current.items]
-    if (filteredCenter) arr = arr.filter(d => d.key === filteredCenter)
-    if (sortOrder === 'desc') arr.sort((a, b) => b.value - a.value)
-    if (sortOrder === 'asc')  arr.sort((a, b) => a.value - b.value)
-    return arr
-  })()
+  // Apply date filter, plus optional work-center filter from the search-bar chip
+  const filteredIncidents = INCIDENTS.filter(i => {
+    if (!dateFilter.predicate(i)) return false
+    if (filteredCenter && i.workCenter !== filteredCenter) return false
+    return true
+  })
+
+  let { rows, seriesKeys } = aggregate(filteredIncidents, groupBy, compareBy)
+
+  // Sort applies to the X axis. For multi-series rows we sort by the row's total.
+  if (sortOrder) {
+    const total = r => (seriesKeys.length ? seriesKeys.reduce((s, k) => s + (r[k] || 0), 0) : r.value)
+    rows = [...rows].sort((a, b) => sortOrder === 'desc' ? total(b) - total(a) : total(a) - total(b))
+  }
+
+  const pieDisplayRows = pieRows(rows, seriesKeys)
 
   return (
     <>
       <StatsSubHeader filteredCenter={filteredCenter} onClearFilter={() => setFilteredCenter(null)} />
       <main className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
         <StatsToolbar
-          metric={metric}
-          onMetricChange={setMetric}
-          graphType={graphType}
-          onGraphTypeChange={setGraphType}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
-          filteredCenter={filteredCenter}
-          onClearFilter={() => setFilteredCenter(null)}
+          groupById={groupById}     onGroupByChange={setGroupById}
+          compareById={compareById} onCompareByChange={setCompareById}
+          dateFilterId={dateFilterId} onDateChange={setDateFilterId}
+          graphType={graphType}     onGraphTypeChange={setGraphType}
+          stacked={stacked}         onStackedToggle={() => setStacked(s => !s)}
+          sortOrder={sortOrder}     onSortChange={setSortOrder}
         />
 
-        {/* Explicit height — `flex: 1` doesn't propagate through min-h-screen on the root */}
+        {/* Explicit height — flex: 1 doesn't propagate through min-h-screen on the root */}
         <div style={{ padding: '0 16px 16px', height: 'calc(100vh - 156px)' }}>
           <ResponsiveContainer width="100%" height="100%">
             {graphType === 'bar' ? (
-              <BarChart data={items} margin={{ top: 20, right: 24, left: 8, bottom: 32 }}>
-                {barChartChildren(items)}
+              <BarChart data={rows} margin={{ top: 20, right: 24, left: 8, bottom: 40 }}>
+                <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+                <XAxis dataKey="key" interval={0} tick={{ fill: '#A0A4AF', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
+                <YAxis tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+                {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
+                {renderBars(rows, seriesKeys, stacked, compareBy)}
               </BarChart>
             ) : graphType === 'line' ? (
-              <LineChart
-                data={current.multiLine ? current.multiLine.data : items}
-                margin={{ top: 20, right: 32, left: 8, bottom: 24 }}
-              >
-                {lineChartChildren(current, items, filteredCenter, (name) =>
-                  setFilteredCenter(filteredCenter === name ? null : name)
-                )}
+              <LineChart data={rows} margin={{ top: 20, right: 32, left: 8, bottom: 40 }}>
+                <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+                <XAxis dataKey="key" interval={0} tick={{ fill: '#626363', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
+                <YAxis tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+                {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
+                {renderLines(rows, seriesKeys, compareBy)}
               </LineChart>
             ) : (
               <PieChart>
-                {pieChartChildren(items)}
+                <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+                <Legend layout="vertical" verticalAlign="top" align="right" wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />
+                <Pie data={pieDisplayRows} dataKey="value" nameKey="key" cx="45%" outerRadius="80%" innerRadius={0} isAnimationActive={false} labelLine={false}>
+                  {pieDisplayRows.map((d, i) => (
+                    <Cell key={d.key} fill={colorFor(groupBy, d.key, i)} />
+                  ))}
+                </Pie>
               </PieChart>
             )}
           </ResponsiveContainer>

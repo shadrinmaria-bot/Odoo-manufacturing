@@ -740,12 +740,19 @@ export default function ManufacturingDashboard() {
   const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null, params: null })
 
   // Jump from an Overview work-center card straight to the Stats page,
-  // line mode, with that center's series pre-filtered.
+  // pre-filtered to that center with a sensible trend view: group by month,
+  // single line, last 90 days.
   function goToWorkCenterStats(workCenterName) {
     setActivePage({
       section: 'Reporting',
       subItem: 'Safety Statistics',
-      params: { initialFilter: workCenterName, initialGraphType: 'line' },
+      params: {
+        initialFilter:    workCenterName,
+        initialGroupBy:   'month',
+        initialCompareBy: null,
+        initialDate:      'last90',
+        initialGraphType: 'line',
+      },
     })
   }
 
