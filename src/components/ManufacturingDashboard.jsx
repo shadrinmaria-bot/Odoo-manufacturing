@@ -311,7 +311,7 @@ function WorkCenterCard({
             </div>
             <div ref={badgeRef} style={{ cursor: incidentCount > 0 ? 'pointer' : 'default' }}>
               <StatusBadge
-                label={`${incidentCount} Opened Incident${incidentCount !== 1 ? 's' : ''}`}
+                label={`${incidentCount} Open Incident${incidentCount !== 1 ? 's' : ''}`}
                 variant={badgeVariant}
                 isOpen={isDropdownOpen}
                 onToggle={incidentCount > 0 ? handleBadgeClick : () => {}}
