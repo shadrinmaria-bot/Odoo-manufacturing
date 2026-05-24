@@ -11,35 +11,140 @@ import { Button, ButtonGroup } from './Button'
 
 const FONT = "'Segoe UI', sans-serif"
 
-// ── Mock data (will be replaced by real metrics later) ────────────────────────
+// ── Mock data (one record per metric) ─────────────────────────────────────────
 
+// Colors used across the prototype for the three work centers — kept for the
+// multi-line Incident Count chart and any work-center-keyed bar/pie.
 const WORK_CENTER_COLORS = {
   'Carpentry Workshop': '#7FBFEF',
   'Paint':              '#EF6A82',
   'Assembly':           '#5DD3B0',
 }
 
-// Aggregated per work center (used by Bar + Pie modes)
-const INCIDENT_COUNTS = [
-  { center: 'Carpentry Workshop', count: 6 },
-  { center: 'Paint',              count: 10 },
-  { center: 'Assembly',           count: 3 },
+// Varied palette for metrics whose keys aren't work centers (job titles,
+// time-of-day buckets, injury types, …).
+const PALETTE = [
+  '#7FBFEF', '#EF6A82', '#5DD3B0', '#FBB945', '#B79CDF',
+  '#F5946D', '#E26370', '#7AC7F1', '#9BE3C1', '#B5D49D',
 ]
+const pal = i => PALETTE[i % PALETTE.length]
 
-// Time-series (used by Line mode)
+// Original time-series (used by the Incident Count metric in line mode so
+// each work center keeps its own line over the last 5 weeks).
 const INCIDENT_OVER_TIME = [
-  { week: '19 - 25 Apr',    'Carpentry Workshop': 5, 'Paint': 2, 'Assembly': 8 },
-  { week: '26 Apr - 2 May', 'Carpentry Workshop': 0, 'Paint': 2, 'Assembly': 7 },
-  { week: '3 - 9 May',      'Carpentry Workshop': 2, 'Paint': 1, 'Assembly': 0 },
-  { week: '10 - 16 May',    'Carpentry Workshop': 2, 'Paint': 0, 'Assembly': 4 },
-  { week: '17 - 23 May',    'Carpentry Workshop': 1, 'Paint': 1, 'Assembly': 10 },
+  { key: '19 - 25 Apr',    'Carpentry Workshop': 5, 'Paint': 2, 'Assembly': 8 },
+  { key: '26 Apr - 2 May', 'Carpentry Workshop': 0, 'Paint': 2, 'Assembly': 7 },
+  { key: '3 - 9 May',      'Carpentry Workshop': 2, 'Paint': 1, 'Assembly': 0 },
+  { key: '10 - 16 May',    'Carpentry Workshop': 2, 'Paint': 0, 'Assembly': 4 },
+  { key: '17 - 23 May',    'Carpentry Workshop': 1, 'Paint': 1, 'Assembly': 10 },
 ]
 
-const METRICS = [
-  { id: 'incident-count',    label: 'Incident Count'    },
-  { id: 'incident-per-type', label: 'Incident Per Type' },
-  { id: 'incident-rate',     label: 'Incident Rate'     },
+const workCenterItems = [
+  { key: 'Carpentry Workshop', value: 6,  color: WORK_CENTER_COLORS['Carpentry Workshop'] },
+  { key: 'Paint',              value: 10, color: WORK_CENTER_COLORS['Paint'] },
+  { key: 'Assembly',           value: 3,  color: WORK_CENTER_COLORS['Assembly'] },
 ]
+
+// Each metric carries everything needed to render bar / pie / line.
+//   - items: aggregated rows used by bar + pie (and the fallback single-line)
+//   - multiLine: optional; if present, line mode draws one series per entry
+//     over the supplied time-series data (used for Incident Count).
+//   - unit: optional suffix shown in the tooltip value (e.g. " days").
+const METRICS_DATA = {
+  'incident-count': {
+    label: 'Incident Count',
+    items: workCenterItems,
+    multiLine: {
+      data: INCIDENT_OVER_TIME,
+      xKey: 'key',
+      series: [
+        { name: 'Carpentry Workshop', color: WORK_CENTER_COLORS['Carpentry Workshop'] },
+        { name: 'Paint',              color: WORK_CENTER_COLORS['Paint'] },
+        { name: 'Assembly',           color: WORK_CENTER_COLORS['Assembly'] },
+      ],
+    },
+  },
+  'incident-per-type': {
+    label: 'Incident Per Type',
+    items: workCenterItems,
+  },
+  'incident-rate': {
+    label: 'Incident Rate',
+    items: workCenterItems,
+  },
+  'recurrence-by-location': {
+    label: 'Recurrence by Location',
+    items: [
+      { key: 'Warehouse 1', value: 8,  color: pal(0) },
+      { key: 'Warehouse 2', value: 14, color: pal(1) },
+      { key: 'Warehouse 3', value: 3,  color: pal(2) },
+    ],
+  },
+  'recurrence-by-work-center': {
+    label: 'Recurrence by Work Center',
+    items: [
+      { key: 'Carpentry Workshop', value: 12, color: WORK_CENTER_COLORS['Carpentry Workshop'] },
+      { key: 'Paint',              value: 9,  color: WORK_CENTER_COLORS['Paint'] },
+      { key: 'Assembly',           value: 4,  color: WORK_CENTER_COLORS['Assembly'] },
+    ],
+  },
+  'recurring-trend': {
+    label: 'Recurring Trend',
+    items: [
+      { key: 'Dec', value: 3, color: pal(0) },
+      { key: 'Jan', value: 5, color: pal(0) },
+      { key: 'Feb', value: 4, color: pal(0) },
+      { key: 'Mar', value: 7, color: pal(0) },
+      { key: 'Apr', value: 6, color: pal(0) },
+      { key: 'May', value: 8, color: pal(0) },
+    ],
+  },
+  'report-to-resolution-gap': {
+    label: 'Report-to-Resolution Gap',
+    unit: ' days',
+    items: [
+      { key: 'Carpentry Workshop', value: 4.2, color: WORK_CENTER_COLORS['Carpentry Workshop'] },
+      { key: 'Paint',              value: 2.8, color: WORK_CENTER_COLORS['Paint'] },
+      { key: 'Assembly',           value: 1.1, color: WORK_CENTER_COLORS['Assembly'] },
+    ],
+  },
+  'by-job-title': {
+    label: 'By Job Title',
+    items: [
+      { key: 'Machine Operator',  value: 9, color: pal(0) },
+      { key: 'Warehouse Worker',  value: 7, color: pal(1) },
+      { key: 'Shift Supervisor',  value: 2, color: pal(2) },
+      { key: 'Maintenance Tech',  value: 4, color: pal(3) },
+      { key: 'Quality Inspector', value: 1, color: pal(4) },
+    ],
+  },
+  'by-time-of-day': {
+    label: 'By Time of Day',
+    items: [
+      { key: 'Morning (6-12)',    value: 10, color: pal(0) },
+      { key: 'Afternoon (12-18)', value: 8,  color: pal(1) },
+      { key: 'Evening (18-24)',  value: 5,  color: pal(2) },
+      { key: 'Night (0-6)',      value: 2,  color: pal(3) },
+    ],
+  },
+  'by-injury-type': {
+    label: 'By Injury Type',
+    items: [
+      { key: 'Overexertion',          value: 6, color: pal(0) },
+      { key: 'Falls (same level)',    value: 4, color: pal(1) },
+      { key: 'Struck by object',      value: 5, color: pal(2) },
+      { key: 'Falls to lower level',  value: 2, color: pal(3) },
+      { key: 'Other exertions',       value: 3, color: pal(4) },
+      { key: 'Slip/trip (no fall)',   value: 2, color: pal(5) },
+      { key: 'Caught in equipment',   value: 1, color: pal(6) },
+      { key: 'Repetitive motions',    value: 1, color: pal(7) },
+      { key: 'Struck against',        value: 1, color: pal(8) },
+      { key: 'Roadway',               value: 0, color: pal(9) },
+    ],
+  },
+}
+
+const METRICS = Object.entries(METRICS_DATA).map(([id, def]) => ({ id, label: def.label }))
 
 // ── Metric dropdown (purple, matches WORK ORDERS button style) ────────────────
 
@@ -195,17 +300,19 @@ const tooltipFixedPosition = { y: 0 }
 // Chart bodies. These return the chart's *contents* (axes, series, etc.) —
 // callers wrap them in BarChart/LineChart/PieChart so ResponsiveContainer can
 // inject width/height onto the chart element directly via cloneElement.
-const barChartChildren = (data) => (
+
+const barChartChildren = (items) => (
   <>
     <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
     <XAxis
-      dataKey="center"
+      dataKey="key"
       tick={{ fill: '#A0A4AF', fontSize: 12, fontFamily: FONT }}
       axisLine={false} tickLine={false} tickMargin={12}
+      interval={0}
     />
     <YAxis
       tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-      axisLine={false} tickLine={false} allowDecimals={false}
+      axisLine={false} tickLine={false}
     />
     <Tooltip
       cursor={{ fill: 'rgba(255,255,255,0.04)' }}
@@ -214,79 +321,103 @@ const barChartChildren = (data) => (
       itemStyle={tooltipItemStyle}
       position={tooltipFixedPosition}
     />
-    <Bar dataKey="count" radius={[2, 2, 0, 0]} isAnimationActive={false}>
-      {data.map(d => <Cell key={d.center} fill={WORK_CENTER_COLORS[d.center]} />)}
+    <Bar dataKey="value" radius={[2, 2, 0, 0]} isAnimationActive={false}>
+      {items.map(d => <Cell key={d.key} fill={d.color} />)}
     </Bar>
   </>
 )
 
-// Line mode supports click-to-isolate: clicking a line filters down to that
-// work center; clicking it again (or the chip in the toolbar) clears the filter.
-const lineChartChildren = (filteredCenter, onLineClick) => (
-  <>
-    <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-    <XAxis
-      dataKey="week"
-      tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-      axisLine={false} tickLine={false} tickMargin={12}
-    />
-    <YAxis
-      tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
-      axisLine={false} tickLine={false} allowDecimals={false}
-    />
-    <Tooltip
-      contentStyle={tooltipContentStyle}
-      labelStyle={tooltipLabelStyle}
-      itemStyle={tooltipItemStyle}
-      position={tooltipFixedPosition}
-    />
-    <Legend
-      wrapperStyle={{ fontFamily: FONT, fontSize: 13, paddingTop: 8, color: '#F5F5F6' }}
-      iconType="rect"
-    />
-    {Object.entries(WORK_CENTER_COLORS)
-      .filter(([center]) => !filteredCenter || filteredCenter === center)
-      .map(([center, color]) => (
-        <Line
-          key={center}
-          type="linear"
-          dataKey={center}
-          stroke={color}
-          strokeWidth={filteredCenter === center ? 2.8 : 2.2}
-          dot={{ r: 4, fill: color, strokeWidth: 0, style: { cursor: 'pointer' } }}
-          activeDot={{ r: 5, fill: color, strokeWidth: 0, style: { cursor: 'pointer' } }}
-          isAnimationActive={false}
-          onClick={() => onLineClick(center)}
-          style={{ cursor: 'pointer' }}
+// Line mode — two branches:
+//   * If multiLine is set on the metric (Incident Count), draw one line per
+//     series over the time-series data. Clicking a line filters down to just
+//     that series.
+//   * Otherwise (single-series metrics like By Job Title or Recurring Trend),
+//     plot one line connecting the metric's items; no click-to-isolate.
+const lineChartChildren = (current, items, filteredCenter, onLineClick) => {
+  if (current.multiLine) {
+    const { xKey, series } = current.multiLine
+    return (
+      <>
+        <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+        <XAxis
+          dataKey={xKey}
+          tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
+          axisLine={false} tickLine={false} tickMargin={12}
         />
-      ))}
-  </>
-)
+        <YAxis
+          tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
+          axisLine={false} tickLine={false} allowDecimals={false}
+        />
+        <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+        <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 13, paddingTop: 8, color: '#F5F5F6' }} iconType="rect" />
+        {series
+          .filter(s => !filteredCenter || filteredCenter === s.name)
+          .map(s => (
+            <Line
+              key={s.name}
+              type="linear"
+              dataKey={s.name}
+              stroke={s.color}
+              strokeWidth={filteredCenter === s.name ? 2.8 : 2.2}
+              dot={{ r: 4, fill: s.color, strokeWidth: 0, style: { cursor: 'pointer' } }}
+              activeDot={{ r: 5, fill: s.color, strokeWidth: 0, style: { cursor: 'pointer' } }}
+              isAnimationActive={false}
+              onClick={() => onLineClick(s.name)}
+              style={{ cursor: 'pointer' }}
+            />
+          ))}
+      </>
+    )
+  }
 
-const pieChartChildren = (data) => (
+  // Single-series line for aggregated metrics
+  const stroke = items[0]?.color || PALETTE[0]
+  return (
+    <>
+      <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+      <XAxis
+        dataKey="key"
+        tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
+        axisLine={false} tickLine={false} tickMargin={12}
+        interval={0}
+      />
+      <YAxis
+        tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }}
+        axisLine={false} tickLine={false}
+      />
+      <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+      <Line
+        type="linear"
+        dataKey="value"
+        stroke={stroke}
+        strokeWidth={2.4}
+        dot={{ r: 4, fill: stroke, strokeWidth: 0 }}
+        activeDot={{ r: 5, fill: stroke, strokeWidth: 0 }}
+        isAnimationActive={false}
+      />
+    </>
+  )
+}
+
+const pieChartChildren = (items) => (
   <>
-    <Tooltip
-      contentStyle={tooltipContentStyle}
-      labelStyle={tooltipLabelStyle}
-      itemStyle={tooltipItemStyle}
-      position={tooltipFixedPosition}
-    />
+    <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
     <Legend
       layout="vertical" verticalAlign="top" align="right"
       wrapperStyle={{ fontFamily: FONT, fontSize: 13, color: '#F5F5F6' }}
       iconType="rect"
     />
     <Pie
-      data={data}
-      dataKey="count"
-      nameKey="center"
+      data={items}
+      dataKey="value"
+      nameKey="key"
       cx="45%"
       outerRadius="80%"
       innerRadius={0}
       isAnimationActive={false}
       labelLine={false}
     >
-      {data.map(d => <Cell key={d.center} fill={WORK_CENTER_COLORS[d.center]} />)}
+      {items.map(d => <Cell key={d.key} fill={d.color} />)}
     </Pie>
   </>
 )
@@ -382,18 +513,20 @@ export default function SafetyStatisticsPage({ initialParams = null }) {
   const [metric, setMetric]       = useState('incident-count')
   const [graphType, setGraphType] = useState(initialParams?.initialGraphType ?? 'bar')
   const [sortOrder, setSortOrder] = useState(null)
-  // null = all centers visible; otherwise only that center's series is shown.
-  // Toggled on by clicking a line in line mode, or by deep-link from the
-  // Overview work-center card's chart icon. Cleared via the chip.
+  // Filter keyed by item-name (e.g. 'Paint'). Click a line in line mode to
+  // isolate, or arrive here from the Overview work-center chart icon.
   const [filteredCenter, setFilteredCenter] = useState(initialParams?.initialFilter ?? null)
 
-  // Sorting only applies to per-center aggregated data (bar + pie).
-  // Line mode is time-series so sort is ignored.
-  const aggregated = (() => {
-    let arr = [...INCIDENT_COUNTS]
-    if (filteredCenter) arr = arr.filter(d => d.center === filteredCenter)
-    if (sortOrder === 'desc') arr.sort((a, b) => b.count - a.count)
-    if (sortOrder === 'asc')  arr.sort((a, b) => a.count - b.count)
+  // Switching metrics invalidates the filter (different item-keys).
+  useEffect(() => { setFilteredCenter(null) }, [metric])
+
+  const current = METRICS_DATA[metric] ?? METRICS_DATA['incident-count']
+
+  const items = (() => {
+    let arr = [...current.items]
+    if (filteredCenter) arr = arr.filter(d => d.key === filteredCenter)
+    if (sortOrder === 'desc') arr.sort((a, b) => b.value - a.value)
+    if (sortOrder === 'asc')  arr.sort((a, b) => a.value - b.value)
     return arr
   })()
 
@@ -416,18 +549,21 @@ export default function SafetyStatisticsPage({ initialParams = null }) {
         <div style={{ padding: '0 16px 16px', height: 'calc(100vh - 156px)' }}>
           <ResponsiveContainer width="100%" height="100%">
             {graphType === 'bar' ? (
-              <BarChart data={aggregated} margin={{ top: 20, right: 24, left: 8, bottom: 32 }}>
-                {barChartChildren(aggregated)}
+              <BarChart data={items} margin={{ top: 20, right: 24, left: 8, bottom: 32 }}>
+                {barChartChildren(items)}
               </BarChart>
             ) : graphType === 'line' ? (
-              <LineChart data={INCIDENT_OVER_TIME} margin={{ top: 20, right: 32, left: 8, bottom: 24 }}>
-                {lineChartChildren(filteredCenter, (center) =>
-                  setFilteredCenter(filteredCenter === center ? null : center)
+              <LineChart
+                data={current.multiLine ? current.multiLine.data : items}
+                margin={{ top: 20, right: 32, left: 8, bottom: 24 }}
+              >
+                {lineChartChildren(current, items, filteredCenter, (name) =>
+                  setFilteredCenter(filteredCenter === name ? null : name)
                 )}
               </LineChart>
             ) : (
               <PieChart>
-                {pieChartChildren(aggregated)}
+                {pieChartChildren(items)}
               </PieChart>
             )}
           </ResponsiveContainer>
