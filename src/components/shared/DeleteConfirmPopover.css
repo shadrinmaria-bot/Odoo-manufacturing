@@ -1,0 +1,56 @@
+/* ── DeleteConfirmPopover ─────────────────────────────────────────────────── */
+.dcp-panel {
+  position:      fixed;
+  top:           var(--popover-top);
+  right:         var(--popover-right);
+  background:    #2A2E3A;
+  border:        1px solid #5A5E6B;
+  border-radius: 6px;
+  min-width:     220px;
+  box-shadow:    0 8px 32px rgba(0, 0, 0, 0.55);
+  z-index:       2000;
+  padding:       14px 14px 12px;
+  animation:     deletePopoverFadeIn 0.13s ease;
+}
+
+.dcp-close-btn {
+  position:      absolute;
+  top:           8px;
+  right:         8px;
+  background:    none;
+  border:        none;
+  cursor:        pointer;
+  color:         #8A8D9A;
+  padding:       2px;
+  border-radius: 3px;
+  display:       flex;
+  align-items:   center;
+  transition:    color 0.12s;
+}
+.dcp-close-btn:hover { color: #F5F5F6; }
+
+.dcp-message {
+  font-family:  'Segoe UI', sans-serif;
+  font-size:    13px;
+  color:        #F5F5F6;
+  margin:       0 0 12px;
+  padding-right: 18px;
+  line-height:  1.4;
+}
+
+.dcp-confirm-btn {
+  background:     #6B3E66;
+  border:         none;
+  border-radius:  4px;
+  padding:        8px 20px;
+  cursor:         pointer;
+  font-family:    'Segoe UI', sans-serif;
+  font-weight:    600;
+  font-size:      13px;
+  color:          #F5F5F6;
+  letter-spacing: 0.06em;
+  transition:     filter 0.13s;
+  display:        inline-flex;
+  align-items:    center;
+}
+.dcp-confirm-btn:hover { filter: brightness(1.15); }

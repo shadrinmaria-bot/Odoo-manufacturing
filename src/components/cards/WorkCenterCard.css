@@ -1,0 +1,242 @@
+/* ── Card container ──────────────────────────────────────────────────────── */
+.wc-card {
+  flex:           1 1 360px;
+  min-width:      360px;
+  height:         263px;
+  background:     #262A36;
+  border:         0.63px solid #3C3E4A;
+  border-radius:  0;
+  box-shadow:     none;
+  position:       relative;
+  display:        flex;
+  flex-direction: column;
+  overflow:       hidden;
+  transition:     box-shadow 0.15s;
+}
+.wc-card:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* ── Chart layer (behind content) ────────────────────────────────────────── */
+.wc-card__chart-layer {
+  position:       absolute;
+  inset:          0;
+  display:        flex;
+  flex-direction: column;
+  z-index:        0;
+}
+
+.wc-card__chart-spacer {
+  height:     110px;
+  flex-shrink: 0;
+}
+
+.wc-card__chart-area {
+  flex:       1;
+  min-height: 0;
+}
+
+/* ── Accent line (left edge) ─────────────────────────────────────────────── */
+.wc-card__accent {
+  position:   absolute;
+  left:       0;
+  top:        0;
+  bottom:     0;
+  width:      2.5px;
+  background: var(--accent-color);
+  z-index:    2;
+}
+
+/* ── Content layer (above chart) ─────────────────────────────────────────── */
+.wc-card__content {
+  position:       relative;
+  z-index:        1;
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+}
+
+/* ── Header row ──────────────────────────────────────────────────────────── */
+.wc-card__header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  flex-wrap:       wrap;
+  row-gap:         6px;
+  padding:         16px 16px 8px 20px;
+}
+
+.wc-card__header-left {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  min-width:   0;
+  flex:        1 1 auto;
+}
+
+.wc-card__name {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  600;
+  font-size:    17.03px;
+  color:        #F5F5F6;
+}
+
+/* ── Status dot ──────────────────────────────────────────────────────────── */
+.status-dot {
+  width:         12px;
+  height:        12px;
+  border-radius: 50%;
+  background:    transparent;
+  border:        1px solid #51545D;
+  flex-shrink:   0;
+  display:       inline-block;
+}
+.status-dot--critical {
+  background: #B83232;
+  border:     1px solid #C45A5A;
+}
+
+/* ── Stats row ───────────────────────────────────────────────────────────── */
+.wc-card__stats {
+  display:      flex;
+  align-items:  center;
+  padding-left: 20px;
+  padding-right: 16px;
+  padding-bottom: 12px;
+}
+
+.wc-card__stats-spacer {
+  flex:      1;
+  min-width: 0;
+}
+
+.wc-card__oee-block {
+  flex:            1.6;
+  min-width:       0;
+  display:         flex;
+  align-items:     flex-start;
+  justify-content: space-between;
+}
+
+.wc-card__oee-left {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+}
+
+.wc-card__status-label {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  400;
+  font-size:    15.14px;
+  color:        #1AD3BB;
+  line-height:  1.2;
+  white-space:  nowrap;
+}
+
+.wc-card__oee-label {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  400;
+  font-size:    15.14px;
+  color:        #1AD3BB;
+  line-height:  1.2;
+}
+
+.wc-card__oee-right {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-end;
+  gap:            2px;
+}
+
+.wc-card__status-count {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  400;
+  font-size:    15.14px;
+  color:        #F5F5F6;
+  line-height:  1.2;
+}
+
+.wc-card__oee-value {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  700;
+  font-size:    15.14px;
+  color:        #1DC959;
+  line-height:  1.2;
+}
+
+.wc-card__flex-fill { flex: 1; }
+
+/* ── WorkOrderButtons ────────────────────────────────────────────────────── */
+/* btn-work-orders-primary and btn-work-orders-icon live in Button.css */
+
+/* ── CustomTooltip ───────────────────────────────────────────────────────── */
+.wc-tooltip {
+  background:    #262A36;
+  border:        1px solid #3C3E4A;
+  border-radius: 4px;
+  padding:       4px 8px;
+  font-size:     12px;
+  color:         #aaa;
+}
+
+.wc-tooltip__label {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  600;
+  color:        #F5F5F6;
+}
+
+/* ── GreyBadgeDropdown ───────────────────────────────────────────────────── */
+.grey-badge-dropdown {
+  position:      fixed;
+  top:           var(--dropdown-top);
+  right:         var(--dropdown-right);
+  background:    #2A2E3A;
+  border:        1px solid #5A5E6B;
+  border-radius: 6px;
+  box-shadow:    0 8px 32px rgba(0, 0, 0, 0.55);
+  z-index:       1500;
+  animation:     dropdownFadeIn 0.13s ease;
+  overflow:      hidden;
+  padding:       12px 14px;
+}
+
+.grey-badge-dropdown__report-btn {
+  background:      #F9464C;
+  border-radius:   4px;
+  font-family:     'Segoe UI', sans-serif;
+  font-weight:     600;
+  font-size:       13px;
+  color:           #F5F5F6;
+  border:          none;
+  cursor:          pointer;
+  height:          33px;
+  white-space:     nowrap;
+  min-width:       158px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             6px;
+  transition:      filter 0.12s;
+}
+.grey-badge-dropdown__report-btn:hover { filter: brightness(1.1); }
+
+/* ── Reset button ────────────────────────────────────────────────────────── */
+.reset-btn {
+  background:    none;
+  border:        1px solid #3C3E4A;
+  border-radius: 4px;
+  padding:       6px 14px;
+  cursor:        pointer;
+  font-family:   'Segoe UI', sans-serif;
+  font-size:     12px;
+  font-weight:   600;
+  color:         #626363;
+  display:       flex;
+  align-items:   center;
+  gap:           6px;
+  transition:    border-color 0.15s, color 0.15s;
+}
+.reset-btn:hover {
+  border-color: #5A5E6B;
+  color:        #A0A4AF;
+}

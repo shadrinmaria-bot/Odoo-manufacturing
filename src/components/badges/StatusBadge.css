@@ -1,0 +1,65 @@
+/* ── StatusBadge ─────────────────────────────────────────────────────────── */
+.status-badge {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           3px;
+  height:        22px;
+  padding:       5px;
+  border-radius: 4px;
+  font-family:   'Segoe UI', sans-serif;
+  font-weight:   600;
+  font-size:     11.87px;
+  white-space:   nowrap;
+  line-height:   1;
+  box-sizing:    border-box;
+  user-select:   none;
+  flex-shrink:   0;
+  border:        none;
+  cursor:        pointer;
+  transition:    filter 0.12s, background 0.12s;
+}
+
+/* ── Red variant ─────────────────────────────────────────────────────────── */
+.status-badge--red {
+  background: #F9464C;
+  color:      #000000;
+}
+.status-badge--red:hover {
+  filter: brightness(1.2);
+}
+.status-badge--red:active {
+  background: #FF6267;
+  filter:     none;
+}
+
+/* ── Blue variant ────────────────────────────────────────────────────────── */
+.status-badge--blue {
+  background: #008FE3;
+  color:      #000000;
+}
+.status-badge--blue:hover {
+  filter: brightness(1.2);
+}
+.status-badge--blue:active {
+  background: rgba(0, 143, 227, 0.7);
+  filter:     none;
+}
+
+/* ── Grey variant ────────────────────────────────────────────────────────── */
+.status-badge--grey {
+  background: #3A3F4B;
+  color:      #ffffff;
+}
+
+/* ── Caret ───────────────────────────────────────────────────────────────── */
+.status-badge__caret {
+  flex-shrink: 0;
+}
+
+.status-badge--grey .status-badge__caret {
+  opacity:    0.5;
+  transition: opacity 0.12s;
+}
+.status-badge--grey:hover .status-badge__caret {
+  opacity: 1;
+}

@@ -1,0 +1,126 @@
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+.btn {
+  border-radius:   4px;
+  border:          1px solid transparent;
+  cursor:          pointer;
+  transition:      background 0.12s, border-color 0.12s, opacity 0.12s, color 0.12s;
+  box-sizing:      border-box;
+  padding:         0;
+  font:            inherit;
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor:  default;
+}
+
+/* ── Position variants (ButtonGroup corner rounding) ─────────────────────── */
+.btn--single { border-radius: 4px; }
+.btn--left   { border-radius: 4px 0 0 4px; }
+.btn--middle { border-radius: 0; }
+.btn--right  { border-radius: 0 4px 4px 0; }
+
+/* ── Purple ──────────────────────────────────────────────────────────────── */
+.btn--purple {
+  background: #6B3E66;
+  color:      #F5F5F6;
+}
+.btn--purple:hover:not(:disabled) {
+  background: #7B4775;
+}
+.btn--purple:active:not(:disabled),
+.btn--purple.btn--on {
+  background: #8B5185;
+}
+
+/* ── Gray ────────────────────────────────────────────────────────────────── */
+.btn--gray {
+  background: #3C3E4B;
+  color:      #A0A4AF;
+}
+.btn--gray:hover:not(:disabled):not(.btn--on) {
+  background: #5A5E6B;
+}
+.btn--gray:active:not(:disabled),
+.btn--gray.btn--on {
+  background:   #17373B;
+  border-color: #03F9E3;
+  color:        #03F9E3;
+}
+
+/* ── Shared sizing classes used across the app ───────────────────────────── */
+.btn-icon {
+  width:  32px;
+  height: 32px;
+}
+
+.btn-work-orders-primary {
+  padding:     0 12px;
+  height:      32px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size:   14.5px;
+  white-space: nowrap;
+}
+
+.btn-work-orders-icon {
+  width:  32px;
+  height: 32px;
+}
+
+.btn-modal-submit {
+  padding:         8px 22px;
+  font-family:     'Segoe UI', sans-serif;
+  font-weight:     600;
+  font-size:       13px;
+  letter-spacing:  0.04em;
+}
+
+.btn-modal-discard {
+  padding:     8px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size:   13px;
+}
+
+.btn-modal-close {
+  padding:        9px 28px;
+  font-family:    'Segoe UI', sans-serif;
+  font-weight:    600;
+  font-size:      13px;
+  letter-spacing: 0.06em;
+}
+
+.btn-config-dropdown {
+  display:      flex;
+  align-items:  center;
+  gap:          8px;
+  padding:      7px 14px;
+  height:       32px;
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  600;
+  font-size:    13px;
+  white-space:  nowrap;
+}
+
+.btn-stats-icon {
+  width:  32px;
+  height: 32px;
+}
+
+.btn-stats-stacked {
+  width:       auto;
+  padding:     0 12px;
+  gap:         6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   13px;
+  font-weight: 600;
+  height:      32px;
+}
+
+.btn-stats-view {
+  width:  32px;
+  height: 32px;
+}

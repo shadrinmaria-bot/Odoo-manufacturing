@@ -1,0 +1,18 @@
+/* ── Overview main area ──────────────────────────────────────────────────── */
+.overview-main {
+  flex:    1;
+  padding: 16px;
+}
+
+.cards-grid {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       10px;
+  width:     100%;
+}
+
+.cards-footer {
+  display:         flex;
+  justify-content: flex-end;
+  margin-top:      12px;
+}

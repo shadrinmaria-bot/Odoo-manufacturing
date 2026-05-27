@@ -1,0 +1,291 @@
+/* ── TopNav (header bar) ─────────────────────────────────────────────────── */
+.top-nav {
+  display:     flex;
+  align-items: center;
+  padding:     0 16px;
+  height:      48px;
+  background:  #262A36;
+  border-bottom: 1px solid #3C3E4A;
+  flex-shrink: 0;
+}
+
+.top-nav__brand {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  margin-right: 20px;
+}
+
+.top-nav__app-name {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  600;
+  font-size:    17.15px;
+  color:        #F5F5F6;
+}
+
+.top-nav__nav {
+  display:     flex;
+  align-items: center;
+  gap:         2px;
+}
+
+/* ── NavSection button ───────────────────────────────────────────────────── */
+.nav-btn {
+  padding:      6px 12px;
+  border-radius: 4px;
+  font-family:   'Segoe UI', sans-serif;
+  font-weight:   400;
+  font-size:     14.55px;
+  color:         #F5F5F6;
+  border:        1px solid transparent;
+  background:    transparent;
+  cursor:        pointer;
+  white-space:   nowrap;
+  transition:    background 0.12s, color 0.12s;
+}
+.nav-btn--active {
+  color:      #1AD3BB;
+  border-color: rgba(26, 211, 187, 0.4);
+  background: rgba(26, 211, 187, 0.05);
+}
+
+/* ── Nav dropdown panel ──────────────────────────────────────────────────── */
+.nav-dropdown {
+  position:      absolute;
+  top:           calc(100% + 4px);
+  left:          0;
+  background:    #2A2E3A;
+  border:        1px solid #3C3E4A;
+  border-radius: 4px;
+  min-width:     200px;
+  box-shadow:    0 8px 24px rgba(0, 0, 0, 0.45);
+  z-index:       100;
+  padding:       4px 0;
+  animation:     navDropdownFadeIn 0.12s ease;
+}
+
+.nav-dropdown-item {
+  display:     block;
+  width:       100%;
+  text-align:  left;
+  background:  transparent;
+  border:      none;
+  cursor:      pointer;
+  padding:     8px 14px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   13.5px;
+  color:       #F5F5F6;
+  opacity:     1;
+  transition:  background 0.12s;
+  white-space: nowrap;
+}
+.nav-dropdown-item:hover:not(:disabled):not(.nav-dropdown-item--active) {
+  background: rgba(255, 255, 255, 0.04);
+}
+.nav-dropdown-item--active {
+  background: rgba(26, 211, 187, 0.07);
+  color:      #1AD3BB;
+}
+.nav-dropdown-item:disabled {
+  opacity: 0.55;
+  cursor:  default;
+}
+
+/* ── NavIcons (right side) ───────────────────────────────────────────────── */
+.nav-icons {
+  display:     flex;
+  align-items: center;
+  gap:         13px;
+  margin-left: auto;
+}
+
+.nav-icon-btn {
+  padding:    0;
+  background: none;
+  border:     none;
+  cursor:     pointer;
+  transition: opacity 0.12s;
+  display:    flex;
+  align-items: center;
+}
+.nav-icon-btn:hover { opacity: 0.8; }
+
+.nav-icon-btn--relative { position: relative; }
+
+.nav-badge {
+  position:      absolute;
+  top:           -4px;
+  right:         -6px;
+  background:    #e53e3e;
+  color:         #fff;
+  font-family:   'Segoe UI', sans-serif;
+  font-weight:   700;
+  font-size:     9px;
+  border-radius: 999px;
+  min-width:     14px;
+  height:        14px;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  padding:       0 3px;
+  line-height:   1;
+}
+
+.nav-separator {
+  width:      1px;
+  height:     18px;
+  background: #3C3E4A;
+  display:    inline-block;
+}
+
+.nav-username {
+  font-family:  'Segoe UI', sans-serif;
+  font-size:    14.55px;
+  color:        #F5F5F6;
+  white-space:  nowrap;
+}
+
+.nav-avatar {
+  width:           28px;
+  height:          28px;
+  border-radius:   50%;
+  background:      #875A7B;
+  font-family:     'Segoe UI', sans-serif;
+  font-weight:     700;
+  font-size:       12px;
+  color:           #F5F5F6;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+
+/* ── SubHeader ───────────────────────────────────────────────────────────── */
+.sub-header {
+  display:     flex;
+  align-items: center;
+  height:      40px;
+  background:  #262A36;
+  border-bottom: 1px solid #3C3E4A;
+  flex-shrink: 0;
+}
+
+.sub-header__title-area {
+  flex:        1;
+  padding:     0 16px;
+  display:     flex;
+  align-items: center;
+}
+
+.sub-header__title {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  400;
+  font-size:    16.51px;
+  color:        #F5F5F6;
+}
+
+.sub-header__search {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  padding:     4px 12px;
+  border:      1px solid #3C3E4A;
+  background:  #1B1D26;
+  border-radius: 4px;
+  width:       420px;
+}
+
+.sub-header__search-placeholder {
+  font-family: Arial, sans-serif;
+  font-size:   12px;
+  color:       #626363;
+  flex:        1;
+}
+
+.sub-header__actions {
+  flex:            1;
+  padding:         0 16px;
+  display:         flex;
+  justify-content: flex-end;
+  align-items:     center;
+  gap:             12px;
+  white-space:     nowrap;
+}
+
+.sub-header__pagination {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  color:       #F5F5F6;
+  font-size:   13px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.sub-header__page-btn {
+  padding:    2px;
+  opacity:    0.4;
+  color:      #F5F5F6;
+  background: none;
+  border:     none;
+  cursor:     default;
+}
+
+.sub-header__report-btn {
+  background:      #F9464C;
+  border-radius:   4px;
+  font-family:     'Segoe UI', sans-serif;
+  font-weight:     600;
+  font-size:       13px;
+  color:           #F5F5F6;
+  border:          none;
+  cursor:          pointer;
+  height:          33px;
+  white-space:     nowrap;
+  min-width:       158px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             6px;
+  transition:      filter 0.12s;
+}
+.sub-header__report-btn:hover { filter: brightness(1.1); }
+
+/* ── PlaceholderPage ─────────────────────────────────────────────────────── */
+.placeholder-page {
+  flex:            1;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         24px;
+}
+
+.placeholder-page__inner {
+  text-align: center;
+  max-width:  520px;
+}
+
+.placeholder-page__section {
+  font-family:     'Segoe UI', sans-serif;
+  font-size:       12px;
+  font-weight:     600;
+  letter-spacing:  0.08em;
+  color:           #626363;
+  text-transform:  uppercase;
+  margin-bottom:   12px;
+}
+
+.placeholder-page__heading {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  600;
+  font-size:    30px;
+  color:        #F5F5F6;
+  margin:       0;
+  line-height:  1.2;
+}
+
+.placeholder-page__body {
+  font-family:  'Segoe UI', sans-serif;
+  font-size:    13px;
+  color:        #626363;
+  margin-top:   18px;
+}

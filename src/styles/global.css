@@ -1,0 +1,51 @@
+/* ── Colour tokens ────────────────────────────────────────────────────────── */
+:root {
+  --color-bg:           #1B1D26;
+  --color-card:         #262A36;
+  --color-modal:        #2A2E3A;
+  --color-border:       #3C3E4A;
+  --color-border-light: #5A5E6B;
+  --color-text:         #F5F5F6;
+  --color-text-muted:   #8A8D9A;
+  --color-text-dim:     #626363;
+  --color-text-mid:     #A0A4AF;
+  --color-accent:       #1AD3BB;
+  --color-danger:       #F9464C;
+  --color-danger-dark:  #B83232;
+  --color-info:         #008FE3;
+  --color-purple:       #6B3E66;
+  --color-green:        #1DC959;
+  --color-avatar:       #875A7B;
+  --color-worker-avatar:#5A7BA0;
+  --font-ui:            'Segoe UI', sans-serif;
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes navDropdownFadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes idmFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes idmScaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes deletePopoverFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,455 @@
+/* ── Overlay ─────────────────────────────────────────────────────────────── */
+.sim-overlay {
+  position:        fixed;
+  inset:           0;
+  background:      rgba(0, 0, 0, 0.72);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  z-index:         1000;
+  animation:       fadeIn 0.18s ease;
+}
+
+/* ── Panel ───────────────────────────────────────────────────────────────── */
+.sim-panel {
+  position:       relative;
+  width:          95vw;
+  max-width:      1064px;
+  height:         min(869px, 94vh);
+  background:     #2A2E3A;
+  border:         1px solid #5A5E6B;
+  border-radius:  6px;
+  box-shadow:     0 24px 64px rgba(0, 0, 0, 0.65);
+  display:        flex;
+  flex-direction: column;
+  overflow:       hidden;
+  animation:      scaleIn 0.18s ease;
+  font-family:    'Segoe UI', sans-serif;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.sim-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         14px 20px;
+  border-bottom:   1px solid #5A5E6B;
+  flex-shrink:     0;
+  background:      #2A2E3A;
+}
+
+.sim-header__left {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+}
+
+.sim-header__icon {
+  width:           26px;
+  height:          26px;
+  border-radius:   4px;
+  background:      rgba(184, 50, 50, 0.18);
+  border:          1px solid rgba(184, 50, 50, 0.45);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+
+.sim-header__title {
+  font-family:  'Segoe UI', sans-serif;
+  font-weight:  700;
+  font-size:    16px;
+  color:        #F5F5F6;
+}
+
+.sim-close-btn {
+  background:    none;
+  border:        none;
+  cursor:        pointer;
+  color:         #8A8D9A;
+  padding:       4px;
+  border-radius: 4px;
+  display:       flex;
+  align-items:   center;
+  transition:    color 0.12s;
+}
+.sim-close-btn:hover { color: #F5F5F6; }
+
+/* ── Scrollable body ─────────────────────────────────────────────────────── */
+.sim-body {
+  overflow-y: auto;
+  flex:       1;
+  padding:    18px 20px 0;
+}
+
+/* ── Reporter info bar ───────────────────────────────────────────────────── */
+.sim-reporter-bar {
+  display:       flex;
+  align-items:   center;
+  gap:           36px;
+  margin-bottom: 18px;
+  padding:       10px 14px;
+  background:    #1B1D26;
+  border:        1px solid #5A5E6B;
+  border-radius: 4px;
+}
+
+.sim-reporter-bar__group {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+}
+
+.sim-meta-label {
+  font-family:    'Segoe UI', sans-serif;
+  font-size:      11.5px;
+  font-weight:    600;
+  color:          #8A8D9A;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sim-reporter-user {
+  display:     flex;
+  align-items: center;
+  gap:         7px;
+}
+
+.sim-reporter-avatar {
+  width:           22px;
+  height:          22px;
+  border-radius:   50%;
+  background:      #875A7B;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-family:     'Segoe UI', sans-serif;
+  font-weight:     700;
+  font-size:       10px;
+  color:           #F5F5F6;
+  flex-shrink:     0;
+}
+
+.sim-reporter-name {
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   13px;
+  color:       #F5F5F6;
+}
+
+.sim-divider-v {
+  width:      1px;
+  height:     16px;
+  background: #5A5E6B;
+}
+
+.sim-date-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+}
+
+.sim-date-text {
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   13px;
+  color:       #F5F5F6;
+}
+
+/* ── Form grid rows ──────────────────────────────────────────────────────── */
+.sim-grid-3 {
+  display:               grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:                   14px;
+  margin-bottom:         14px;
+}
+
+.sim-grid-2 {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   14px;
+  margin-bottom:         18px;
+}
+
+.sim-grid-bottom {
+  display:               grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap:                   14px;
+  margin-bottom:         14px;
+}
+
+/* ── Field label ─────────────────────────────────────────────────────────── */
+.sim-field-label {
+  font-family:    'Segoe UI', sans-serif;
+  font-size:      11.5px;
+  font-weight:    600;
+  color:          #8A8D9A;
+  display:        block;
+  margin-bottom:  5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sim-field-label--error { color: #B83232; }
+
+/* ── Inputs ──────────────────────────────────────────────────────────────── */
+.sim-input,
+.sim-select {
+  width:       100%;
+  background:  #1B1D26;
+  border:      1px solid #5A5E6B;
+  border-radius: 4px;
+  padding:     7px 10px;
+  color:       #F5F5F6;
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   13px;
+  outline:     none;
+  box-sizing:  border-box;
+}
+.sim-input--error,
+.sim-select--error {
+  border-color: #B83232;
+}
+
+.sim-select {
+  appearance:         none;
+  -moz-appearance:    none;
+  -webkit-appearance: none;
+  cursor:             pointer;
+  padding-right:      28px;
+}
+
+.sim-select-wrap {
+  position: relative;
+  width:    100%;
+}
+
+.sim-select-caret {
+  position:       absolute;
+  right:          12px;
+  top:            50%;
+  transform:      translateY(-50%);
+  pointer-events: none;
+}
+
+.sim-textarea {
+  width:       100%;
+  background:  #1B1D26;
+  border:      1px solid #5A5E6B;
+  border-radius: 4px;
+  padding:     7px 10px;
+  color:       #F5F5F6;
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   13px;
+  outline:     none;
+  box-sizing:  border-box;
+  height:      100px;
+  resize:      vertical;
+  min-height:  70px;
+  line-height: 1.5;
+}
+
+.sim-time-input {
+  width:        100%;
+  max-width:    200px;
+  background:   #1B1D26;
+  border:       1px solid #5A5E6B;
+  border-radius: 4px;
+  padding:      7px 10px;
+  color:        #F5F5F6;
+  font-family:  'Segoe UI', sans-serif;
+  font-size:    13px;
+  outline:      none;
+  box-sizing:   border-box;
+  color-scheme: dark;
+}
+
+/* ── Injury type section ─────────────────────────────────────────────────── */
+.sim-section {
+  margin-bottom: 18px;
+}
+
+.sim-section-title {
+  font-family:   'Segoe UI', sans-serif;
+  font-weight:   700;
+  font-size:     13.5px;
+  color:         #F5F5F6;
+  display:       block;
+  margin-bottom: 10px;
+}
+.sim-section-title--error { color: #B83232; }
+
+.sim-section-subtitle {
+  font-weight: 400;
+  font-size:   11.5px;
+  margin-left: 8px;
+}
+
+.sim-injury-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   6px;
+}
+
+.sim-injury-grid--error {
+  padding:       6px;
+  border:        1px solid #B83232;
+  border-radius: 5px;
+}
+
+.sim-injury-card {
+  display:        flex;
+  flex-direction: row;
+  align-items:    center;
+  gap:            10px;
+  padding:        10px 12px;
+  background:     #1B1D26;
+  border:         1px solid #3C3E4A;
+  border-radius:  4px;
+  cursor:         pointer;
+  transition:     background 0.14s, border-color 0.14s;
+  text-align:     left;
+  width:          100%;
+}
+.sim-injury-card:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.sim-injury-card--selected {
+  background:   rgba(26, 211, 187, 0.07);
+  border-color: #1AD3BB;
+}
+
+.sim-injury-card__icon {
+  width:           34px;
+  height:          34px;
+  border:          1.5px solid #5A5E6B;
+  background:      rgba(255, 255, 255, 0.04);
+  border-radius:   4px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  color:           #8A8D9A;
+  transition:      border-color 0.14s, background 0.14s, color 0.14s;
+}
+.sim-injury-card--selected .sim-injury-card__icon {
+  border-color: #1AD3BB;
+  background:   rgba(26, 211, 187, 0.12);
+  color:        #1AD3BB;
+}
+
+.sim-injury-card__label {
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   13px;
+  font-weight: 400;
+  color:       #8A8D9A;
+  line-height: 1.4;
+  transition:  color 0.14s;
+}
+.sim-injury-card--selected .sim-injury-card__label {
+  color: #1AD3BB;
+}
+
+/* ── Severity section ────────────────────────────────────────────────────── */
+.sim-severity-options {
+  display: flex;
+  gap:     8px;
+}
+
+.sim-severity-btn {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  padding:       8px 18px;
+  border:        1px solid #3C3E4A;
+  background:    #1B1D26;
+  border-radius: 4px;
+  cursor:        pointer;
+  font-family:   'Segoe UI', sans-serif;
+  font-size:     13px;
+  font-weight:   600;
+  color:         #8A8D9A;
+  transition:    all 0.14s;
+}
+.sim-severity-btn--error {
+  border-color: #B83232;
+}
+.sim-severity-btn--selected {
+  border-color: #1AD3BB;
+  background:   rgba(26, 211, 187, 0.07);
+  color:        #1AD3BB;
+}
+
+.sim-severity-dot {
+  width:        9px;
+  height:       9px;
+  border-radius: 50%;
+  flex-shrink:  0;
+}
+
+.sim-severity-error {
+  margin-top:  6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size:   11.5px;
+  color:       #B83232;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.sim-footer {
+  display:         flex;
+  justify-content: flex-start;
+  align-items:     center;
+  padding:         12px 20px;
+  border-top:      1px solid #5A5E6B;
+  flex-shrink:     0;
+  gap:             10px;
+  background:      #2A2E3A;
+}
+
+/* ── Success popup ───────────────────────────────────────────────────────── */
+.sim-success-overlay {
+  position:        absolute;
+  inset:           0;
+  background:      rgba(0, 0, 0, 0.55);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  z-index:         10;
+  border-radius:   6px;
+  animation:       fadeIn 0.15s ease;
+}
+
+.sim-success-panel {
+  background:    #2A2E3A;
+  border:        1px solid #5A5E6B;
+  border-radius: 6px;
+  padding:       32px 40px;
+  text-align:    center;
+  min-width:     320px;
+  box-shadow:    0 8px 32px rgba(0, 0, 0, 0.5);
+  animation:     scaleIn 0.15s ease;
+}
+
+.sim-success-icon {
+  width:           44px;
+  height:          44px;
+  border-radius:   50%;
+  background:      rgba(26, 211, 187, 0.12);
+  border:          2px solid #1AD3BB;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  margin:          0 auto 16px;
+}
+
+.sim-success-text {
+  font-family:   'Segoe UI', sans-serif;
+  font-weight:   600;
+  font-size:     15px;
+  color:         #F5F5F6;
+  margin:        0 0 20px;
+}
+
+/* ── select option override ──────────────────────────────────────────────── */
+select option {
+  background: #2A2E3A;
+  color:      #F5F5F6;
+}
