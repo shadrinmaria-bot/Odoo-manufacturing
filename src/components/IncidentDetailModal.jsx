@@ -198,8 +198,8 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
 
           {/* ── Single unified inner content block ── */}
           <div style={{ padding: '0 0 4px' }}>
-            {/* Icon + injury type name */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+            {/* Icon + injury type name — border-bottom acts as row divider */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, paddingBottom: 14, marginBottom: 16, borderBottom: '1px solid #3C3E4A' }}>
               <div style={{
                 width: 46, height: 46, borderRadius: '50%', flexShrink: 0,
                 background: iconBg, border: `1px solid ${iconBorder}`,
@@ -212,11 +212,8 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
               </span>
             </div>
 
-            {/* Divider above Row 1 */}
-            <div style={{ height: 1, background: '#3C3E4A', marginBottom: 16 }} />
-
-            {/* Row 1 — 50/50: [Injured Worker + Incident Location] | [Incident Date + Worker ID] */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px', marginBottom: 16 }}>
+            {/* Row 1 — 50/50: [Injured Worker + Incident Location] | [Incident Date + Worker ID] — border-bottom acts as row divider */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px', paddingBottom: 16, marginBottom: 16, borderBottom: '1px solid #3C3E4A' }}>
               {/* Left column: Injured Worker (top) + Incident Location (bottom) */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <div>
@@ -256,10 +253,7 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Divider between Row 1 and Row 2 */}
-            <div style={{ height: 1, background: '#3C3E4A', marginBottom: 16 }} />
-
-            {/* Row 2 — 50/50: Actions Taken | Incident Details */}
+            {/* Row 2 — 50/50: Actions Taken | Incident Details (no bottom border — last row) */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
               {/* Left: Actions Taken */}
               <div>
