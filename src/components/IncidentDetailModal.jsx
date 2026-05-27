@@ -197,12 +197,11 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
         {/* ── Scrollable body — #1B1D26 matches main app background ── */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16, background: '#1B1D26' }}>
 
-          {/* ── Injury type card ── */}
+          {/* ── Single unified inner content block ── */}
           <div style={{
-            background: '#262A36',
+            background: '#2A2E3A',
             borderRadius: 6,
-            borderLeft: `3px solid ${accentColor}`,
-            padding: '14px 16px',
+            padding: '16px',
           }}>
             {/* Icon + injury type name */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
@@ -218,68 +217,74 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
               </span>
             </div>
 
-            {/* Divider */}
-            <div style={{ height: 1, background: '#3C3E4A', marginBottom: 14 }} />
+            {/* Divider above Row 1 */}
+            <div style={{ height: 1, background: '#3C3E4A', marginBottom: 16 }} />
 
-            {/* Row 1: Injured Worker | Incident Date */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 32px', marginBottom: 12 }}>
-              <div>
-                <MetaLabel>Injured Worker</MetaLabel>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <div style={{
-                    width: 20, height: 20, borderRadius: '50%', background: '#5A7BA0', flexShrink: 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: FONT, fontWeight: 700, fontSize: 9, color: '#F5F5F6',
-                  }}>
-                    {workerInitial}
+            {/* Row 1 — 50/50: [Injured Worker + Incident Location] | [Incident Date + Worker ID] */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px', marginBottom: 16 }}>
+              {/* Left column: Injured Worker (top) + Incident Location (bottom) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                  <MetaLabel>Injured Worker</MetaLabel>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                    <div style={{
+                      width: 20, height: 20, borderRadius: '50%', background: '#5A7BA0', flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: FONT, fontWeight: 700, fontSize: 9, color: '#F5F5F6',
+                    }}>
+                      {workerInitial}
+                    </div>
+                    <MetaValue>{incident.injuredWorker || '—'}</MetaValue>
                   </div>
-                  <MetaValue>{incident.injuredWorker || '—'}</MetaValue>
+                </div>
+                <div>
+                  <MetaLabel>Incident Location</MetaLabel>
+                  <MetaValue>{incident.incidentLocation || '—'}</MetaValue>
                 </div>
               </div>
-              <div>
-                <MetaLabel>Incident Date</MetaLabel>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                  </svg>
-                  <MetaValue>{incident.incidentDate || '—'}</MetaValue>
+
+              {/* Right column: Incident Date (top) + Worker ID (bottom) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                  <MetaLabel>Incident Date</MetaLabel>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+                    </svg>
+                    <MetaValue>{incident.incidentDate || '—'}</MetaValue>
+                  </div>
+                </div>
+                <div>
+                  <MetaLabel>Worker ID</MetaLabel>
+                  <MetaValue>{incident.workerId || '—'}</MetaValue>
                 </div>
               </div>
             </div>
 
-            {/* Row 2: Incident Location | Worker ID */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 32px' }}>
-              <div>
-                <MetaLabel>Incident Location</MetaLabel>
-                <MetaValue>{incident.incidentLocation || '—'}</MetaValue>
-              </div>
-              <div>
-                <MetaLabel>Worker ID</MetaLabel>
-                <MetaValue>{incident.workerId || '—'}</MetaValue>
-              </div>
-            </div>
-          </div>
+            {/* Divider between Row 1 and Row 2 */}
+            <div style={{ height: 1, background: '#3C3E4A', marginBottom: 16 }} />
 
-          {/* ── Two-column: Actions Taken | Incident Details ── */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 24 }}>
-            {/* Left: Actions Taken */}
-            <div>
-              <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13.5, color: '#F5F5F6', marginBottom: 10 }}>
-                Actions Taken
+            {/* Row 2 — 50/50: Actions Taken | Incident Details */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
+              {/* Left: Actions Taken */}
+              <div>
+                <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13.5, color: '#F5F5F6', marginBottom: 10 }}>
+                  Actions Taken
+                </div>
+                <p style={{ fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#A0A4AF', lineHeight: 1.6, margin: 0 }}>
+                  {incident.actionsTaken || '—'}
+                </p>
               </div>
-              <p style={{ fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#A0A4AF', lineHeight: 1.6, margin: 0 }}>
-                {incident.actionsTaken || '—'}
-              </p>
-            </div>
 
-            {/* Right: Incident Details */}
-            <div>
-              <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13.5, color: '#F5F5F6', marginBottom: 10 }}>
-                Incident Details
+              {/* Right: Incident Details */}
+              <div>
+                <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13.5, color: '#F5F5F6', marginBottom: 10 }}>
+                  Incident Details
+                </div>
+                <p style={{ fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#A0A4AF', lineHeight: 1.6, margin: 0 }}>
+                  {incident.incidentDetails || 'No details provided.'}
+                </p>
               </div>
-              <p style={{ fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#A0A4AF', lineHeight: 1.6, margin: 0 }}>
-                {incident.incidentDetails || 'No details provided.'}
-              </p>
             </div>
           </div>
         </div>
