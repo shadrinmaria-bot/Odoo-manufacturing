@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
+import Icon from './Icon'
 
 function CriticalIcon() {
   return (
@@ -187,25 +188,21 @@ export default function OpenSafetyItemsDropdown({
         {/* Divider before footer */}
         <div style={{ height: 1, background: '#5A5E6B' }} />
 
-        {/* Report Incident button */}
-        <div style={{ padding: '12px 14px', display: 'flex', justifyContent: 'center' }}>
+        {/* Report Incident button — identical to header button */}
+        <div style={{ padding: '12px 14px', display: 'flex', justifyContent: 'flex-start' }}>
           <button
             onClick={() => { onClose(); onReportIncident?.() }}
-            className="hover:brightness-110 transition-all"
+            className="flex items-center gap-1.5 px-3 hover:brightness-110 transition-all"
             style={{
-              background: '#B83232', borderRadius: 4,
+              background: '#F9464C', borderRadius: 4,
               fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
               fontSize: 13, color: '#F5F5F6', border: 'none', cursor: 'pointer',
               height: 33, whiteSpace: 'nowrap', minWidth: 158,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ flexShrink: 0 }}>
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            Report Incident
+            <Icon char={''} size={12} />
+            REPORT INCIDENT
           </button>
         </div>
       </div>

@@ -31,17 +31,21 @@ export default function StatusBadge({
   const [hovered, setHovered] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  // Grey zero-state: static pill, no arrow, no interactivity
+  // Grey state: button with chevron — no background hover, only chevron opacity changes
   if (variant === 'grey') {
     return (
-      <div
+      <button
+        onClick={onToggle}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
           display:        'inline-flex',
           alignItems:     'center',
-          justifyContent: 'center',
+          gap:            6,
           height:         BADGE_H,
           padding:        '5px 10.5px',
           background:     '#3A3F4B',
+          border:         'none',
           borderRadius:   4,
           fontFamily:     FONT,
           fontWeight:     FONT_W,
@@ -49,13 +53,21 @@ export default function StatusBadge({
           color:          '#ffffff',
           whiteSpace:     'nowrap',
           lineHeight:     1,
+          cursor:         'pointer',
           boxSizing:      'border-box',
           userSelect:     'none',
           flexShrink:     0,
         }}
+        aria-label={isOpen ? 'Collapse' : 'Expand'}
       >
         {label}
-      </div>
+        <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{ flexShrink: 0, opacity: hovered ? 1 : 0.5, transition: 'opacity 0.12s' }}>
+          {isOpen
+            ? <path d="M1 4.5L4 1.5L7 4.5" stroke="#ffffff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            : <path d="M1 1L4 4L7 1" stroke="#ffffff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+          }
+        </svg>
+      </button>
     )
   }
 

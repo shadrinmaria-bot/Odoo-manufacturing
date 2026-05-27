@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import {
   LineChart,
   Line,
@@ -151,8 +152,8 @@ function OdooLogo({ size = 24 }) {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function StatusDot({ blocked }) {
-  if (blocked) {
+function StatusDot({ hasCritical }) {
+  if (hasCritical) {
     return (
       <span style={{
         width: 12, height: 12, borderRadius: '50%',
@@ -164,9 +165,62 @@ function StatusDot({ blocked }) {
   return (
     <span style={{
       width: 12, height: 12, borderRadius: '50%',
-      border: '2px solid #008FE3', background: 'transparent',
+      background: '#51545D', border: '1.5px solid #51545D',
       flexShrink: 0, display: 'inline-block',
     }} />
+  )
+}
+
+function GreyBadgeDropdown({ isOpen, anchorRect, onClose, onReportIncident }) {
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    function handleMouseDown(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) onClose()
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [isOpen, onClose])
+
+  if (!isOpen || !anchorRect) return null
+
+  return ReactDOM.createPortal(
+    <>
+      <style>{`@keyframes dropdownFadeIn2{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      <div
+        ref={dropdownRef}
+        style={{
+          position: 'fixed',
+          top: anchorRect.bottom + 6,
+          right: window.innerWidth - anchorRect.right,
+          background: '#2A2E3A',
+          border: '1px solid #5A5E6B',
+          borderRadius: 6,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.55)',
+          zIndex: 1500,
+          animation: 'dropdownFadeIn2 0.13s ease',
+          overflow: 'hidden',
+          padding: '12px 14px',
+        }}
+      >
+        <button
+          onClick={() => { onClose(); onReportIncident?.() }}
+          className="flex items-center gap-1.5 px-3 hover:brightness-110 transition-all"
+          style={{
+            background: '#F9464C', borderRadius: 4,
+            fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
+            fontSize: 13, color: '#F5F5F6', border: 'none', cursor: 'pointer',
+            height: 33, whiteSpace: 'nowrap', minWidth: 158,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <Icon char={''} size={12} />
+          REPORT INCIDENT
+        </button>
+      </div>
+    </>,
+    document.body
   )
 }
 
@@ -301,7 +355,7 @@ function WorkCenterCard({
           {/* Header row */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 8px 20px' }}>
             <div className="flex items-center gap-2">
-              <StatusDot blocked={center.blocked} />
+              <StatusDot hasCritical={badgeVariant === 'red'} />
               <span style={{
                 fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
                 fontSize: 17.03, color: '#F5F5F6',
@@ -309,17 +363,17 @@ function WorkCenterCard({
                 {center.name}
               </span>
             </div>
-            <div ref={badgeRef} style={{ cursor: incidentCount > 0 ? 'pointer' : 'default' }}>
+            <div ref={badgeRef}>
               <StatusBadge
                 label={`${incidentCount} Opened Incident${incidentCount !== 1 ? 's' : ''}`}
                 variant={badgeVariant}
                 isOpen={isDropdownOpen}
-                onToggle={incidentCount > 0 ? handleBadgeClick : () => {}}
+                onToggle={handleBadgeClick}
               />
             </div>
           </div>
 
-          {/* Stats row — flex spacer enforces min 156px gap; OEE block has ~256px internal gap at 1.6 ratio */}
+          {/* Stats row — flex spacer enforces min 106px gap; OEE block has ~206px internal gap at 1.6 ratio */}
           <div
             style={{
               display: 'flex', alignItems: 'center',
@@ -328,12 +382,12 @@ function WorkCenterCard({
           >
             <WorkOrderButtons onShowChart={onShowStats} />
 
-            {/* Spacer: minimum 156px, grows proportionally */}
-            <div style={{ flex: 1, minWidth: 156 }} />
+            {/* Spacer: minimum 106px, grows proportionally */}
+            <div style={{ flex: 1, minWidth: 106 }} />
 
-            {/* OEE section: internal gap ~256px, left/right columns at 1.6 ratio */}
+            {/* OEE section: internal gap ~206px, left/right columns at 1.6 ratio */}
             <div style={{
-              flex: 1.6, minWidth: 256,
+              flex: 1.6, minWidth: 206,
               display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
             }}>
               {/* Left: status label stacked above OEE */}
@@ -379,15 +433,24 @@ function WorkCenterCard({
         </div>
       </div>
 
-      <OpenSafetyItemsDropdown
-        isOpen={isDropdownOpen}
-        anchorRect={anchorRect}
-        workCenterName={center.name}
-        incidents={incidents}
-        onClose={onCloseDropdown}
-        onViewIncident={onViewIncident}
-        onReportIncident={onReportIncident}
-      />
+      {badgeVariant === 'grey' ? (
+        <GreyBadgeDropdown
+          isOpen={isDropdownOpen}
+          anchorRect={anchorRect}
+          onClose={onCloseDropdown}
+          onReportIncident={onReportIncident}
+        />
+      ) : (
+        <OpenSafetyItemsDropdown
+          isOpen={isDropdownOpen}
+          anchorRect={anchorRect}
+          workCenterName={center.name}
+          incidents={incidents}
+          onClose={onCloseDropdown}
+          onViewIncident={onViewIncident}
+          onReportIncident={onReportIncident}
+        />
+      )}
     </>
   )
 }
