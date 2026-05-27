@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import { Button } from './Button'
 
 const FONT = "'Segoe UI', sans-serif"
 
@@ -77,12 +76,10 @@ const INJURY_TYPE_LABELS = {
   other:             'Other',
 }
 
-// ── Helper: field label ───────────────────────────────────────────────────────
-
-function DetailLabel({ children }) {
+function MetaLabel({ children }) {
   return (
     <span style={{
-      fontFamily: FONT, fontSize: 11.5, fontWeight: 600,
+      fontFamily: FONT, fontSize: 11, fontWeight: 600,
       color: '#8A8D9A', textTransform: 'uppercase', letterSpacing: '0.05em',
       display: 'block', marginBottom: 4,
     }}>
@@ -91,11 +88,9 @@ function DetailLabel({ children }) {
   )
 }
 
-function DetailValue({ children }) {
+function MetaValue({ children }) {
   return (
-    <span style={{
-      fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#F5F5F6',
-    }}>
+    <span style={{ fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#F5F5F6' }}>
       {children}
     </span>
   )
@@ -103,7 +98,7 @@ function DetailValue({ children }) {
 
 // ── IncidentDetailModal ───────────────────────────────────────────────────────
 
-export default function IncidentDetailModal({ incident, isOpen, onClose, onMarkAsDone }) {
+export default function IncidentDetailModal({ incident, isOpen, onClose }) {
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -117,13 +112,21 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onMarkA
 
   if (!isOpen || !incident) return null
 
-  const injuryId = incident.injuryType?.id || 'other'
+  const injuryId    = incident.injuryType?.id    || 'other'
   const injuryLabel = incident.injuryType?.label || INJURY_TYPE_LABELS[injuryId] || 'Other'
-  const injuryIcon = INJURY_ICONS[injuryId] || INJURY_ICONS.other
+  const injuryIcon  = INJURY_ICONS[injuryId]     || INJURY_ICONS.other
 
-  const isCritical = incident.severity === 'critical'
-  const injuryBoxBg = isCritical ? 'rgba(184,50,50,0.2)' : 'rgba(0,143,227,0.15)'
-  const injuryBoxBorder = isCritical ? '#B83232' : '#008FE3'
+  const isCritical       = incident.severity === 'critical'
+  const accentColor      = isCritical ? '#B83232' : '#008FE3'
+  const iconBg           = isCritical ? 'rgba(184,50,50,0.2)' : 'rgba(0,143,227,0.15)'
+  const iconBorder       = isCritical ? '#B83232' : '#008FE3'
+  const severityLabel    = isCritical ? 'Critical' : 'Needs Attention'
+  const severityText     = isCritical ? '#F9464C' : '#008FE3'
+  const severityBg       = isCritical ? 'rgba(249,70,76,0.12)' : 'rgba(0,143,227,0.12)'
+
+  const reporterName    = incident.reportedBy || 'Emma Granger'
+  const reporterInitial = reporterName.charAt(0).toUpperCase()
+  const workerInitial   = (incident.injuredWorker || 'W').charAt(0).toUpperCase()
 
   return (
     <div
@@ -140,8 +143,7 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onMarkA
         ref={modalRef}
         onClick={e => e.stopPropagation()}
         style={{
-          width: '95vw', maxWidth: 1064,
-          height: 'auto',
+          width: '95vw', maxWidth: 1064, maxHeight: '92vh',
           background: '#2A2E3A',
           border: '1px solid #5A5E6B',
           borderRadius: 6,
@@ -159,21 +161,18 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onMarkA
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '14px 20px',
           borderBottom: '1px solid #5A5E6B',
-          flexShrink: 0, background: '#2A2E3A',
+          flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 26, height: 26, borderRadius: 4,
-              background: 'rgba(184,50,50,0.18)', border: '1px solid rgba(184,50,50,0.45)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B83232" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </div>
             <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 16, color: '#F5F5F6' }}>
               Safety Incident Report
+            </span>
+            <span style={{
+              fontFamily: FONT, fontSize: 12, fontWeight: 600,
+              color: severityText, background: severityBg,
+              borderRadius: 4, padding: '2px 8px',
+            }}>
+              {severityLabel}
             </span>
           </div>
           <button
@@ -191,202 +190,163 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onMarkA
           </button>
         </div>
 
-        {/* ── Reporter row ── */}
+        {/* ── Scrollable body ── */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* ── Injury type card ── */}
+          <div style={{
+            background: '#1B1D26',
+            borderRadius: 6,
+            borderLeft: `3px solid ${accentColor}`,
+            padding: '14px 16px',
+          }}>
+            {/* Icon + injury type name */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+              <div style={{
+                width: 46, height: 46, borderRadius: '50%', flexShrink: 0,
+                background: iconBg, border: `1px solid ${iconBorder}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {injuryIcon}
+              </div>
+              <span style={{ fontFamily: FONT, fontSize: 14, fontWeight: 700, color: '#F5F5F6', lineHeight: 1.35 }}>
+                {injuryLabel}
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div style={{ height: 1, background: '#3C3E4A', marginBottom: 14 }} />
+
+            {/* Row 1: Injured Worker | Incident Date */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 32px', marginBottom: 12 }}>
+              <div>
+                <MetaLabel>Injured Worker</MetaLabel>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <div style={{
+                    width: 20, height: 20, borderRadius: '50%', background: '#5A7BA0', flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: FONT, fontWeight: 700, fontSize: 9, color: '#F5F5F6',
+                  }}>
+                    {workerInitial}
+                  </div>
+                  <MetaValue>{incident.injuredWorker || '—'}</MetaValue>
+                </div>
+              </div>
+              <div>
+                <MetaLabel>Incident Date</MetaLabel>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+                  </svg>
+                  <MetaValue>{incident.incidentDate || '—'}</MetaValue>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Incident Location | Worker ID */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 32px' }}>
+              <div>
+                <MetaLabel>Incident Location</MetaLabel>
+                <MetaValue>{incident.incidentLocation || '—'}</MetaValue>
+              </div>
+              <div>
+                <MetaLabel>Worker ID</MetaLabel>
+                <MetaValue>{incident.workerId || '—'}</MetaValue>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Two-column: Actions Taken | Incident Details ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 24 }}>
+            {/* Left: Actions Taken */}
+            <div>
+              <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13.5, color: '#F5F5F6', marginBottom: 10 }}>
+                Actions Taken
+              </div>
+              <p style={{ fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#A0A4AF', lineHeight: 1.6, margin: 0 }}>
+                {incident.actionsTaken || '—'}
+              </p>
+            </div>
+
+            {/* Right: Incident Details */}
+            <div>
+              <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13.5, color: '#F5F5F6', marginBottom: 10 }}>
+                Incident Details
+              </div>
+              <p style={{ fontFamily: FONT, fontSize: 13, fontWeight: 400, color: '#A0A4AF', lineHeight: 1.6, margin: 0 }}>
+                {incident.incidentDetails || 'No details provided.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Footer ── */}
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 20,
-          padding: '10px 14px',
-          background: '#1B1D26', border: '1px solid #5A5E6B',
-          margin: '16px 20px 0',
-          borderRadius: 4,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '12px 20px',
+          borderTop: '1px solid #5A5E6B',
+          flexShrink: 0, gap: 16,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* Left: Share + Print */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              style={{
+                background: '#654064', borderRadius: 4, border: 'none',
+                padding: '7px 18px', cursor: 'pointer',
+                fontFamily: FONT, fontSize: 13, fontWeight: 600, color: '#F5F5F6',
+              }}
+              onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
+              onMouseLeave={e => e.currentTarget.style.filter = 'none'}
+            >
+              Share
+            </button>
+            <button
+              style={{
+                background: '#654064', borderRadius: 4, border: 'none',
+                padding: '7px 18px', cursor: 'pointer',
+                fontFamily: FONT, fontSize: 13, fontWeight: 600, color: '#F5F5F6',
+              }}
+              onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.15)'}
+              onMouseLeave={e => e.currentTarget.style.filter = 'none'}
+            >
+              Print
+            </button>
+          </div>
+
+          {/* Right: Reporter info */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             <span style={{
-              fontFamily: FONT, fontSize: 11.5, fontWeight: 600,
+              fontFamily: FONT, fontSize: 11, fontWeight: 600,
               color: '#8A8D9A', textTransform: 'uppercase', letterSpacing: '0.05em',
             }}>
               Reported By
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
               <div style={{
-                width: 22, height: 22, borderRadius: '50%', background: '#875A7B',
+                width: 22, height: 22, borderRadius: '50%', background: '#875A7B', flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: FONT, fontWeight: 700, fontSize: 10, color: '#F5F5F6', flexShrink: 0,
-              }}>E</div>
-              <span style={{ fontFamily: FONT, fontSize: 13, color: '#F5F5F6' }}>
-                {incident.reportedBy || 'Emma Granger'}
-              </span>
-            </div>
-          </div>
-          <div style={{ width: 1, height: 16, background: '#5A5E6B', flexShrink: 0 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{
-              fontFamily: FONT, fontSize: 11.5, fontWeight: 600,
-              color: '#8A8D9A', textTransform: 'uppercase', letterSpacing: '0.05em',
-            }}>
-              Incident Date
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-              </svg>
-              <span style={{ fontFamily: FONT, fontSize: 13, color: '#F5F5F6' }}>
-                {incident.incidentDate || '—'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Worker / Location section ── */}
-        <div style={{
-          padding: '16px 20px',
-          background: '#1B1D26', border: '1px solid #5A5E6B',
-          margin: '12px 20px 16px',
-          borderRadius: 4,
-        }}>
-          {/* Row 1: 3 cols */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 14 }}>
-            <div>
-              <DetailLabel>Injured Worker</DetailLabel>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
-                  <circle cx="12" cy="7" r="4" /><path d="M20 21a8 8 0 10-16 0" />
-                </svg>
-                <DetailValue>{incident.injuredWorker || '—'}</DetailValue>
-              </div>
-            </div>
-            <div>
-              <DetailLabel>Worker ID</DetailLabel>
-              <DetailValue>{incident.workerId || '—'}</DetailValue>
-            </div>
-            <div>
-              <DetailLabel>Job Title</DetailLabel>
-              <DetailValue>{incident.jobTitle || '—'}</DetailValue>
-            </div>
-          </div>
-          {/* Row 2: 2 cols */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div>
-              <DetailLabel>Incident Location</DetailLabel>
-              <DetailValue>{incident.incidentLocation || '—'}</DetailValue>
-            </div>
-            <div>
-              <DetailLabel>Work Center Location</DetailLabel>
-              <DetailValue>{incident.workCenterLocation || '—'}</DetailValue>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Horizontal divider ── */}
-        <div style={{ height: 1, background: '#5A5E6B', margin: '0 20px' }} />
-
-        {/* ── Two-column section ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1.5fr 1fr',
-          gap: 24,
-          padding: '16px 20px',
-        }}>
-          {/* Left: Incident Details */}
-          <div>
-            <div style={{
-              fontFamily: FONT, fontWeight: 700, fontSize: 13.5,
-              color: '#F5F5F6', marginBottom: 10,
-            }}>
-              Incident Details
-            </div>
-            <p style={{
-              fontFamily: FONT, fontSize: 13, fontWeight: 400,
-              color: '#A0A4AF', lineHeight: 1.6, margin: 0,
-            }}>
-              {incident.incidentDetails || 'No details provided.'}
-            </p>
-          </div>
-
-          {/* Right: Type of Injury + Actions Taken */}
-          <div>
-            <div style={{
-              fontFamily: FONT, fontWeight: 700, fontSize: 13.5,
-              color: '#F5F5F6', marginBottom: 10,
-            }}>
-              Type Of Injury
-            </div>
-            {/* Injury card */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 12,
-              marginBottom: 14,
-            }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 4, flexShrink: 0,
-                background: injuryBoxBg,
-                border: `1px solid ${injuryBoxBorder}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: FONT, fontWeight: 700, fontSize: 10, color: '#F5F5F6',
               }}>
-                {injuryIcon}
+                {reporterInitial}
               </div>
-              <span style={{
-                fontFamily: FONT, fontSize: 13, color: '#F5F5F6', lineHeight: 1.4,
-              }}>
-                {injuryLabel}
+              <span style={{ fontFamily: FONT, fontSize: 13, color: '#F5F5F6' }}>
+                {reporterName}
+                {incident.jobTitle && (
+                  <span style={{ color: '#8A8D9A' }}>, {incident.jobTitle}</span>
+                )}
               </span>
             </div>
-
-            <div style={{
-              fontFamily: FONT, fontWeight: 700, fontSize: 13.5,
-              color: '#F5F5F6', marginBottom: 8, marginTop: 14,
-            }}>
-              Actions Taken
-            </div>
-            <p style={{
-              fontFamily: FONT, fontSize: 13, fontWeight: 400,
-              color: '#A0A4AF', lineHeight: 1.6, margin: 0,
-            }}>
-              {incident.actionsTaken || '—'}
-            </p>
+            {incident.incidentDate && (
+              <span style={{ fontFamily: FONT, fontSize: 12, color: '#6A6D7A' }}>
+                {incident.incidentDate}
+              </span>
+            )}
           </div>
-        </div>
-
-        {/* ── Footer ── */}
-        <div style={{
-          display: 'flex', justifyContent: 'flex-start', alignItems: 'center',
-          padding: '12px 20px',
-          borderTop: '1px solid #5A5E6B',
-          flexShrink: 0, gap: 10, background: '#2A2E3A',
-        }}>
-          <Button
-            variant="purple"
-            onClick={() => {
-              if (incident && onMarkAsDone) onMarkAsDone(incident.id)
-              onClose()
-            }}
-            style={{
-              padding: '8px 22px',
-              fontFamily: FONT, fontWeight: 600, fontSize: 13,
-              letterSpacing: '0.04em',
-            }}
-          >
-            MARK AS DONE
-          </Button>
-          <Button
-            style={{
-              padding: '8px 20px',
-              fontFamily: FONT, fontWeight: 600, fontSize: 13,
-            }}
-          >
-            Share
-          </Button>
-          <Button
-            style={{
-              padding: '8px 20px',
-              fontFamily: FONT, fontWeight: 600, fontSize: 13,
-            }}
-          >
-            Print
-          </Button>
         </div>
       </div>
 
       <style>{`
-        @keyframes idmFadeIn  { from { opacity: 0; }                        to { opacity: 1; } }
+        @keyframes idmFadeIn  { from { opacity: 0; }                         to { opacity: 1; } }
         @keyframes idmScaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
       `}</style>
     </div>
