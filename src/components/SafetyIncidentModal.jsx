@@ -15,7 +15,7 @@ const WORKERS = [
 
 const SEVERITY_OPTIONS = [
   { value: 'critical',   label: 'Critical',        color: '#B83232' },
-  { value: 'attention',  label: 'Needs Attention',  color: '#E8A100' },
+  { value: 'attention',  label: 'Needs Attention',  color: '#008FE3' },
 ]
 
 // ── Injury type definitions (icons use currentColor) ──────────────────────────

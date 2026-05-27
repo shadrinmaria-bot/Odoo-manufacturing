@@ -195,7 +195,7 @@ export const WORK_CENTER_COLORS = {
 }
 
 export const PALETTE = [
-  '#7FBFEF', '#EF6A82', '#5DD3B0', '#FBB945', '#B79CDF',
+  '#7FBFEF', '#EF6A82', '#5DD3B0', '#008FE3', '#B79CDF',
   '#F5946D', '#E26370', '#7AC7F1', '#9BE3C1', '#B5D49D',
 ]
 
@@ -204,7 +204,7 @@ export const PALETTE = [
 // PALETTE in domain order.
 export function colorFor(dim, key, index = 0) {
   if (dim?.id === 'workCenter' && WORK_CENTER_COLORS[key]) return WORK_CENTER_COLORS[key]
-  if (dim?.id === 'severity') return key === 'Critical' ? '#F9464C' : '#FBB945'
+  if (dim?.id === 'severity') return key === 'Critical' ? '#F9464C' : '#008FE3'
   const domain = dim?.domain
   if (domain) {
     const i = domain.indexOf(key)

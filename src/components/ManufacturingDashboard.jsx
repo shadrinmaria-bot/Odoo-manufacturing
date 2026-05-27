@@ -140,7 +140,7 @@ const DEMO_INCIDENTS = {
 function getVariantFromIncidents(list) {
   if (!list?.length) return 'grey'
   if (list.some(i => i.severity === 'critical')) return 'red'
-  return 'orange'
+  return 'blue'
 }
 
 // ── Odoo Logo ─────────────────────────────────────────────────────────────────
@@ -164,7 +164,7 @@ function StatusDot({ blocked }) {
   return (
     <span style={{
       width: 12, height: 12, borderRadius: '50%',
-      border: '2px solid #51545D', background: 'transparent',
+      border: '2px solid #008FE3', background: 'transparent',
       flexShrink: 0, display: 'inline-block',
     }} />
   )
@@ -319,18 +319,24 @@ function WorkCenterCard({
             </div>
           </div>
 
-          {/* Stats row — buttons pinned left, OEE section pinned right */}
+          {/* Stats row — buttons pinned left, OEE section at fixed proportional position */}
           <div
             style={{
+              position: 'relative',
               display: 'flex', alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingLeft: 20, paddingRight: 16, paddingBottom: 12,
+              paddingLeft: 20, paddingBottom: 12,
+              minHeight: 44,
             }}
           >
             <WorkOrderButtons onShowChart={onShowStats} />
 
-            {/* OEE section: label column + spacer + number column */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+            {/* OEE section — positioned at left: 156/(156+260) = 37.5% of card width,
+                derived from the 260px/156px reference ratio */}
+            <div style={{
+              position: 'absolute',
+              left: 'calc(156 / (156 + 260) * 100%)',
+              display: 'flex', alignItems: 'flex-start', gap: 16,
+            }}>
               {/* Left: status label stacked above OEE */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {center.statusLabel && (

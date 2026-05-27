@@ -122,8 +122,8 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onMarkA
   const injuryIcon = INJURY_ICONS[injuryId] || INJURY_ICONS.other
 
   const isCritical = incident.severity === 'critical'
-  const injuryBoxBg = isCritical ? 'rgba(184,50,50,0.2)' : 'rgba(232,161,0,0.15)'
-  const injuryBoxBorder = isCritical ? '#B83232' : '#E8A100'
+  const injuryBoxBg = isCritical ? 'rgba(184,50,50,0.2)' : 'rgba(0,143,227,0.15)'
+  const injuryBoxBorder = isCritical ? '#B83232' : '#008FE3'
 
   return (
     <div
