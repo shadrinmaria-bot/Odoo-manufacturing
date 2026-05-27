@@ -157,7 +157,7 @@ function StatusDot({ hasCritical }) {
     return (
       <span style={{
         width: 12, height: 12, borderRadius: '50%',
-        background: '#B83232', border: '1.5px solid #C45A5A',
+        background: '#B83232', border: '1px solid #C45A5A',
         flexShrink: 0, display: 'inline-block',
       }} />
     )
@@ -165,7 +165,7 @@ function StatusDot({ hasCritical }) {
   return (
     <span style={{
       width: 12, height: 12, borderRadius: '50%',
-      background: '#51545D', border: '1.5px solid #51545D',
+      background: 'transparent', border: '1px solid #51545D',
       flexShrink: 0, display: 'inline-block',
     }} />
   )
@@ -382,12 +382,12 @@ function WorkCenterCard({
           >
             <WorkOrderButtons onShowChart={onShowStats} />
 
-            {/* Spacer: minimum 106px, grows proportionally */}
-            <div style={{ flex: 1, minWidth: 106 }} />
+            {/* Spacer: minimum 85px, grows proportionally */}
+            <div style={{ flex: 1, minWidth: 85 }} />
 
-            {/* OEE section: internal gap ~206px, left/right columns at 1.6 ratio */}
+            {/* OEE section: internal gap ~165px, left/right columns at 1.6 ratio */}
             <div style={{
-              flex: 1.6, minWidth: 206,
+              flex: 1.6, minWidth: 165,
               display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
             }}>
               {/* Left: status label stacked above OEE */}
