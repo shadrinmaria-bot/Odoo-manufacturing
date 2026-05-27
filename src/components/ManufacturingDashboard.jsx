@@ -295,7 +295,7 @@ function WorkCenterCard({
       <div
         className="flex flex-col overflow-hidden transition-all"
         style={{
-          flex: 1, minWidth: 0, height: 263,
+          flex: '1 1 360px', minWidth: 360, height: 263,
           background: '#262A36',
           border: '0.63px solid #3C3E4A',
           borderRadius: 0,
@@ -323,6 +323,7 @@ function WorkCenterCard({
                   dataKey="week"
                   tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
                   axisLine={false} tickLine={false}
+                  interval="preserveStartEnd"
                 />
                 <YAxis hide domain={[0, 'auto']} />
                 <Tooltip content={<CustomTooltip />} />
@@ -353,8 +354,8 @@ function WorkCenterCard({
         {/* Content layer — above chart, below accent line overlap */}
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
           {/* Header row */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 8px 20px' }}>
-            <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', rowGap: 6, padding: '16px 16px 8px 20px' }}>
+            <div className="flex items-center gap-2" style={{ minWidth: 0, flex: '1 1 auto' }}>
               <StatusDot hasCritical={badgeVariant === 'red'} />
               <span style={{
                 fontFamily: "'Segoe UI', sans-serif", fontWeight: 600,
@@ -382,12 +383,12 @@ function WorkCenterCard({
           >
             <WorkOrderButtons onShowChart={onShowStats} />
 
-            {/* Spacer: minimum 85px, grows proportionally */}
-            <div style={{ flex: 1, minWidth: 85 }} />
+            {/* Spacer: scales proportionally, can compress to zero on narrow cards */}
+            <div style={{ flex: 1, minWidth: 0 }} />
 
-            {/* OEE section: internal gap ~165px, left/right columns at 1.6 ratio */}
+            {/* OEE section: internal gap scales at 1.6 ratio relative to spacer */}
             <div style={{
-              flex: 1.6, minWidth: 165,
+              flex: 1.6, minWidth: 0,
               display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
             }}>
               {/* Left: status label stacked above OEE */}
@@ -897,7 +898,7 @@ export default function ManufacturingDashboard() {
         <>
           <SubHeader onOpenModal={() => setIsModalOpen(true)} />
           <main className="flex-1 p-4">
-            <div style={{ display: 'flex', gap: 10, width: '100%' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, width: '100%' }}>
               {workCenters.map((center) => (
                 <WorkCenterCard
                   key={center.id}
