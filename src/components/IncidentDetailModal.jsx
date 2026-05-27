@@ -116,13 +116,12 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
   const injuryLabel = incident.injuryType?.label || INJURY_TYPE_LABELS[injuryId] || 'Other'
   const injuryIcon  = INJURY_ICONS[injuryId]     || INJURY_ICONS.other
 
-  const isCritical       = incident.severity === 'critical'
-  const accentColor      = isCritical ? '#B83232' : '#008FE3'
-  const iconBg           = isCritical ? 'rgba(184,50,50,0.2)' : 'rgba(0,143,227,0.15)'
-  const iconBorder       = isCritical ? '#B83232' : '#008FE3'
-  const severityLabel    = isCritical ? 'Critical' : 'Needs Attention'
-  const severityText     = isCritical ? '#F9464C' : '#008FE3'
-  const severityBg       = isCritical ? 'rgba(249,70,76,0.12)' : 'rgba(0,143,227,0.12)'
+  const isCritical   = incident.severity === 'critical'
+  const accentColor  = isCritical ? '#B83232' : '#008FE3'
+  const iconBg       = isCritical ? 'rgba(184,50,50,0.2)' : 'rgba(0,143,227,0.15)'
+  const iconBorder   = isCritical ? '#B83232' : '#008FE3'
+  const severityLabel = isCritical ? 'Critical' : 'Needs Attention'
+  const severityBadgeBg = isCritical ? '#F9464C' : '#008FE3'
 
   const reporterName    = incident.reportedBy || 'Emma Granger'
   const reporterInitial = reporterName.charAt(0).toUpperCase()
@@ -167,10 +166,15 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
             <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 16, color: '#F5F5F6' }}>
               Safety Incident Report
             </span>
+            {/* Severity badge — matches StatusBadge dimensions and fill exactly, display-only */}
             <span style={{
-              fontFamily: FONT, fontSize: 12, fontWeight: 600,
-              color: severityText, background: severityBg,
-              borderRadius: 4, padding: '2px 8px',
+              display: 'inline-flex', alignItems: 'center',
+              height: 22, padding: '5px 10.5px',
+              background: severityBadgeBg,
+              borderRadius: 4,
+              fontFamily: FONT, fontWeight: 600, fontSize: 11.87,
+              color: '#000000',
+              whiteSpace: 'nowrap', lineHeight: 1, boxSizing: 'border-box',
             }}>
               {severityLabel}
             </span>
@@ -190,12 +194,12 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
           </button>
         </div>
 
-        {/* ── Scrollable body ── */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* ── Scrollable body — #1B1D26 matches main app background ── */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16, background: '#1B1D26' }}>
 
           {/* ── Injury type card ── */}
           <div style={{
-            background: '#1B1D26',
+            background: '#262A36',
             borderRadius: 6,
             borderLeft: `3px solid ${accentColor}`,
             padding: '14px 16px',
@@ -302,7 +306,7 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
             </button>
             <button
               style={{
-                background: '#654064', borderRadius: 4, border: 'none',
+                background: '#3C3E4B', borderRadius: 4, border: 'none',
                 padding: '7px 18px', cursor: 'pointer',
                 fontFamily: FONT, fontSize: 13, fontWeight: 600, color: '#F5F5F6',
               }}
