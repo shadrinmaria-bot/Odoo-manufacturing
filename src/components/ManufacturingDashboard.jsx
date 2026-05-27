@@ -319,23 +319,22 @@ function WorkCenterCard({
             </div>
           </div>
 
-          {/* Stats row — buttons pinned left, OEE section at fixed proportional position */}
+          {/* Stats row — flex spacer enforces min 156px gap; OEE block has ~256px internal gap at 1.6 ratio */}
           <div
             style={{
-              position: 'relative',
               display: 'flex', alignItems: 'center',
-              paddingLeft: 20, paddingBottom: 12,
-              minHeight: 44,
+              paddingLeft: 20, paddingRight: 16, paddingBottom: 12,
             }}
           >
             <WorkOrderButtons onShowChart={onShowStats} />
 
-            {/* OEE section — positioned at left: 156/(156+260) = 37.5% of card width,
-                derived from the 260px/156px reference ratio */}
+            {/* Spacer: minimum 156px, grows proportionally */}
+            <div style={{ flex: 1, minWidth: 156 }} />
+
+            {/* OEE section: internal gap ~256px, left/right columns at 1.6 ratio */}
             <div style={{
-              position: 'absolute',
-              left: 'calc(156 / (156 + 260) * 100%)',
-              display: 'flex', alignItems: 'flex-start', gap: 16,
+              flex: 1.6, minWidth: 256,
+              display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
             }}>
               {/* Left: status label stacked above OEE */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -387,7 +386,6 @@ function WorkCenterCard({
         incidents={incidents}
         onClose={onCloseDropdown}
         onViewIncident={onViewIncident}
-        onDeleteIncident={(incidentId) => onDeleteIncident(center.id, incidentId)}
         onReportIncident={onReportIncident}
       />
     </>
