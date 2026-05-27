@@ -366,7 +366,7 @@ function WorkCenterCard({
             </div>
             <div ref={badgeRef}>
               <StatusBadge
-                label={`${incidentCount} Opened Incident${incidentCount !== 1 ? 's' : ''}`}
+                label={`${incidentCount} Incident${incidentCount !== 1 ? 's' : ''}`}
                 variant={badgeVariant}
                 isOpen={isDropdownOpen}
                 onToggle={handleBadgeClick}

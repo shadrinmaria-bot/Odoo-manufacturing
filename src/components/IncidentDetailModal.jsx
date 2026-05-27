@@ -159,7 +159,6 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '14px 20px',
-          borderBottom: '1px solid #5A5E6B',
           flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -194,15 +193,11 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
           </button>
         </div>
 
-        {/* ── Scrollable body — #1B1D26 matches main app background ── */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16, background: '#1B1D26' }}>
+        {/* ── Scrollable body ── */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* ── Single unified inner content block ── */}
-          <div style={{
-            background: '#2A2E3A',
-            borderRadius: 6,
-            padding: '16px',
-          }}>
+          <div style={{ padding: '0 0 4px' }}>
             {/* Icon + injury type name */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
               <div style={{
@@ -293,7 +288,6 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '12px 20px',
-          borderTop: '1px solid #5A5E6B',
           flexShrink: 0, gap: 16,
         }}>
           {/* Left: Share + Print */}

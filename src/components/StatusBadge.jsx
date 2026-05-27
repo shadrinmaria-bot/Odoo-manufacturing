@@ -11,7 +11,7 @@ const VARIANTS = {
   red: {
     bg:       '#F9464C',
     activeBg: '#FF6267',
-    text:     '#ffffff',
+    text:     '#000000',
   },
   blue: {
     bg:       '#008FE3',
