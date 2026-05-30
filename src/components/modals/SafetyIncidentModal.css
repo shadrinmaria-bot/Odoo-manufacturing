@@ -16,15 +16,15 @@
   width:          95vw;
   max-width:      1064px;
   height:         min(869px, 94vh);
-  background:     #2A2E3A;
-  border:         1px solid #5A5E6B;
+  background:     var(--color-modal);
+  border:         1px solid var(--color-border-light);
   border-radius:  6px;
   box-shadow:     0 24px 64px rgba(0, 0, 0, 0.65);
   display:        flex;
   flex-direction: column;
   overflow:       hidden;
   animation:      scaleIn 0.18s ease;
-  font-family:    'Segoe UI', sans-serif;
+  font-family:    var(--font-ui);
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -32,323 +32,267 @@
   display:         flex;
   align-items:     center;
   justify-content: space-between;
-  padding:         14px 20px;
-  border-bottom:   1px solid #5A5E6B;
+  padding:         16px 22px;
+  border-bottom:   1px solid var(--color-border);
   flex-shrink:     0;
-  background:      #2A2E3A;
-}
-
-.sim-header__left {
-  display:     flex;
-  align-items: center;
-  gap:         10px;
-}
-
-.sim-header__icon {
-  width:           26px;
-  height:          26px;
-  border-radius:   4px;
-  background:      rgba(184, 50, 50, 0.18);
-  border:          1px solid rgba(184, 50, 50, 0.45);
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  flex-shrink:     0;
+  background:      var(--color-modal);
 }
 
 .sim-header__title {
-  font-family:  'Segoe UI', sans-serif;
+  font-family:  var(--font-ui);
   font-weight:  700;
-  font-size:    16px;
-  color:        #F5F5F6;
+  font-size:    17px;
+  color:        var(--color-text);
 }
 
 .sim-close-btn {
   background:    none;
   border:        none;
   cursor:        pointer;
-  color:         #8A8D9A;
+  color:         var(--color-text-muted);
   padding:       4px;
   border-radius: 4px;
   display:       flex;
   align-items:   center;
   transition:    color 0.12s;
 }
-.sim-close-btn:hover { color: #F5F5F6; }
+.sim-close-btn:hover { color: var(--color-text); }
 
 /* ── Scrollable body ─────────────────────────────────────────────────────── */
 .sim-body {
   overflow-y: auto;
   flex:       1;
-  padding:    18px 20px 0;
+  padding:    18px 24px 0;
 }
 
-/* ── Reporter info bar ───────────────────────────────────────────────────── */
-.sim-reporter-bar {
+/* ── Reporter row ────────────────────────────────────────────────────────── */
+.sim-reporter-row {
   display:       flex;
   align-items:   center;
-  gap:           36px;
+  gap:           40px;
+  padding:       4px 0 16px;
   margin-bottom: 18px;
-  padding:       10px 14px;
-  background:    #1B1D26;
-  border:        1px solid #5A5E6B;
-  border-radius: 4px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.sim-reporter-bar__group {
+.sim-reporter-row__group {
   display:     flex;
   align-items: center;
   gap:         10px;
 }
 
-.sim-meta-label {
-  font-family:    'Segoe UI', sans-serif;
-  font-size:      11.5px;
-  font-weight:    600;
-  color:          #8A8D9A;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.sim-reporter-user {
-  display:     flex;
-  align-items: center;
-  gap:         7px;
-}
-
 .sim-reporter-avatar {
-  width:           22px;
-  height:          22px;
+  width:           28px;
+  height:          28px;
   border-radius:   50%;
-  background:      #875A7B;
+  background:      var(--color-avatar);
   display:         flex;
   align-items:     center;
   justify-content: center;
-  font-family:     'Segoe UI', sans-serif;
+  font-family:     var(--font-ui);
   font-weight:     700;
-  font-size:       10px;
-  color:           #F5F5F6;
+  font-size:       12px;
+  color:           var(--color-text);
   flex-shrink:     0;
+  overflow:        hidden;
 }
+.sim-reporter-avatar--img { object-fit: cover; }
 
 .sim-reporter-name {
-  font-family: 'Segoe UI', sans-serif;
-  font-size:   13px;
-  color:       #F5F5F6;
-}
-
-.sim-divider-v {
-  width:      1px;
-  height:     16px;
-  background: #5A5E6B;
-}
-
-.sim-date-row {
-  display:     flex;
-  align-items: center;
-  gap:         6px;
+  font-family: var(--font-ui);
+  font-size:   13.5px;
+  color:       var(--color-text);
 }
 
 .sim-date-text {
-  font-family: 'Segoe UI', sans-serif;
-  font-size:   13px;
-  color:       #F5F5F6;
+  font-family: var(--font-ui);
+  font-size:   13.5px;
+  color:       var(--color-text);
 }
 
-/* ── Form grid rows ──────────────────────────────────────────────────────── */
+/* ── Grid rows ───────────────────────────────────────────────────────────── */
 .sim-grid-3 {
   display:               grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap:                   14px;
-  margin-bottom:         14px;
+  grid-template-columns: 1.4fr 1.4fr 1fr;
+  gap:                   28px;
+  margin-bottom:         18px;
 }
 
-.sim-grid-2 {
+.sim-grid-2-aligned {
   display:               grid;
-  grid-template-columns: 1fr 1fr;
-  gap:                   14px;
-  margin-bottom:         18px;
+  grid-template-columns: 1.4fr 1.4fr 1fr;
+  gap:                   28px;
+  margin-bottom:         24px;
+}
+.sim-grid-2-aligned > :nth-child(3) { display: none; }
+
+.sim-bottom-divider {
+  height:        1px;
+  background:    var(--color-border);
+  margin:        4px 0 18px;
 }
 
 .sim-grid-bottom {
   display:               grid;
-  grid-template-columns: 1.6fr 1fr;
-  gap:                   14px;
-  margin-bottom:         14px;
+  grid-template-columns: 1.4fr 1fr;
+  gap:                   40px;
+  margin-bottom:         18px;
 }
 
-/* ── Field label ─────────────────────────────────────────────────────────── */
-.sim-field-label {
-  font-family:    'Segoe UI', sans-serif;
-  font-size:      11.5px;
-  font-weight:    600;
-  color:          #8A8D9A;
-  display:        block;
-  margin-bottom:  5px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.sim-bottom-right {
+  display:        flex;
+  flex-direction: column;
+  gap:            18px;
 }
-.sim-field-label--error { color: #B83232; }
 
-/* ── Inputs ──────────────────────────────────────────────────────────────── */
-.sim-input,
-.sim-select {
-  width:       100%;
-  background:  #1B1D26;
-  border:      1px solid #5A5E6B;
-  border-radius: 4px;
-  padding:     7px 10px;
-  color:       #F5F5F6;
-  font-family: 'Segoe UI', sans-serif;
+/* ── Inline (label-left) rows ────────────────────────────────────────────── */
+.sim-inline-row {
+  display:     flex;
+  align-items: center;
+  gap:         14px;
+  flex-wrap:   wrap;
+}
+
+.sim-inline-label {
+  font-family: var(--font-ui);
   font-size:   13px;
-  outline:     none;
-  box-sizing:  border-box;
+  font-weight: 700;
+  color:       var(--color-text);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
-.sim-input--error,
-.sim-select--error {
-  border-color: #B83232;
+.sim-inline-label--error { color: var(--color-danger); }
+
+.sim-inline-field {
+  flex:      1;
+  min-width: 0;
+  display:   flex;
+  flex-direction: column;
+  gap:       6px;
 }
 
-.sim-select {
-  appearance:         none;
-  -moz-appearance:    none;
-  -webkit-appearance: none;
-  cursor:             pointer;
-  padding-right:      28px;
+/* ── Underline fields (Odoo style) ───────────────────────────────────────── */
+.sim-uline {
+  width:        100%;
+  background:   transparent;
+  border:       none;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  padding:      4px 0;
+  color:        var(--color-text);
+  font-family:  var(--font-ui);
+  font-size:    13px;
+  outline:      none;
+  box-sizing:   border-box;
+  transition:   border-color 0.12s;
 }
+.sim-uline::placeholder { color: var(--color-text-dim); }
+.sim-uline:hover         { border-bottom-color: var(--color-border-light); }
+.sim-uline:focus         { border-bottom-color: var(--color-accent); }
+.sim-uline--error        { border-bottom-color: var(--color-danger); }
+.sim-uline--secondary    { margin-top: 2px; }
 
-.sim-select-wrap {
+.sim-uline--time { color-scheme: dark; max-width: 220px; }
+
+.sim-uline-wrap {
   position: relative;
   width:    100%;
 }
 
-.sim-select-caret {
+.sim-uline--select {
+  appearance:         none;
+  -moz-appearance:    none;
+  -webkit-appearance: none;
+  cursor:             pointer;
+  padding-right:      22px;
+}
+
+.sim-uline-caret {
   position:       absolute;
-  right:          12px;
+  right:          4px;
   top:            50%;
   transform:      translateY(-50%);
   pointer-events: none;
+  display:        flex;
+  align-items:    center;
 }
 
-.sim-textarea {
-  width:       100%;
-  background:  #1B1D26;
-  border:      1px solid #5A5E6B;
-  border-radius: 4px;
-  padding:     7px 10px;
-  color:       #F5F5F6;
-  font-family: 'Segoe UI', sans-serif;
-  font-size:   13px;
-  outline:     none;
-  box-sizing:  border-box;
-  height:      100px;
-  resize:      vertical;
-  min-height:  70px;
-  line-height: 1.5;
-}
-
-.sim-time-input {
-  width:        100%;
-  max-width:    200px;
-  background:   #1B1D26;
-  border:       1px solid #5A5E6B;
-  border-radius: 4px;
-  padding:      7px 10px;
-  color:        #F5F5F6;
-  font-family:  'Segoe UI', sans-serif;
-  font-size:    13px;
-  outline:      none;
-  box-sizing:   border-box;
-  color-scheme: dark;
-}
-
-/* ── Injury type section ─────────────────────────────────────────────────── */
+/* ── Section header ──────────────────────────────────────────────────────── */
 .sim-section {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .sim-section-title {
-  font-family:   'Segoe UI', sans-serif;
+  font-family:   var(--font-ui);
   font-weight:   700;
-  font-size:     13.5px;
-  color:         #F5F5F6;
+  font-size:     14px;
+  color:         var(--color-text);
   display:       block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
-.sim-section-title--error { color: #B83232; }
+.sim-section-title--error { color: var(--color-danger); }
 
 .sim-section-subtitle {
   font-weight: 400;
-  font-size:   11.5px;
+  font-size:   12px;
   margin-left: 8px;
+  color:       var(--color-danger);
 }
 
+/* ── Injury type grid ────────────────────────────────────────────────────── */
 .sim-injury-grid {
   display:               grid;
   grid-template-columns: repeat(3, 1fr);
-  gap:                   6px;
-}
-
-.sim-injury-grid--error {
-  padding:       6px;
-  border:        1px solid #B83232;
-  border-radius: 5px;
+  gap:                   12px 28px;
 }
 
 .sim-injury-card {
-  display:        flex;
-  flex-direction: row;
-  align-items:    center;
-  gap:            10px;
-  padding:        10px 12px;
-  background:     #1B1D26;
-  border:         1px solid #3C3E4A;
-  border-radius:  4px;
-  cursor:         pointer;
-  transition:     background 0.14s, border-color 0.14s;
-  text-align:     left;
-  width:          100%;
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+  padding:     4px 0;
+  background:  transparent;
+  border:      none;
+  cursor:      pointer;
+  text-align:  left;
+  width:       100%;
 }
-.sim-injury-card:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-.sim-injury-card--selected {
-  background:   rgba(26, 211, 187, 0.07);
-  border-color: #1AD3BB;
-}
+.sim-injury-card--empty { visibility: hidden; cursor: default; }
 
-.sim-injury-card__icon {
-  width:           34px;
-  height:          34px;
-  border:          1.5px solid #5A5E6B;
-  background:      rgba(255, 255, 255, 0.04);
-  border-radius:   4px;
+.sim-injury-card__tile {
+  width:           50px;
+  height:          50px;
+  border-radius:   8px;
+  background:      var(--color-card);
   display:         flex;
   align-items:     center;
   justify-content: center;
   flex-shrink:     0;
-  color:           #8A8D9A;
-  transition:      border-color 0.14s, background 0.14s, color 0.14s;
+  color:           var(--color-text);
+  transition:      background 0.14s;
 }
-.sim-injury-card--selected .sim-injury-card__icon {
-  border-color: #1AD3BB;
-  background:   rgba(26, 211, 187, 0.12);
-  color:        #1AD3BB;
+.sim-injury-card--selected .sim-injury-card__tile {
+  background: var(--color-purple);
 }
+
+.sim-injury-card__tile img,
+.sim-injury-card__tile svg { display: block; }
 
 .sim-injury-card__label {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: var(--font-ui);
   font-size:   13px;
   font-weight: 400;
-  color:       #8A8D9A;
-  line-height: 1.4;
-  transition:  color 0.14s;
-}
-.sim-injury-card--selected .sim-injury-card__label {
-  color: #1AD3BB;
+  color:       var(--color-text);
+  line-height: 1.35;
 }
 
-/* ── Severity section ────────────────────────────────────────────────────── */
+.sim-injury-card__other-input {
+  flex:        1;
+  min-width:   0;
+  font-size:   13px;
+}
+
+/* ── Severity buttons (compact, match underline aesthetic) ───────────────── */
 .sim-severity-options {
   display: flex;
   gap:     8px;
@@ -357,51 +301,63 @@
 .sim-severity-btn {
   display:       flex;
   align-items:   center;
-  gap:           8px;
-  padding:       8px 18px;
-  border:        1px solid #3C3E4A;
-  background:    #1B1D26;
+  gap:           7px;
+  padding:       5px 12px;
+  border:        1px solid var(--color-border);
+  background:    transparent;
   border-radius: 4px;
   cursor:        pointer;
-  font-family:   'Segoe UI', sans-serif;
-  font-size:     13px;
-  font-weight:   600;
-  color:         #8A8D9A;
+  font-family:   var(--font-ui);
+  font-size:     12.5px;
+  font-weight:   500;
+  color:         var(--color-text-muted);
   transition:    all 0.14s;
 }
-.sim-severity-btn--error {
-  border-color: #B83232;
-}
+.sim-severity-btn--error    { border-color: var(--color-danger); }
 .sim-severity-btn--selected {
-  border-color: #1AD3BB;
+  border-color: var(--color-accent);
   background:   rgba(26, 211, 187, 0.07);
-  color:        #1AD3BB;
+  color:        var(--color-accent);
 }
 
 .sim-severity-dot {
-  width:        9px;
-  height:       9px;
+  width:         8px;
+  height:        8px;
   border-radius: 50%;
-  flex-shrink:  0;
+  flex-shrink:   0;
 }
 
-.sim-severity-error {
-  margin-top:  6px;
-  font-family: 'Segoe UI', sans-serif;
-  font-size:   11.5px;
-  color:       #B83232;
+/* ── Incident details textarea (kept filled) ─────────────────────────────── */
+.sim-textarea {
+  width:         100%;
+  background:    var(--color-bg);
+  border:        1px solid var(--color-border);
+  border-radius: 6px;
+  padding:       10px 12px;
+  color:         var(--color-text);
+  font-family:   var(--font-ui);
+  font-size:     13px;
+  outline:       none;
+  box-sizing:    border-box;
+  height:        180px;
+  resize:        vertical;
+  min-height:    120px;
+  line-height:   1.5;
+  transition:    border-color 0.12s;
 }
+.sim-textarea::placeholder { color: var(--color-text-dim); }
+.sim-textarea:focus        { border-color: var(--color-border-light); }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 .sim-footer {
   display:         flex;
   justify-content: flex-start;
   align-items:     center;
-  padding:         12px 20px;
-  border-top:      1px solid #5A5E6B;
+  padding:         14px 22px;
+  border-top:      1px solid var(--color-border);
   flex-shrink:     0;
   gap:             10px;
-  background:      #2A2E3A;
+  background:      var(--color-modal);
 }
 
 /* ── Success popup ───────────────────────────────────────────────────────── */
@@ -418,8 +374,8 @@
 }
 
 .sim-success-panel {
-  background:    #2A2E3A;
-  border:        1px solid #5A5E6B;
+  background:    var(--color-modal);
+  border:        1px solid var(--color-border-light);
   border-radius: 6px;
   padding:       32px 40px;
   text-align:    center;
@@ -433,7 +389,7 @@
   height:          44px;
   border-radius:   50%;
   background:      rgba(26, 211, 187, 0.12);
-  border:          2px solid #1AD3BB;
+  border:          2px solid var(--color-accent);
   display:         flex;
   align-items:     center;
   justify-content: center;
@@ -441,15 +397,15 @@
 }
 
 .sim-success-text {
-  font-family:   'Segoe UI', sans-serif;
-  font-weight:   600;
-  font-size:     15px;
-  color:         #F5F5F6;
-  margin:        0 0 20px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size:   15px;
+  color:       var(--color-text);
+  margin:      0 0 20px;
 }
 
 /* ── select option override ──────────────────────────────────────────────── */
 select option {
-  background: #2A2E3A;
-  color:      #F5F5F6;
+  background: var(--color-modal);
+  color:      var(--color-text);
 }

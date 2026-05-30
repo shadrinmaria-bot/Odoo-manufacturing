@@ -11,54 +11,69 @@ const WORKERS = [
 ]
 
 const SEVERITY_OPTIONS = [
-  { value: 'critical',  label: 'Critical',       color: '#B83232' },
+  { value: 'critical',  label: 'Critical',        color: '#B83232' },
   { value: 'attention', label: 'Needs Attention', color: '#008FE3' },
 ]
 
 const INJURY_TYPES = [
+  // Row 1
   {
     id: 'overexertion', label: 'Overexertion involving outside sources',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v5l3 3" /><path d="M9 12l-3 2" /><path d="M12 12l3 2" /><path d="M9 17l-1 3" /><path d="M15 17l1 3" /></svg>,
+    iconSrc: '/icons/injuries/overexertion.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v5l3 3" /><path d="M9 12l-3 2" /><path d="M12 12l3 2" /><path d="M9 17l-1 3" /><path d="M15 17l1 3" /></svg>,
   },
   {
     id: 'other-exertions', label: 'Other exertions or bodily reactions',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v6" /><path d="M9 10l3 2 3-2" /><path d="M10 20l2-7 2 7" /></svg>,
+    iconSrc: '/icons/injuries/other-exertions.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v6" /><path d="M9 10l3 2 3-2" /><path d="M10 20l2-7 2 7" /></svg>,
   },
   {
     id: 'repetitive', label: 'Repetitive motions involving microtasks',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg>,
+    iconSrc: '/icons/injuries/repetitive.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg>,
   },
+  // Row 2
   {
     id: 'fall-same', label: 'Falls on the same level',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M8 9l4 3-4 4" /><path d="M3 20h18" /><path d="M16 14l-4-2" /></svg>,
+    iconSrc: '/icons/injuries/fall-same.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M8 9l4 3-4 4" /><path d="M3 20h18" /><path d="M16 14l-4-2" /></svg>,
   },
   {
     id: 'roadway', label: 'Roadway incidents by motorized vehicles',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="10" width="22" height="8" rx="2" /><path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></svg>,
+    iconSrc: '/icons/injuries/roadway.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="10" width="22" height="8" rx="2" /><path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></svg>,
   },
   {
     id: 'struck-against', label: 'Struck against object or equipment',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="5" r="2" /><path d="M8 7v5l5 3" /><rect x="15" y="12" width="7" height="7" rx="1" /><path d="M6 17l2 3" /></svg>,
+    iconSrc: '/icons/injuries/struck-against.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="5" r="2" /><path d="M8 7v5l5 3" /><rect x="15" y="12" width="7" height="7" rx="1" /><path d="M6 17l2 3" /></svg>,
   },
+  // Row 3
   {
     id: 'struck-by', label: 'Struck by object or equipment',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="16" cy="5" r="2" /><path d="M16 7v5l-5 3" /><path d="M2 12l5 2" /><path d="M2 12l2-2m-2 2l2 2" /><path d="M18 17l-2 3" /></svg>,
+    iconSrc: '/icons/injuries/struck-by.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="16" cy="5" r="2" /><path d="M16 7v5l-5 3" /><path d="M2 12l5 2" /><path d="M2 12l2-2m-2 2l2 2" /><path d="M18 17l-2 3" /></svg>,
   },
   {
     id: 'slip', label: 'Slip or trip without fall',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M10 8l-3 5 4 1" /><path d="M11 14l1 4 3-1" /><path d="M4 21c2-2 6-3 10-1" /></svg>,
-  },
-  {
-    id: 'fall-lower', label: 'Falls to lower level',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M12 6v4" /><path d="M9 10l3 2 3-2" /><path d="M12 12v3l-3 2" /><path d="M12 15l3 2" /><path d="M3 22h18" /><path d="M12 17l1 3" /></svg>,
-  },
-  {
-    id: 'caught', label: 'Caught in equipment or objects',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" /></svg>,
+    iconSrc: '/icons/injuries/slip.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M10 8l-3 5 4 1" /><path d="M11 14l1 4 3-1" /><path d="M4 21c2-2 6-3 10-1" /></svg>,
   },
   {
     id: 'other', label: 'Other...',
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>,
+    iconSrc: '/icons/injuries/other.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>,
+  },
+  // Row 4
+  {
+    id: 'fall-lower', label: 'Falls to lower level',
+    iconSrc: '/icons/injuries/fall-lower.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M12 6v4" /><path d="M9 10l3 2 3-2" /><path d="M12 12v3l-3 2" /><path d="M12 15l3 2" /><path d="M3 22h18" /><path d="M12 17l1 3" /></svg>,
+  },
+  {
+    id: 'caught', label: 'Caught in equipment or objects',
+    iconSrc: '/icons/injuries/caught.svg',
+    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" /></svg>,
   },
 ]
 
@@ -69,41 +84,76 @@ const WORK_CENTERS = [
   { id: 'other',     label: 'Other' },
 ]
 
-const ACTIONS_OPTIONS = [
-  'First Aid Administered', 'Area Secured', 'Worker Sent Home',
-  'Emergency Services Called', 'Equipment Shut Down', 'Supervisor Notified',
-]
-
 const REQUIRED_FIELDS = ['injuredWorker', 'jobTitle', 'workerId', 'incidentLocation', 'actionsTaken', 'severity']
 
-function SelectWithCaret({ cls, children, ...rest }) {
+// ── Field building blocks ────────────────────────────────────────────────────
+
+function UnderlineSelect({ cls, children, ...rest }) {
   return (
-    <div className="sim-select-wrap">
-      <select {...rest} className={cls}>{children}</select>
-      <span className="sim-select-caret">
-        <Icon char="" size={10} color="#626363" />
+    <div className="sim-uline-wrap">
+      <select {...rest} className={`sim-uline sim-uline--select ${cls || ''}`}>{children}</select>
+      <span className="sim-uline-caret">
+        <Icon char="" size={9} color="#8A8D9A" />
       </span>
     </div>
   )
 }
 
-function FieldLabel({ children, error }) {
+function InlineRow({ label, error, htmlFor, children, wide }) {
   return (
-    <span className={`sim-field-label${error ? ' sim-field-label--error' : ''}`}>
-      {children}
-    </span>
+    <div className={`sim-inline-row${wide ? ' sim-inline-row--wide' : ''}`}>
+      <label htmlFor={htmlFor} className={`sim-inline-label${error ? ' sim-inline-label--error' : ''}`}>
+        {label}
+      </label>
+      <div className="sim-inline-field">{children}</div>
+    </div>
+  )
+}
+
+function InjuryIcon({ type }) {
+  const [errored, setErrored] = useState(false)
+  if (errored) return type.fallbackIcon
+  return (
+    <img
+      src={type.iconSrc}
+      alt=""
+      width="24"
+      height="24"
+      onError={() => setErrored(true)}
+    />
   )
 }
 
 function InjuryCard({ type, selected, onSelect }) {
   return (
     <button
+      type="button"
       onClick={() => onSelect(type.id)}
       className={`sim-injury-card${selected ? ' sim-injury-card--selected' : ''}`}
     >
-      <div className="sim-injury-card__icon">{type.icon}</div>
+      <div className="sim-injury-card__tile">
+        <InjuryIcon type={type} />
+      </div>
       <span className="sim-injury-card__label">{type.label}</span>
     </button>
+  )
+}
+
+function InjuryOtherCard({ type, selected, value, onChange, onFocus }) {
+  return (
+    <div className={`sim-injury-card${selected ? ' sim-injury-card--selected' : ''}`}>
+      <div className="sim-injury-card__tile">
+        <InjuryIcon type={type} />
+      </div>
+      <input
+        type="text"
+        className="sim-uline sim-injury-card__other-input"
+        placeholder="Other…"
+        value={value}
+        onChange={onChange}
+        onFocus={onFocus}
+      />
+    </div>
   )
 }
 
@@ -123,8 +173,11 @@ function SuccessPopup({ onClose }) {
   )
 }
 
+// ── Modal ───────────────────────────────────────────────────────────────────
+
 export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   const modalRef = useRef(null)
+  const [avatarErrored, setAvatarErrored] = useState(false)
 
   const now = new Date()
   const incidentDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
@@ -217,6 +270,8 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   if (!isOpen) return null
 
   const injuryGridError = showErrors && !form.selectedInjuryType
+  const otherType       = INJURY_TYPES.find(t => t.id === 'other')
+  const mainInjuryTypes = INJURY_TYPES.filter(t => t.id !== 'other')
 
   return (
     <div className="sim-overlay" onClick={handleClose}>
@@ -232,15 +287,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
 
         {/* Header */}
         <div className="sim-header">
-          <div className="sim-header__left">
-            <div className="sim-header__icon">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B83232" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </div>
-            <span id="sim-modal-title" className="sim-header__title">Safety Incident Report</span>
-          </div>
+          <span id="sim-modal-title" className="sim-header__title">Safety Incident Report</span>
           <button className="sim-close-btn" onClick={handleClose} aria-label="Close">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M18 6L6 18M6 6l12 12" />
@@ -250,110 +297,100 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
 
         {/* Scrollable body */}
         <div className="sim-body">
-          {/* Reporter info */}
-          <div className="sim-reporter-bar">
-            <div className="sim-reporter-bar__group">
-              <span className="sim-meta-label">Reported By</span>
-              <div className="sim-reporter-user">
+          {/* Reporter row */}
+          <div className="sim-reporter-row">
+            <div className="sim-reporter-row__group">
+              <span className="sim-inline-label">Reported By</span>
+              {avatarErrored ? (
                 <div className="sim-reporter-avatar">E</div>
-                <span className="sim-reporter-name">Emma Granger</span>
-              </div>
+              ) : (
+                <img
+                  src="/avatar-emma.png"
+                  alt="Emma Granger"
+                  className="sim-reporter-avatar sim-reporter-avatar--img"
+                  onError={() => setAvatarErrored(true)}
+                />
+              )}
+              <span className="sim-reporter-name">Emma Granger</span>
             </div>
-            <div className="sim-divider-v" />
-            <div className="sim-reporter-bar__group">
-              <span className="sim-meta-label">Report Date</span>
-              <div className="sim-date-row">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                </svg>
-                <span className="sim-date-text">{incidentDate}</span>
-              </div>
+            <div className="sim-reporter-row__group">
+              <span className="sim-inline-label">Incident Date</span>
+              <span className="sim-date-text">{incidentDate}</span>
             </div>
           </div>
 
-          {/* Injured worker row */}
+          {/* Row 1: Injured Worker | Worker ID | Job Title */}
           <div className="sim-grid-3">
-            <div>
-              <FieldLabel error={err('injuredWorker')}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <circle cx="12" cy="7" r="4" /><path d="M20 21a8 8 0 10-16 0" />
-                  </svg>
-                  Injured Worker
-                </span>
-              </FieldLabel>
-              <SelectWithCaret
-                cls={`sim-select${err('injuredWorker') ? ' sim-select--error' : ''}`}
+            <InlineRow label="Injured Worker" error={err('injuredWorker')} wide>
+              <UnderlineSelect
+                cls={err('injuredWorker') ? 'sim-uline--error' : ''}
                 value={form.injuredWorker}
                 onChange={e => handleWorkerChange(e.target.value)}
                 onBlur={() => touch('injuredWorker')}
               >
                 <option value="">Select Worker</option>
                 {WORKERS.map(w => <option key={w.value} value={w.value}>{w.label}</option>)}
-              </SelectWithCaret>
-            </div>
-            <div>
-              <FieldLabel error={err('jobTitle')}>Job Title</FieldLabel>
+              </UnderlineSelect>
+            </InlineRow>
+
+            <InlineRow label="Worker ID" error={err('workerId')} wide>
+              <UnderlineSelect
+                cls={err('workerId') ? 'sim-uline--error' : ''}
+                value={form.workerId}
+                onChange={e => handleWorkerIdChange(e.target.value)}
+                onBlur={() => touch('workerId')}
+              >
+                <option value="">Select ID</option>
+                {WORKERS.map(w => <option key={w.workerId} value={w.workerId}>{w.workerId}</option>)}
+              </UnderlineSelect>
+            </InlineRow>
+
+            <InlineRow label="Job Title" error={err('jobTitle')}>
               <input
                 type="text"
                 placeholder="Title"
-                className={`sim-input${err('jobTitle') ? ' sim-input--error' : ''}`}
+                className={`sim-uline${err('jobTitle') ? ' sim-uline--error' : ''}`}
                 value={form.jobTitle}
                 onChange={e => setForm(f => ({ ...f, jobTitle: e.target.value }))}
                 onBlur={() => touch('jobTitle')}
               />
-            </div>
-            <div>
-              <FieldLabel error={err('workerId')}>Worker ID</FieldLabel>
-              <input
-                type="text"
-                placeholder="2012380163"
-                className={`sim-input${err('workerId') ? ' sim-input--error' : ''}`}
-                value={form.workerId}
-                onChange={e => handleWorkerIdChange(e.target.value)}
-                onBlur={() => touch('workerId')}
-              />
-            </div>
+            </InlineRow>
           </div>
 
-          {/* Location row */}
-          <div className="sim-grid-2">
-            <div>
-              <FieldLabel error={err('incidentLocation')}>Incident Location</FieldLabel>
-              <SelectWithCaret
-                cls={`sim-select${err('incidentLocation') ? ' sim-select--error' : ''}`}
+          {/* Row 2: Incident Location | Work Center Location */}
+          <div className="sim-grid-2-aligned">
+            <InlineRow label="Incident Location" error={err('incidentLocation')} wide>
+              <UnderlineSelect
+                cls={err('incidentLocation') ? 'sim-uline--error' : ''}
                 value={form.incidentLocation}
                 onChange={e => setForm(f => ({ ...f, incidentLocation: e.target.value }))}
                 onBlur={() => touch('incidentLocation')}
               >
                 <option value="">Select Work Center</option>
                 {WORK_CENTERS.map(wc => <option key={wc.id} value={wc.id}>{wc.label}</option>)}
-              </SelectWithCaret>
+              </UnderlineSelect>
               {form.incidentLocation === 'other' && (
-                <div style={{ marginTop: 8 }}>
-                  <FieldLabel error={(showErrors || touched.otherLocation) && !form.otherLocation}>Specify location</FieldLabel>
-                  <input
-                    type="text"
-                    placeholder="Please specify the location..."
-                    className={`sim-input${(showErrors || touched.otherLocation) && !form.otherLocation ? ' sim-input--error' : ''}`}
-                    value={form.otherLocation}
-                    onChange={e => setForm(f => ({ ...f, otherLocation: e.target.value }))}
-                    onBlur={() => touch('otherLocation')}
-                    autoFocus
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="Please specify the location..."
+                  className={`sim-uline sim-uline--secondary${(showErrors || touched.otherLocation) && !form.otherLocation ? ' sim-uline--error' : ''}`}
+                  value={form.otherLocation}
+                  onChange={e => setForm(f => ({ ...f, otherLocation: e.target.value }))}
+                  onBlur={() => touch('otherLocation')}
+                  autoFocus
+                />
               )}
-            </div>
-            <div>
-              <FieldLabel>Work Center Location</FieldLabel>
+            </InlineRow>
+
+            <InlineRow label="Work Center Location" wide>
               <input
                 type="text"
                 placeholder="Warehouse 2"
-                className="sim-input"
+                className="sim-uline"
                 value={form.workCenterLocation}
                 onChange={e => setForm(f => ({ ...f, workCenterLocation: e.target.value }))}
               />
-            </div>
+            </InlineRow>
           </div>
 
           {/* Type of Injury */}
@@ -362,8 +399,8 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               Type Of Injury
               {injuryGridError && <span className="sim-section-subtitle">— please select one</span>}
             </span>
-            <div className={`sim-injury-grid${injuryGridError ? ' sim-injury-grid--error' : ''}`}>
-              {INJURY_TYPES.map(type => (
+            <div className="sim-injury-grid">
+              {mainInjuryTypes.slice(0, 8).map(type => (
                 <InjuryCard
                   key={type.id}
                   type={type}
@@ -371,33 +408,45 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                   onSelect={id => setForm(f => ({
                     ...f,
                     selectedInjuryType: f.selectedInjuryType === id ? '' : id,
-                    otherInjuryText: id !== 'other' ? '' : f.otherInjuryText,
                   }))}
                 />
               ))}
-            </div>
-            {form.selectedInjuryType === 'other' && (
-              <div style={{ marginTop: 8 }}>
-                <FieldLabel error={(showErrors || touched.otherInjuryText) && !form.otherInjuryText}>
-                  Describe the injury type
-                </FieldLabel>
-                <input
-                  type="text"
-                  placeholder="Please describe the injury type..."
-                  className={`sim-input${(showErrors || touched.otherInjuryText) && !form.otherInjuryText ? ' sim-input--error' : ''}`}
-                  value={form.otherInjuryText}
-                  onChange={e => setForm(f => ({ ...f, otherInjuryText: e.target.value }))}
-                  onBlur={() => touch('otherInjuryText')}
-                  autoFocus
+
+              {/* "Other..." card with inline input */}
+              <InjuryOtherCard
+                type={otherType}
+                selected={form.selectedInjuryType === 'other'}
+                value={form.otherInjuryText}
+                onChange={e => setForm(f => ({
+                  ...f,
+                  selectedInjuryType: 'other',
+                  otherInjuryText: e.target.value,
+                }))}
+                onFocus={() => setForm(f => ({ ...f, selectedInjuryType: 'other' }))}
+              />
+
+              {/* Row 4 */}
+              {mainInjuryTypes.slice(8).map(type => (
+                <InjuryCard
+                  key={type.id}
+                  type={type}
+                  selected={form.selectedInjuryType === type.id}
+                  onSelect={id => setForm(f => ({
+                    ...f,
+                    selectedInjuryType: f.selectedInjuryType === id ? '' : id,
+                  }))}
                 />
-              </div>
-            )}
+              ))}
+              <div className="sim-injury-card sim-injury-card--empty" aria-hidden="true" />
+            </div>
           </div>
 
-          {/* Bottom grid: Incident Details + Actions Taken */}
+          {/* Bottom: Incident Details | Actions/Time/Severity */}
+          <div className="sim-bottom-divider" />
           <div className="sim-grid-bottom">
+            {/* Left: Incident Details (label above, filled textarea) */}
             <div>
-              <FieldLabel>Incident Details</FieldLabel>
+              <span className="sim-section-title">Incident Details</span>
               <textarea
                 placeholder="Describe what happened, conditions at the time, and any other relevant details..."
                 className="sim-textarea"
@@ -405,56 +454,52 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 onChange={e => setForm(f => ({ ...f, incidentDetails: e.target.value }))}
               />
             </div>
-            <div>
-              <FieldLabel error={err('actionsTaken')}>Actions Taken</FieldLabel>
-              <SelectWithCaret
-                cls={`sim-select${err('actionsTaken') ? ' sim-select--error' : ''}`}
-                value={form.actionsTaken}
-                onChange={e => setForm(f => ({ ...f, actionsTaken: e.target.value }))}
-                onBlur={() => touch('actionsTaken')}
-              >
-                <option value="">Choose...</option>
-                {ACTIONS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-              </SelectWithCaret>
-            </div>
-          </div>
 
-          {/* Time of Incident */}
-          <div className="sim-section">
-            <FieldLabel>Time of Incident</FieldLabel>
-            <input
-              type="time"
-              className="sim-time-input"
-              value={form.timeOfIncident}
-              onChange={e => setForm(f => ({ ...f, timeOfIncident: e.target.value }))}
-            />
-          </div>
+            {/* Right: Actions Taken / Time / Severity */}
+            <div className="sim-bottom-right">
+              <InlineRow label="Actions Taken" error={err('actionsTaken')} wide>
+                <input
+                  type="text"
+                  placeholder="Example: First Aid Provided…"
+                  className={`sim-uline${err('actionsTaken') ? ' sim-uline--error' : ''}`}
+                  value={form.actionsTaken}
+                  onChange={e => setForm(f => ({ ...f, actionsTaken: e.target.value }))}
+                  onBlur={() => touch('actionsTaken')}
+                />
+              </InlineRow>
 
-          {/* Incident Severity */}
-          <div className="sim-section">
-            <FieldLabel error={err('severity')}>Incident Severity</FieldLabel>
-            <div className="sim-severity-options">
-              {SEVERITY_OPTIONS.map(opt => {
-                const active = form.severity === opt.value
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => setForm(f => ({ ...f, severity: opt.value }))}
-                    className={[
-                      'sim-severity-btn',
-                      active ? 'sim-severity-btn--selected' : '',
-                      !active && err('severity') ? 'sim-severity-btn--error' : '',
-                    ].filter(Boolean).join(' ')}
-                  >
-                    <span className="sim-severity-dot" style={{ background: opt.color }} />
-                    {opt.label}
-                  </button>
-                )
-              })}
+              <InlineRow label="Time of Incident" wide>
+                <input
+                  type="time"
+                  className="sim-uline sim-uline--time"
+                  value={form.timeOfIncident}
+                  onChange={e => setForm(f => ({ ...f, timeOfIncident: e.target.value }))}
+                />
+              </InlineRow>
+
+              <InlineRow label="Incident Severity" error={err('severity')} wide>
+                <div className="sim-severity-options">
+                  {SEVERITY_OPTIONS.map(opt => {
+                    const active = form.severity === opt.value
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setForm(f => ({ ...f, severity: opt.value }))}
+                        className={[
+                          'sim-severity-btn',
+                          active ? 'sim-severity-btn--selected' : '',
+                          !active && err('severity') ? 'sim-severity-btn--error' : '',
+                        ].filter(Boolean).join(' ')}
+                      >
+                        <span className="sim-severity-dot" style={{ background: opt.color }} />
+                        {opt.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </InlineRow>
             </div>
-            {err('severity') && (
-              <p className="sim-severity-error">Please select incident severity.</p>
-            )}
           </div>
         </div>
 
