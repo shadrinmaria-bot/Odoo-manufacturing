@@ -46,11 +46,11 @@
 }
 
 .form-dd__caret {
-  color:      #03F9E3;
+  color:       #F5F5F6;
   flex-shrink: 0;
-  transition: transform 0.14s;
+  display:     inline-flex;
+  align-items: center;
 }
-.form-dd__caret--open { transform: rotate(180deg); }
 
 /* ── Panel (lighter than the modal) ──────────────────────────────────────── */
 .form-dd__panel {

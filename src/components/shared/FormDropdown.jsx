@@ -1,17 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
+import Icon from './Icon'
 import './FormDropdown.css'
 
 function Caret({ open }) {
   return (
-    <svg
-      className={`form-dd__caret${open ? ' form-dd__caret--open' : ''}`}
-      width="10" height="10" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2.6"
-      strokeLinecap="round" strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M6 9l6 6 6-6" />
-    </svg>
+    <span className="form-dd__caret">
+      <Icon char={open ? '' : ''} size={11} color="#F5F5F6" />
+    </span>
   )
 }
 
