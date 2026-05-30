@@ -20,8 +20,8 @@
   --font-ui:            'Segoe UI', sans-serif;
 
   /* ── Chat panel tokens ─────────────────────────────────────────────────── */
-  --color-chat-bubble-bot:  #353A4D;   /* bot message bubble — slightly lighter than --color-modal */
-  --color-chat-bubble-user: #3D2E5C;   /* user message bubble — purple-tinted dark */
+  --color-chat-bubble-bot:  #1D3046;   /* bot message bubble — desaturated navy */
+  --color-chat-bubble-user: #183629;   /* user message bubble — dark green */
 
   /* Chat text sizes */
   --chat-fs-header:    1.1375rem; /* header contact name */
