@@ -62,9 +62,33 @@ function NavIcons({ onOpenChat }) {
 const DISCUSS_TABS = ['Notifications', 'Chats', 'Channels']
 
 const DEMO_CHATS = [
-  { id: 'c1', name: 'Emma Granger',    initial: 'E', color: '#875A7B', date: 'May 30', preview: 'Safety report submitted.' },
-  { id: 'c2', name: 'Production Team', initial: 'P', color: '#5A7BA0', date: 'May 29', preview: 'Work orders updated.' },
-  { id: 'c3', name: 'John Doe',        initial: 'J', color: '#6B3E66', date: 'May 28', preview: 'Machine guard inspection done.' },
+  {
+    id: 'c1',
+    name: 'shadrinmaria@gmail.com, amit tzadik, oran3000@gmail.com',
+    initial: 'S',
+    color: '#C58A2E',
+    status: 'online',
+    date: '10:38 AM',
+    preview: 'oran3000@gmail.com: hello team',
+  },
+  {
+    id: 'c2',
+    name: 'amit tzadik',
+    initial: 'A',
+    color: '#1AD3BB',
+    status: 'online',
+    date: '10:35 AM',
+    preview: 'You: shadrinmaria@gmail.com started a call',
+  },
+  {
+    id: 'c3',
+    name: 'OdooBot',
+    initial: 'O',
+    color: '#875A7B',
+    status: 'online',
+    date: 'May 7',
+    preview: "Hello, Odoo's chat helps employees collaborate efficiently. I'm here to help you discover its features. Try to send me an emoji :)",
+  },
 ]
 
 function DiscussDropdown({ onOpenChat }) {
@@ -89,8 +113,11 @@ function DiscussDropdown({ onOpenChat }) {
         {activeTab === 'Chats' ? (
           DEMO_CHATS.map(chat => (
             <button key={chat.id} className="discuss-chat-row" onClick={() => onOpenChat(chat)}>
-              <div className="discuss-chat-row__avatar" style={{ background: chat.color }}>
-                {chat.initial}
+              <div className="discuss-chat-row__avatar-wrap">
+                <div className="discuss-chat-row__avatar" style={{ background: chat.color }}>
+                  {chat.initial}
+                </div>
+                {chat.status === 'online' && <span className="discuss-chat-row__status" />}
               </div>
               <div className="discuss-chat-row__content">
                 <div className="discuss-chat-row__top">
