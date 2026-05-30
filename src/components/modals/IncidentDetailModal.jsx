@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import './IncidentDetailModal.css'
 import ShareIncidentPopup from './ShareIncidentPopup'
 
-const INJURY_ICONS = {
+const slugify = (s) => (s || '').trim().toLowerCase().replace(/\s+/g, '-')
+
+const FALLBACK_INJURY_ICONS = {
   overexertion: (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="5" r="2" /><path d="M12 7v5l3 3" /><path d="M9 12l-3 2" /><path d="M12 12l3 2" /><path d="M9 17l-1 3" /><path d="M15 17l1 3" />
@@ -60,6 +62,36 @@ const INJURY_ICONS = {
   ),
 }
 
+function InjuryImg({ injuryId }) {
+  const [errored, setErrored] = useState(false)
+  if (errored) return FALLBACK_INJURY_ICONS[injuryId] || FALLBACK_INJURY_ICONS.other
+  return (
+    <img
+      src={`/icons/injuries/${injuryId}.svg`}
+      alt=""
+      className="idm-injury-img"
+      width="28"
+      height="28"
+      onError={() => setErrored(true)}
+    />
+  )
+}
+
+function AvatarImg({ name, fallback, baseClass }) {
+  const [errored, setErrored] = useState(false)
+  if (!name || errored) {
+    return <div className={baseClass}>{fallback}</div>
+  }
+  return (
+    <img
+      src={`/avatars/${slugify(name)}.png`}
+      alt=""
+      className={`${baseClass} ${baseClass}--img`}
+      onError={() => setErrored(true)}
+    />
+  )
+}
+
 const INJURY_TYPE_LABELS = {
   overexertion:      'Overexertion involving outside sources',
   'other-exertions': 'Other exertions or bodily reactions',
@@ -100,9 +132,9 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
 
   const injuryId    = incident.injuryType?.id    || 'other'
   const injuryLabel = incident.injuryType?.label || INJURY_TYPE_LABELS[injuryId] || 'Other'
-  const injuryIcon  = INJURY_ICONS[injuryId]     || INJURY_ICONS.other
 
   const isCritical      = incident.severity === 'critical'
+  const severityKey     = isCritical ? 'critical' : 'attention'
   const severityLabel   = isCritical ? 'Critical' : 'Needs Attention'
   const reporterName    = incident.reportedBy || 'Emma Granger'
   const reporterInitial = reporterName.charAt(0).toUpperCase()
@@ -121,7 +153,7 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
         <div className="idm-header">
           <div className="idm-header__left">
             <span className="idm-header__title">Safety Incident Report</span>
-            <span className={`idm-severity-badge idm-severity-badge--${isCritical ? 'critical' : 'attention'}`}>
+            <span className={`idm-severity-text idm-severity-text--${severityKey}`}>
               {severityLabel}
             </span>
           </div>
@@ -134,22 +166,25 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
 
         {/* Scrollable body */}
         <div className="idm-body">
-          <div className="idm-content">
-            {/* Icon + injury type */}
+          {/* Top card: injury icon + meta grid */}
+          <div className="idm-card">
             <div className="idm-icon-row">
-              <div className={`idm-injury-icon idm-injury-icon--${isCritical ? 'critical' : 'attention'}`}>
-                {injuryIcon}
+              <div className={`idm-injury-icon idm-injury-icon--${severityKey}`}>
+                <InjuryImg injuryId={injuryId} />
               </div>
               <span className="idm-injury-label">{injuryLabel}</span>
             </div>
 
-            {/* Row 1 grid: Injured Worker + Incident Location | Incident Date + Worker ID */}
-            <div className="idm-grid-row idm-grid-row--divided">
+            <div className="idm-grid-row">
               <div className="idm-grid-col">
                 <div>
                   <span className="idm-meta-label">Injured Worker</span>
                   <div className="idm-worker-row">
-                    <div className="idm-worker-avatar">{workerInitial}</div>
+                    <AvatarImg
+                      name={incident.injuredWorker}
+                      fallback={workerInitial}
+                      baseClass="idm-worker-avatar"
+                    />
                     <span className="idm-meta-value">{incident.injuredWorker || '—'}</span>
                   </div>
                 </div>
@@ -174,8 +209,10 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Row 2 grid: Actions Taken | Incident Details */}
+          {/* Bottom card: Actions Taken | Incident Details */}
+          <div className="idm-card">
             <div className="idm-grid-row">
               <div>
                 <div className="idm-section-title">Actions Taken</div>
@@ -201,7 +238,11 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
           <div className="idm-footer__reporter">
             <span className="idm-reporter-label">Reported By</span>
             <div className="idm-reporter-info">
-              <div className="idm-reporter-avatar">{reporterInitial}</div>
+              <AvatarImg
+                name={reporterName}
+                fallback={reporterInitial}
+                baseClass="idm-reporter-avatar"
+              />
               <span className="idm-reporter-name">
                 {reporterName}
                 {incident.jobTitle && (
