@@ -4,6 +4,7 @@ import WorkCenterCard from './cards/WorkCenterCard'
 import SafetyIncidentModal from './modals/SafetyIncidentModal'
 import IncidentDetailModal from './modals/IncidentDetailModal'
 import SafetyStatisticsPage from '../pages/SafetyStatisticsPage'
+import ChatPanel from './chat/ChatPanel'
 import './ManufacturingDashboard.css'
 
 // ── Work center chart data ────────────────────────────────────────────────────
@@ -134,6 +135,7 @@ export default function ManufacturingDashboard() {
   const [detailIncident, setDetailIncident] = useState(null)
   const [isModalOpen,    setIsModalOpen]    = useState(false)
   const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null, params: null })
+  const [isChatOpen,     setIsChatOpen]     = useState(false)
 
   function goToWorkCenterStats(workCenterName) {
     setActivePage({
@@ -201,6 +203,8 @@ export default function ManufacturingDashboard() {
       <TopNav
         activePage={activePage}
         onSelect={(section, subItem) => setActivePage({ section, subItem, params: null })}
+        onChatToggle={() => setIsChatOpen(p => !p)}
+        isChatOpen={isChatOpen}
       />
 
       {isOverview ? (
@@ -254,6 +258,7 @@ export default function ManufacturingDashboard() {
         onClose={() => setDetailIncident(null)}
         onMarkAsDone={markIncidentAsDone}
       />
+      <ChatPanel isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   )
 }

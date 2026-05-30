@@ -17,7 +17,7 @@ const ENABLED_SUB_ITEMS = new Set(['Reporting/Safety Statistics'])
 
 // ── NavIcons ──────────────────────────────────────────────────────────────────
 
-function NavIcons() {
+function NavIcons({ onChatToggle, isChatOpen }) {
   return (
     <div className="nav-icons">
       <button className="nav-icon-btn" aria-label="AI">
@@ -32,6 +32,15 @@ function NavIcons() {
       </button>
       <button className="nav-icon-btn" aria-label="Debug">
         <Icon char="" font="odoo" size={18} color="#F5F5F6" />
+      </button>
+      <button
+        className={`nav-icon-btn nav-icon-btn--chat${isChatOpen ? ' nav-icon-btn--chat-active' : ''}`}
+        aria-label="Toggle chat"
+        onClick={onChatToggle}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
       </button>
       <span className="nav-separator" />
       <span className="nav-username">ProductDesign</span>
@@ -85,7 +94,7 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
 
 // ── TopNav ────────────────────────────────────────────────────────────────────
 
-export function TopNav({ activePage, onSelect }) {
+export function TopNav({ activePage, onSelect, onChatToggle, isChatOpen }) {
   const [openDropdown, setOpenDropdown] = useState(null)
   const navRef = useRef(null)
 
@@ -131,7 +140,7 @@ export function TopNav({ activePage, onSelect }) {
           />
         ))}
       </nav>
-      <NavIcons />
+      <NavIcons onChatToggle={onChatToggle} isChatOpen={isChatOpen} />
     </header>
   )
 }

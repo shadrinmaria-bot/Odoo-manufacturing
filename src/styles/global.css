@@ -18,6 +18,10 @@
   --color-avatar:       #875A7B;
   --color-worker-avatar:#5A7BA0;
   --font-ui:            'Segoe UI', sans-serif;
+
+  /* ── Chat panel tokens ─────────────────────────────────────────────────── */
+  --color-chat-bubble-bot:  #353A4D;   /* bot message bubble — slightly lighter than --color-modal */
+  --color-chat-bubble-user: #3D2E5C;   /* user message bubble — purple-tinted dark */
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
