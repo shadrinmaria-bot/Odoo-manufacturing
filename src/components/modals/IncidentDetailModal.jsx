@@ -73,7 +73,7 @@ const INJURY_TYPE_LABELS = {
   other:             'Other',
 }
 
-export default function IncidentDetailModal({ incident, isOpen, onClose }) {
+export default function IncidentDetailModal({ incident, isOpen, onClose, onShare }) {
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -181,7 +181,10 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
         {/* Footer */}
         <div className="idm-footer">
           <div className="idm-footer__actions">
-            <button className="idm-btn idm-btn--share">Share</button>
+            <button
+              className="idm-btn idm-btn--share"
+              onClick={() => onShare && onShare(incident)}
+            >Share</button>
             <button className="idm-btn idm-btn--print" onClick={() => window.print()}>Print</button>
           </div>
           <div className="idm-footer__reporter">

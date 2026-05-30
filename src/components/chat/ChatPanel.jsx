@@ -1,24 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react'
 import './ChatPanel.css'
 
-const CONTACT_NAME    = 'OdooBot'
-const CONTACT_INITIAL = 'O'
+const DEFAULT_CONTACT = { name: 'OdooBot', initial: 'O' }
 const USER_INITIAL    = 'P'
 
-const INITIAL_MESSAGES = [
+const DEFAULT_MESSAGES = [
   { id: 'intro',  type: 'intro' },
   { id: 'sep-1',  type: 'separator', label: 'May 27, 2026' },
   {
     id: 'bot-1', type: 'message', from: 'bot',
-    name: CONTACT_NAME, time: 'May 27, 9:35 AM',
+    name: DEFAULT_CONTACT.name, time: 'May 27, 9:35 AM',
     text: 'Hello! How can I help you today?',
   },
   { id: 'sep-2', type: 'separator', label: 'Today' },
   { id: 'sys-1', type: 'system',   text: 'Call lasted 1 min.', time: '10:35 AM' },
 ]
 
-export default function ChatPanel({ isOpen, onClose }) {
-  const [messages,     setMessages]     = useState(INITIAL_MESSAGES)
+export default function ChatPanel({ isOpen, onClose, contact, initialMessages }) {
+  const CONTACT_NAME    = (contact && contact.name)    || DEFAULT_CONTACT.name
+  const CONTACT_INITIAL = (contact && contact.initial) || DEFAULT_CONTACT.initial
+  const startMessages   = initialMessages || DEFAULT_MESSAGES
+
+  const [messages,     setMessages]     = useState(startMessages)
+  const sessionKey = `${CONTACT_NAME}|${(initialMessages && initialMessages[0]?.id) || 'default'}`
+  useEffect(() => { setMessages(startMessages) }, [sessionKey])
   const [input,        setInput]        = useState('')
   const [minimized,    setMinimized]    = useState(false)
   const [dotsMenuOpen, setDotsMenuOpen] = useState(false)
@@ -72,7 +77,7 @@ export default function ChatPanel({ isOpen, onClose }) {
   }
 
   function handleCloseAll() {
-    setMessages(INITIAL_MESSAGES)
+    setMessages(startMessages)
     setMinimized(false)
     setDotsMenuOpen(false)
     onClose()

@@ -136,6 +136,51 @@ export default function ManufacturingDashboard() {
   const [isModalOpen,    setIsModalOpen]    = useState(false)
   const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null, params: null })
   const [isChatOpen,     setIsChatOpen]     = useState(false)
+  const [chatSession,    setChatSession]    = useState(null)
+
+  function buildSharedIncidentMessage(incident) {
+    const sevLabel = incident.severity === 'critical' ? 'Critical' : 'Needs Attention'
+    const typeLabel = incident.injuryType?.label || 'Incident'
+    return (
+      <>
+        <div style={{ fontWeight: 700, marginBottom: 4 }}>🚨 Safety Incident Report Shared</div>
+        <div style={{ fontWeight: 700, marginBottom: 4 }}>{typeLabel}</div>
+        <div>Injured Worker: {incident.injuredWorker || '—'}</div>
+        <div>Location: {incident.incidentLocation || '—'}</div>
+        <div>Date: {incident.incidentDate || '—'}</div>
+        <div style={{ marginBottom: 4 }}>Severity: {sevLabel}</div>
+        <div style={{ opacity: 0.75 }}>View full report for details.</div>
+      </>
+    )
+  }
+
+  function nowTimeLabel() {
+    return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  }
+
+  function handleShareIncident(incident) {
+    if (!incident) return
+    const initialMessages = [
+      { id: 'share-intro', type: 'intro' },
+      { id: 'share-sep',   type: 'separator', label: 'Today' },
+      {
+        id: `share-${Date.now()}`, type: 'message', from: 'user',
+        name: 'You', time: nowTimeLabel(),
+        text: buildSharedIncidentMessage(incident),
+      },
+    ]
+    setChatSession({
+      contact: { name: 'Maria Shadrin', initial: 'M' },
+      initialMessages,
+    })
+    setDetailIncident(null)
+    setIsChatOpen(true)
+  }
+
+  function handleCloseChat() {
+    setIsChatOpen(false)
+    setChatSession(null)
+  }
 
   function goToWorkCenterStats(workCenterName) {
     setActivePage({
@@ -203,7 +248,7 @@ export default function ManufacturingDashboard() {
       <TopNav
         activePage={activePage}
         onSelect={(section, subItem) => setActivePage({ section, subItem, params: null })}
-        onOpenChat={() => setIsChatOpen(true)}
+        onOpenChat={() => { setChatSession(null); setIsChatOpen(true) }}
       />
 
       {isOverview ? (
@@ -256,8 +301,14 @@ export default function ManufacturingDashboard() {
         isOpen={!!detailIncident}
         onClose={() => setDetailIncident(null)}
         onMarkAsDone={markIncidentAsDone}
+        onShare={handleShareIncident}
       />
-      <ChatPanel isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      <ChatPanel
+        isOpen={isChatOpen}
+        onClose={handleCloseChat}
+        contact={chatSession?.contact}
+        initialMessages={chatSession?.initialMessages}
+      />
     </div>
   )
 }
