@@ -9,7 +9,7 @@
 /* ── ChatPanel ───────────────────────────────────────────────────────────── */
 .chat-panel {
   position:         relative;
-  width:            336px;
+  width:            370px;
   display:          flex;
   flex-direction:   column;
   background:       var(--color-bg);
@@ -21,7 +21,7 @@
   overflow:         hidden;
 }
 
-.chat-panel--expanded  { height: 560px; }
+.chat-panel--expanded  { height: 620px; }
 .chat-panel--minimized { height: auto; }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
