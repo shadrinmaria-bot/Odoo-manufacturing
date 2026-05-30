@@ -70,7 +70,7 @@
   gap:         3px;
   font-family: var(--font-ui);
   font-weight: 600;
-  font-size:   12px;
+  font-size:   var(--chat-fs-header);
   color:       var(--color-text);
 }
 
@@ -175,7 +175,7 @@
 
 .chat-intro__tagline {
   font-family: var(--font-ui);
-  font-size:   11px;
+  font-size:   var(--chat-fs-subtitle);
   color:       var(--color-text-muted);
   line-height: 1.5;
   margin:      2px 0 0;
@@ -202,7 +202,7 @@
   padding:     0 8px;
   background:  var(--color-bg);
   font-family: var(--font-ui);
-  font-size:   9.5px;
+  font-size:   var(--chat-fs-separator);
   color:       var(--color-text-mid);
   white-space: nowrap;
 }
@@ -245,14 +245,14 @@
   gap:         5px;
   font-family: var(--font-ui);
 }
-.chat-msg__meta-name { font-size: 9px;   color: var(--color-text-muted); font-weight: 600; }
-.chat-msg__meta-time { font-size: 8.5px; color: var(--color-text-dim); }
+.chat-msg__meta-name { font-size: var(--chat-fs-meta); color: var(--color-text-muted); font-weight: 600; }
+.chat-msg__meta-time { font-size: var(--chat-fs-meta); color: var(--color-text-dim); }
 
 .chat-msg__bubble {
   padding:       6px 10px;
   border-radius: 5px;
   font-family:   var(--font-ui);
-  font-size:     11px;
+  font-size:     var(--chat-fs-bubble);
   line-height:   1.45;
   color:         var(--color-text);
   word-break:    break-word;
@@ -267,12 +267,12 @@
   justify-content: center;
   gap:             5px;
   font-family:     var(--font-ui);
-  font-size:       10px;
+  font-size:       var(--chat-fs-system);
   color:           var(--color-text-mid);
   padding:         2px 0;
 }
 .chat-sys-event__time {
-  font-size: 9px;
+  font-size: var(--chat-fs-system);
   color:     var(--color-text-dim);
 }
 
@@ -330,7 +330,7 @@
   border:      none;
   padding:     0;
   font-family: var(--font-ui);
-  font-size:   11px;
+  font-size:   var(--chat-fs-input);
   color:       var(--color-text);
   resize:      none;
   min-height:  22px;
@@ -339,7 +339,7 @@
   outline:     none;
   line-height: 1.45;
 }
-.chat-input-bar__textarea::placeholder { color: var(--color-text-dim); font-size: 11px; }
+.chat-input-bar__textarea::placeholder { color: var(--color-text-dim); font-size: var(--chat-fs-input); }
 
 /* Send: plain icon when empty, filled teal circle when text is present */
 .chat-input-bar__send {

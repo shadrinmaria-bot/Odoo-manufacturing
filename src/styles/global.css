@@ -22,6 +22,15 @@
   /* ── Chat panel tokens ─────────────────────────────────────────────────── */
   --color-chat-bubble-bot:  #353A4D;   /* bot message bubble — slightly lighter than --color-modal */
   --color-chat-bubble-user: #3D2E5C;   /* user message bubble — purple-tinted dark */
+
+  /* Chat text sizes */
+  --chat-fs-header:    14px;   /* header contact name */
+  --chat-fs-bubble:    13px;   /* message bubble text */
+  --chat-fs-input:     13px;   /* input field text */
+  --chat-fs-subtitle:  12px;   /* intro / subtitle text */
+  --chat-fs-meta:      11px;   /* timestamps */
+  --chat-fs-separator: 11px;   /* date separators */
+  --chat-fs-system:    11px;   /* system messages (e.g. "Call lasted...") */
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
