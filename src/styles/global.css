@@ -28,9 +28,9 @@
   --chat-fs-bubble:    0.875rem;  /* message bubble text */
   --chat-fs-input:     0.875rem;  /* input field text */
   --chat-fs-subtitle:  0.75rem;    /* intro / subtitle text */
-  --chat-fs-meta:      0.6875rem;  /* timestamps */
-  --chat-fs-separator: 0.6875rem;  /* date separators */
-  --chat-fs-system:    0.6875rem;  /* system messages (e.g. "Call lasted...") */
+  --chat-fs-meta:      0.8125rem;  /* timestamps */
+  --chat-fs-separator: 0.8125rem;  /* date separators */
+  --chat-fs-system:    0.8125rem;  /* system messages (e.g. "Call lasted...") */
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
