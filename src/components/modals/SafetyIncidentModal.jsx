@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Icon from '../shared/Icon'
 import { Button } from '../shared/Button'
+import FormDropdown from '../shared/FormDropdown'
 import './SafetyIncidentModal.css'
 
 const WORKERS = [
@@ -88,16 +88,21 @@ const REQUIRED_FIELDS = ['injuredWorker', 'jobTitle', 'workerId', 'incidentLocat
 
 // ── Field building blocks ────────────────────────────────────────────────────
 
-function UnderlineSelect({ cls, children, ...rest }) {
-  return (
-    <div className="sim-uline-wrap">
-      <select {...rest} className={`sim-uline sim-uline--select ${cls || ''}`}>{children}</select>
-      <span className="sim-uline-caret">
-        <Icon char="" size={9} color="#8A8D9A" />
-      </span>
-    </div>
-  )
+function initialsOf(label) {
+  const parts = label.split(/\s+/).filter(Boolean)
+  return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase()
 }
+
+const WORKER_OPTIONS = WORKERS.map(w => ({
+  value:   w.value,
+  label:   w.label,
+  avatar:  `/avatars/${w.value}.png`,
+  initial: initialsOf(w.label),
+}))
+
+const WORKER_ID_OPTIONS = WORKERS.map(w => ({ value: w.workerId, label: w.workerId }))
+
+const LOCATION_OPTIONS = WORK_CENTERS.map(wc => ({ value: wc.id, label: wc.label }))
 
 function InlineRow({ label, error, htmlFor, children, wide }) {
   return (
@@ -322,27 +327,29 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
           {/* Row 1: Injured Worker | Worker ID | Job Title */}
           <div className="sim-grid-3">
             <InlineRow label="Injured Worker" error={err('injuredWorker')} wide>
-              <UnderlineSelect
-                cls={err('injuredWorker') ? 'sim-uline--error' : ''}
+              <FormDropdown
                 value={form.injuredWorker}
-                onChange={e => handleWorkerChange(e.target.value)}
+                options={WORKER_OPTIONS}
+                onChange={handleWorkerChange}
                 onBlur={() => touch('injuredWorker')}
-              >
-                <option value="">Select Worker</option>
-                {WORKERS.map(w => <option key={w.value} value={w.value}>{w.label}</option>)}
-              </UnderlineSelect>
+                placeholder="Select Worker"
+                error={err('injuredWorker')}
+                withAvatars
+                footerLabel="Search more…"
+                ariaLabel="Injured Worker"
+              />
             </InlineRow>
 
             <InlineRow label="Worker ID" error={err('workerId')} wide>
-              <UnderlineSelect
-                cls={err('workerId') ? 'sim-uline--error' : ''}
+              <FormDropdown
                 value={form.workerId}
-                onChange={e => handleWorkerIdChange(e.target.value)}
+                options={WORKER_ID_OPTIONS}
+                onChange={handleWorkerIdChange}
                 onBlur={() => touch('workerId')}
-              >
-                <option value="">Select ID</option>
-                {WORKERS.map(w => <option key={w.workerId} value={w.workerId}>{w.workerId}</option>)}
-              </UnderlineSelect>
+                placeholder="Select ID"
+                error={err('workerId')}
+                ariaLabel="Worker ID"
+              />
             </InlineRow>
 
             <InlineRow label="Job Title" error={err('jobTitle')}>
@@ -360,15 +367,15 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
           {/* Row 2: Incident Location | Work Center Location */}
           <div className="sim-grid-2-aligned">
             <InlineRow label="Incident Location" error={err('incidentLocation')} wide>
-              <UnderlineSelect
-                cls={err('incidentLocation') ? 'sim-uline--error' : ''}
+              <FormDropdown
                 value={form.incidentLocation}
-                onChange={e => setForm(f => ({ ...f, incidentLocation: e.target.value }))}
+                options={LOCATION_OPTIONS}
+                onChange={v => setForm(f => ({ ...f, incidentLocation: v }))}
                 onBlur={() => touch('incidentLocation')}
-              >
-                <option value="">Select Work Center</option>
-                {WORK_CENTERS.map(wc => <option key={wc.id} value={wc.id}>{wc.label}</option>)}
-              </UnderlineSelect>
+                placeholder="Select Work Center"
+                error={err('incidentLocation')}
+                ariaLabel="Incident Location"
+              />
               {form.incidentLocation === 'other' && (
                 <input
                   type="text"

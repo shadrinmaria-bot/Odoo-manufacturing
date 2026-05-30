@@ -194,29 +194,6 @@
 
 .sim-uline--time { color-scheme: dark; max-width: 220px; }
 
-.sim-uline-wrap {
-  position: relative;
-  width:    100%;
-}
-
-.sim-uline--select {
-  appearance:         none;
-  -moz-appearance:    none;
-  -webkit-appearance: none;
-  cursor:             pointer;
-  padding-right:      22px;
-}
-
-.sim-uline-caret {
-  position:       absolute;
-  right:          4px;
-  top:            50%;
-  transform:      translateY(-50%);
-  pointer-events: none;
-  display:        flex;
-  align-items:    center;
-}
-
 /* ── Section header ──────────────────────────────────────────────────────── */
 .sim-section {
   margin-bottom: 20px;
@@ -263,16 +240,23 @@
   width:           50px;
   height:          50px;
   border-radius:   8px;
-  background:      var(--color-card);
+  background:      #3C3E4B;
+  border:          1px solid transparent;
+  box-sizing:      border-box;
   display:         flex;
   align-items:     center;
   justify-content: center;
   flex-shrink:     0;
-  color:           var(--color-text);
-  transition:      background 0.14s;
+  color:           #F5F5F6;
+  transition:      background 0.12s, border-color 0.12s, color 0.12s, box-shadow 0.12s;
+}
+.sim-injury-card:hover:not(.sim-injury-card--selected) .sim-injury-card__tile {
+  background: #5A5E6B;
 }
 .sim-injury-card--selected .sim-injury-card__tile {
-  background: var(--color-purple);
+  background:   #17373B;
+  border-color: #03F9E3;
+  box-shadow:   0 0 8px rgba(3, 249, 227, 0.35);
 }
 
 .sim-injury-card__tile img,
@@ -284,7 +268,9 @@
   font-weight: 400;
   color:       var(--color-text);
   line-height: 1.35;
+  transition:  color 0.12s;
 }
+.sim-injury-card--selected .sim-injury-card__label { color: #03F9E3; }
 
 .sim-injury-card__other-input {
   flex:        1;
@@ -404,8 +390,3 @@
   margin:      0 0 20px;
 }
 
-/* ── select option override ──────────────────────────────────────────────── */
-select option {
-  background: var(--color-modal);
-  color:      var(--color-text);
-}
