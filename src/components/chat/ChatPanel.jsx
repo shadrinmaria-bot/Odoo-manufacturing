@@ -173,8 +173,10 @@ export default function ChatPanel({ isOpen, onClose, contact, initialMessages })
               {messages.map(msg => {
                 if (msg.type === 'intro') return (
                   <div key={msg.id} className="chat-intro">
-                    <div className="chat-intro__avatar">{CONTACT_INITIAL}</div>
-                    <div className="chat-intro__name">{CONTACT_NAME}</div>
+                    <div className="chat-intro__head">
+                      <div className="chat-intro__avatar">{CONTACT_INITIAL}</div>
+                      <div className="chat-intro__name">{CONTACT_NAME}</div>
+                    </div>
                     <p className="chat-intro__tagline">
                       This is the start of your direct chat with {CONTACT_NAME}
                     </p>

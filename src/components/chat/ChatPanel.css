@@ -146,31 +146,36 @@
   display:        flex;
   flex-direction: column;
   align-items:    flex-start;
-  gap:            2px;
+  gap:            6px;
   padding:        4px 0;
 }
 
+.chat-intro__head {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+}
+
 .chat-intro__avatar {
-  width:           38px;
-  height:          38px;
-  border-radius:   0.4375rem;
+  width:           28px;
+  height:          28px;
+  border-radius:   0.3125rem;
   background:      var(--color-accent);
   display:         flex;
   align-items:     center;
   justify-content: center;
   font-family:     var(--font-ui);
   font-weight:     700;
-  font-size:       17px;
+  font-size:       0.8125rem;
   color:           var(--color-text);
-  margin-bottom:   6px;
 }
 
 .chat-intro__name {
   font-family:  var(--font-ui);
-  font-weight:  600;
-  font-size:    15px;
+  font-weight:  700;
+  font-size:    var(--chat-fs-header);
   color:        var(--color-text);
-  line-height:  1.3;
+  line-height:  1.2;
 }
 
 .chat-intro__tagline {
@@ -183,24 +188,17 @@
 
 /* Date separator */
 .chat-date-sep {
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  position:        relative;
-  margin:          4px 0;
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  margin:      4px 0;
 }
 .chat-date-sep__line {
-  position:   absolute;
-  left:       0;
-  right:      0;
-  top:        50%;
+  flex:       1;
   height:     1px;
   background: var(--color-border);
 }
 .chat-date-sep__label {
-  position:    relative;
-  padding:     0 8px;
-  background:  var(--color-bg);
   font-family: var(--font-ui);
   font-size:   var(--chat-fs-separator);
   color:       var(--color-text-mid);
