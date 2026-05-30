@@ -174,8 +174,9 @@ function startOfQuarter(d) {
 }
 
 export const DATE_FILTERS = [
-  { id: 'last7',      label: 'Last 7 days',     predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 7  * 86400000 },
-  { id: 'last30',     label: 'Last 30 days',    predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 30 * 86400000 },
+  { id: 'last7',      label: 'Last 7 days',              predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 7  * 86400000 },
+  { id: 'last7ByDay', label: 'Last 7 days (by weekday)', predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 7  * 86400000 },
+  { id: 'last30',     label: 'Last 30 days',             predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 30 * 86400000 },
   { id: 'last90',     label: 'Last 90 days',    predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 90 * 86400000 },
   { id: 'thisMonth',  label: 'This Month',      predicate: i => new Date(i.reportDate) >= startOfMonth(REFERENCE_NOW) },
   { id: 'thisQuarter',label: 'This Quarter',    predicate: i => new Date(i.reportDate) >= startOfQuarter(REFERENCE_NOW) },

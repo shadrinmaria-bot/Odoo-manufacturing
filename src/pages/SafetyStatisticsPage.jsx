@@ -94,6 +94,9 @@ function ConfigDropdown({ prefix, value, options, onChange, includeNone = false,
 
 // ── StatsToolbar ───────────────────────────────────────────────────────────────
 
+const GROUP_BY_DIMS = DIMENSIONS.filter(d => d.id !== 'month' && d.id !== 'dayOfWeek')
+const COMPARE_BY_IDS = new Set(['workCenter', 'injuryType'])
+
 function StatsToolbar({
   groupById, onGroupByChange,
   compareById, onCompareByChange,
@@ -102,15 +105,26 @@ function StatsToolbar({
   stacked, onStackedToggle,
   sortOrder, onSortChange,
 }) {
-  const compareByOptions = DIMENSIONS.filter(d => d.id !== groupById)
+  const isLast7ByDay      = dateFilterId === 'last7ByDay'
+  const compareByOptions  = DIMENSIONS.filter(d => COMPARE_BY_IDS.has(d.id) && d.id !== groupById)
+  const showCompareBy     = graphType !== 'pie'
   const showStackedToggle = graphType === 'bar' && !!compareById
-  const showSort = graphType !== 'pie'
+  const showSort          = graphType !== 'pie'
 
   return (
     <div className="stats-toolbar">
-      <ConfigDropdown prefix="Group by"   value={groupById}    options={DIMENSIONS}         onChange={onGroupByChange} />
-      <ConfigDropdown prefix="Compare by" value={compareById}  options={compareByOptions}   onChange={onCompareByChange} includeNone />
-      <ConfigDropdown prefix="Date"       value={dateFilterId} options={DATE_FILTERS}       onChange={onDateChange} minWidth={180} />
+      {isLast7ByDay ? (
+        <Button variant="purple" className="btn-config-dropdown" style={{ opacity: 0.65, cursor: 'default' }}>
+          <span className="config-prefix">Group by:</span>
+          <span>Day of Week</span>
+        </Button>
+      ) : (
+        <ConfigDropdown prefix="Group by" value={groupById} options={GROUP_BY_DIMS} onChange={onGroupByChange} />
+      )}
+      {showCompareBy && (
+        <ConfigDropdown prefix="Compare by" value={compareById} options={compareByOptions} onChange={onCompareByChange} includeNone />
+      )}
+      <ConfigDropdown prefix="Date" value={dateFilterId} options={DATE_FILTERS} onChange={onDateChange} minWidth={210} />
 
       <ButtonGroup gap={3} style={{ marginLeft: 4 }}>
         <Button active={graphType === 'bar'}  onClick={() => onGraphTypeChange('bar')}  title="Bar chart"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
@@ -238,6 +252,10 @@ export default function SafetyStatisticsPage({ initialParams = null, onOpenModal
   useEffect(() => {
     if (compareById && compareById === groupById) setCompareById(null)
   }, [groupById, compareById])
+
+  useEffect(() => {
+    if (dateFilterId === 'last7ByDay') setGroupById('dayOfWeek')
+  }, [dateFilterId])
 
   const groupBy    = findDimension(groupById)
   const compareBy  = compareById ? findDimension(compareById) : null
