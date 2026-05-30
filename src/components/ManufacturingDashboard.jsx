@@ -158,8 +158,14 @@ export default function ManufacturingDashboard() {
     return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
   }
 
-  function handleShareIncident(incident) {
+  function handleShareIncident(incident, shareOptions) {
     if (!incident) return
+    const recipients = shareOptions?.recipients ?? []
+    const first = recipients[0] ?? { name: 'Maria Shadrin', initial: 'M' }
+    const extras = Math.max(0, recipients.length - 1)
+    const contactName = extras > 0
+      ? `${first.name} +${extras} other${extras === 1 ? '' : 's'}`
+      : first.name
     const initialMessages = [
       { id: 'share-intro', type: 'intro' },
       { id: 'share-sep',   type: 'separator', label: 'Today' },
@@ -170,7 +176,7 @@ export default function ManufacturingDashboard() {
       },
     ]
     setChatSession({
-      contact: { name: 'Maria Shadrin', initial: 'M' },
+      contact: { name: contactName, initial: (first.initial || first.name.charAt(0)).toUpperCase() },
       initialMessages,
     })
     setDetailIncident(null)
