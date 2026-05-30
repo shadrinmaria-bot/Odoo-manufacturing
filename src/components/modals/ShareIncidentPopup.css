@@ -108,7 +108,7 @@
   transition:    border-color 0.12s;
 }
 .sip-search-input::placeholder { color: #6A6D7A; }
-.sip-search-input:focus { border-color: #654064; }
+.sip-search-input:focus { border-color: #03F9E3; }
 
 /* ── Recipient list ─────────────────────────────────────────────────────── */
 .sip-recipient-list {
@@ -134,13 +134,18 @@
   cursor:         pointer;
   transition:     background-color 0.12s;
 }
-.sip-recipient:hover { background: #2F3340; }
+.sip-recipient:hover { background: #3C3E4B; }
 
-.sip-recipient--checked {
-  background: rgba(101, 64, 100, 0.22);
-}
-.sip-recipient--checked:hover {
-  background: rgba(101, 64, 100, 0.32);
+.sip-recipient--checked,
+.sip-recipient--checked:hover { background: #3C3E4B; }
+
+.sip-check {
+  width:           14px;
+  height:          14px;
+  flex-shrink:     0;
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
 }
 
 .sip-avatar {
@@ -188,7 +193,7 @@
   text-align:  center;
 }
 
-/* ── Checkbox ───────────────────────────────────────────────────────────── */
+/* ── Checkbox (Send via email toggle only) ──────────────────────────────── */
 .sip-checkbox {
   width:           16px;
   height:          16px;

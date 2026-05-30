@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import Icon from '../shared/Icon'
 import './ShareIncidentPopup.css'
 
 const RECIPIENTS = [
@@ -110,12 +111,8 @@ export default function ShareIncidentPopup({ isOpen, onClose, onConfirm }) {
                     role="option"
                     aria-selected={checked}
                   >
-                    <span className={`sip-checkbox ${checked ? 'sip-checkbox--checked' : ''}`} aria-hidden="true">
-                      {checked && (
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
-                      )}
+                    <span className="sip-check" aria-hidden="true">
+                      {checked && <Icon char={"\uF00C"} size={12} color="#03F9E3" />}
                     </span>
                     <span className={`sip-avatar sip-avatar--${r.type}`}>
                       {r.type === 'group' ? (
@@ -167,12 +164,12 @@ export default function ShareIncidentPopup({ isOpen, onClose, onConfirm }) {
 
         {/* Footer */}
         <div className="sip-footer">
-          <button className="sip-btn sip-btn--cancel" onClick={onClose}>Cancel</button>
           <button
             className="sip-btn sip-btn--share"
             onClick={handleShare}
             disabled={!canShare}
           >Share</button>
+          <button className="sip-btn sip-btn--cancel" onClick={onClose}>Cancel</button>
         </div>
       </div>
     </div>

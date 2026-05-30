@@ -33,6 +33,17 @@
   --chat-fs-system:    0.8125rem;  /* system messages (e.g. "Call lasted...") */
 }
 
+/* ── Scrollbars (Odoo dark mode) ─────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+*::-webkit-scrollbar           { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track     { background: transparent; }
+*::-webkit-scrollbar-thumb     { background: var(--color-border); border-radius: 4px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--color-border-light); }
+*::-webkit-scrollbar-corner    { background: transparent; }
+
 /* ── Animations ──────────────────────────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
