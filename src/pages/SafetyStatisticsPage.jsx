@@ -312,8 +312,8 @@ export default function SafetyStatisticsPage({ initialParams = null, onOpenModal
               <PieChart>
                 <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
                 <Legend layout="vertical" verticalAlign="top" align="right" wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />
-                <Pie data={pieDisplayRows} dataKey="value" nameKey="key" cx="45%" outerRadius="80%" innerRadius={0} isAnimationActive={false} labelLine={false}>
-                  {pieDisplayRows.map((d, i) => <Cell key={d.key} fill={colorFor(groupBy, d.key, i)} />)}
+                <Pie data={pieDisplayRows} dataKey="value" nameKey="key" cx="45%" outerRadius="80%" innerRadius={0} isAnimationActive={false} labelLine={false} stroke="none">
+                  {pieDisplayRows.map((d, i) => <Cell key={d.key} fill={colorFor(groupBy, d.key, i)} stroke="none" />)}
                 </Pie>
               </PieChart>
             )}
