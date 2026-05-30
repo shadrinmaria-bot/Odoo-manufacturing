@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './IncidentDetailModal.css'
+import ShareIncidentPopup from './ShareIncidentPopup'
 
 const INJURY_ICONS = {
   overexertion: (
@@ -75,15 +76,25 @@ const INJURY_TYPE_LABELS = {
 
 export default function IncidentDetailModal({ incident, isOpen, onClose, onShare }) {
   const modalRef = useRef(null)
+  const [isShareOpen, setIsShareOpen] = useState(false)
 
   useEffect(() => {
     if (!isOpen) return
     function handleKey(e) {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape' && !isShareOpen) onClose()
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [isOpen, onClose])
+  }, [isOpen, isShareOpen, onClose])
+
+  useEffect(() => {
+    if (!isOpen) setIsShareOpen(false)
+  }, [isOpen])
+
+  function handleShareConfirm({ recipients, emailAlso }) {
+    setIsShareOpen(false)
+    if (onShare) onShare(incident, { recipients, emailAlso })
+  }
 
   if (!isOpen || !incident) return null
 
@@ -183,7 +194,7 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
           <div className="idm-footer__actions">
             <button
               className="idm-btn idm-btn--share"
-              onClick={() => onShare && onShare(incident)}
+              onClick={() => setIsShareOpen(true)}
             >Share</button>
             <button className="idm-btn idm-btn--print" onClick={() => window.print()}>Print</button>
           </div>
@@ -204,6 +215,12 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
           </div>
         </div>
       </div>
+
+      <ShareIncidentPopup
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        onConfirm={handleShareConfirm}
+      />
     </div>
   )
 }
