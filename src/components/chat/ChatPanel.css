@@ -1,8 +1,8 @@
 /* ── ChatPanel ───────────────────────────────────────────────────────────── */
 .chat-panel {
   position:         fixed;
-  bottom:           0;
-  right:            24px;
+  bottom:           3px;
+  right:            50px;
   width:            380px;
   display:          flex;
   flex-direction:   column;
@@ -279,3 +279,59 @@
   cursor:  default;
   filter:  none;
 }
+
+/* ── Three-dot action button ────────────────────────────────────────────── */
+.chat-dots-wrapper {
+  position: absolute;
+  bottom:   6px;
+  right:    -18px;
+  z-index:  501;
+}
+
+.chat-dots-btn {
+  width:           32px;
+  height:          32px;
+  border-radius:   50%;
+  background:      var(--color-card);
+  border:          1px solid var(--color-border);
+  cursor:          pointer;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  color:           var(--color-text);
+  opacity:         0;
+  transition:      opacity 0.18s;
+}
+.chat-panel:hover .chat-dots-btn { opacity: 1; }
+.chat-dots-btn--open              { opacity: 1 !important; }
+
+.chat-dots-menu {
+  position:      absolute;
+  bottom:        calc(100% + 6px);
+  right:         0;
+  background:    var(--color-modal);
+  border:        1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow:    0 4px 16px rgba(0, 0, 0, 0.4);
+  z-index:       502;
+  min-width:     210px;
+  overflow:      hidden;
+  animation:     navDropdownFadeIn 0.12s ease;
+}
+
+.chat-dots-menu__item {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  width:       100%;
+  padding:     9px 14px;
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  font-family: var(--font-ui);
+  font-size:   13.5px;
+  color:       var(--color-text);
+  text-align:  left;
+  transition:  background 0.1s;
+}
+.chat-dots-menu__item:hover { background: rgba(255, 255, 255, 0.05); }

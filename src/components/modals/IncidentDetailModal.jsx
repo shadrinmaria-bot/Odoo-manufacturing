@@ -182,7 +182,7 @@ export default function IncidentDetailModal({ incident, isOpen, onClose }) {
         <div className="idm-footer">
           <div className="idm-footer__actions">
             <button className="idm-btn idm-btn--share">Share</button>
-            <button className="idm-btn idm-btn--print">Print</button>
+            <button className="idm-btn idm-btn--print" onClick={() => window.print()}>Print</button>
           </div>
           <div className="idm-footer__reporter">
             <span className="idm-reporter-label">Reported By</span>

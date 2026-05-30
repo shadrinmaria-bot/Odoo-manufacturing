@@ -114,6 +114,152 @@
 
 .nav-icon-btn--chat-active { color: var(--color-accent); opacity: 1; }
 
+/* ── Discuss dropdown ────────────────────────────────────────────────────── */
+.discuss-dropdown {
+  position:      absolute;
+  top:           calc(100% + 6px);
+  right:         -120px;
+  width:         320px;
+  background:    var(--color-card);
+  border:        1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow:    0 8px 24px rgba(0, 0, 0, 0.45);
+  z-index:       200;
+  overflow:      hidden;
+  animation:     navDropdownFadeIn 0.12s ease;
+}
+
+.discuss-dropdown__header {
+  display:       flex;
+  align-items:   center;
+  padding:       6px 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.discuss-dropdown__tabs {
+  display: flex;
+  flex:    1;
+  gap:     0;
+}
+
+.discuss-tab {
+  background:    none;
+  border:        none;
+  cursor:        pointer;
+  padding:       8px 12px;
+  font-family:   var(--font-ui);
+  font-size:     13.5px;
+  color:         var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition:    color 0.12s, border-color 0.12s;
+  white-space:   nowrap;
+}
+.discuss-tab:hover    { color: var(--color-text); }
+.discuss-tab--active  {
+  color:        var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.discuss-new-msg {
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  font-family: var(--font-ui);
+  font-size:   12.5px;
+  color:       var(--color-accent);
+  padding:     4px 0 4px 8px;
+  white-space: nowrap;
+  transition:  opacity 0.12s;
+}
+.discuss-new-msg:hover { opacity: 0.75; }
+
+.discuss-dropdown__body {
+  max-height:      320px;
+  overflow-y:      auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.discuss-chat-row {
+  display:     flex;
+  align-items: flex-start;
+  gap:         10px;
+  width:       100%;
+  padding:     10px 14px;
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  text-align:  left;
+  transition:  background 0.1s;
+}
+.discuss-chat-row:hover { background: rgba(255, 255, 255, 0.04); }
+
+.discuss-chat-row__avatar {
+  width:           36px;
+  height:          36px;
+  border-radius:   4px;
+  flex-shrink:     0;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-family:     var(--font-ui);
+  font-weight:     700;
+  font-size:       15px;
+  color:           var(--color-text);
+}
+
+.discuss-chat-row__content {
+  flex:           1;
+  min-width:      0;
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+}
+
+.discuss-chat-row__top {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  gap:             8px;
+}
+
+.discuss-chat-row__name {
+  font-family:   var(--font-ui);
+  font-size:     13.5px;
+  font-weight:   600;
+  color:         var(--color-text);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.discuss-chat-row__date {
+  font-family: var(--font-ui);
+  font-size:   11.5px;
+  color:       var(--color-text-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.discuss-chat-row__preview {
+  font-family:   var(--font-ui);
+  font-size:     12.5px;
+  color:         var(--color-text-muted);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.discuss-dropdown__empty {
+  padding:     24px 16px;
+  font-family: var(--font-ui);
+  font-size:   13px;
+  color:       var(--color-text-dim);
+  text-align:  center;
+  margin:      0;
+}
+
 .nav-badge {
   position:      absolute;
   top:           -4px;

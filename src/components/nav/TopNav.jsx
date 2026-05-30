@@ -17,34 +17,94 @@ const ENABLED_SUB_ITEMS = new Set(['Reporting/Safety Statistics'])
 
 // ── NavIcons ──────────────────────────────────────────────────────────────────
 
-function NavIcons({ onChatToggle, isChatOpen }) {
+function NavIcons({ onOpenChat }) {
+  const [discussOpen, setDiscussOpen] = useState(false)
+  const discussRef = useRef(null)
+
+  useEffect(() => {
+    if (!discussOpen) return
+    function handleMouseDown(e) {
+      if (discussRef.current && !discussRef.current.contains(e.target)) setDiscussOpen(false)
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [discussOpen])
+
   return (
     <div className="nav-icons">
       <button className="nav-icon-btn" aria-label="AI">
         <img src="/aiicon.png" width="18" height="18" alt="AI" />
       </button>
-      <button className="nav-icon-btn nav-icon-btn--relative" aria-label="Discuss">
+      <div ref={discussRef} style={{ position: 'relative' }}>
+        <button className="nav-icon-btn nav-icon-btn--relative" aria-label="Discuss" onClick={() => setDiscussOpen(p => !p)}>
         <Icon char="" size={18} color="#F5F5F6" />
         <span className="nav-badge">3</span>
-      </button>
+        </button>
+        {discussOpen && (
+          <DiscussDropdown onOpenChat={() => { onOpenChat(); setDiscussOpen(false) }} />
+        )}
+      </div>
       <button className="nav-icon-btn" aria-label="Activity">
         <Icon char="" size={18} color="#F5F5F6" />
       </button>
       <button className="nav-icon-btn" aria-label="Debug">
         <Icon char="" font="odoo" size={18} color="#F5F5F6" />
       </button>
-      <button
-        className={`nav-icon-btn nav-icon-btn--chat${isChatOpen ? ' nav-icon-btn--chat-active' : ''}`}
-        aria-label="Toggle chat"
-        onClick={onChatToggle}
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
-      </button>
       <span className="nav-separator" />
       <span className="nav-username">ProductDesign</span>
       <div className="nav-avatar">P</div>
+    </div>
+  )
+}
+
+// ── Discuss dropdown ──────────────────────────────────────────────────────────
+
+const DISCUSS_TABS = ['Notifications', 'Chats', 'Channels']
+
+const DEMO_CHATS = [
+  { id: 'c1', name: 'Emma Granger',    initial: 'E', color: '#875A7B', date: 'May 30', preview: 'Safety report submitted.' },
+  { id: 'c2', name: 'Production Team', initial: 'P', color: '#5A7BA0', date: 'May 29', preview: 'Work orders updated.' },
+  { id: 'c3', name: 'John Doe',        initial: 'J', color: '#6B3E66', date: 'May 28', preview: 'Machine guard inspection done.' },
+]
+
+function DiscussDropdown({ onOpenChat }) {
+  const [activeTab, setActiveTab] = useState('Chats')
+  return (
+    <div className="discuss-dropdown">
+      <div className="discuss-dropdown__header">
+        <div className="discuss-dropdown__tabs">
+          {DISCUSS_TABS.map(tab => (
+            <button
+              key={tab}
+              className={`discuss-tab${activeTab === tab ? ' discuss-tab--active' : ''}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        <button className="discuss-new-msg">New Message</button>
+      </div>
+      <div className="discuss-dropdown__body">
+        {activeTab === 'Chats' ? (
+          DEMO_CHATS.map(chat => (
+            <button key={chat.id} className="discuss-chat-row" onClick={() => onOpenChat(chat)}>
+              <div className="discuss-chat-row__avatar" style={{ background: chat.color }}>
+                {chat.initial}
+              </div>
+              <div className="discuss-chat-row__content">
+                <div className="discuss-chat-row__top">
+                  <span className="discuss-chat-row__name">{chat.name}</span>
+                  <span className="discuss-chat-row__date">{chat.date}</span>
+                </div>
+                <span className="discuss-chat-row__preview">{chat.preview}</span>
+              </div>
+            </button>
+          ))
+        ) : (
+          <p className="discuss-dropdown__empty">No {activeTab.toLowerCase()} to show.</p>
+        )}
+      </div>
     </div>
   )
 }
@@ -94,7 +154,7 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
 
 // ── TopNav ────────────────────────────────────────────────────────────────────
 
-export function TopNav({ activePage, onSelect, onChatToggle, isChatOpen }) {
+export function TopNav({ activePage, onSelect, onOpenChat }) {
   const [openDropdown, setOpenDropdown] = useState(null)
   const navRef = useRef(null)
 
@@ -140,7 +200,7 @@ export function TopNav({ activePage, onSelect, onChatToggle, isChatOpen }) {
           />
         ))}
       </nav>
-      <NavIcons onChatToggle={onChatToggle} isChatOpen={isChatOpen} />
+      <NavIcons onOpenChat={onOpenChat} />
     </header>
   )
 }

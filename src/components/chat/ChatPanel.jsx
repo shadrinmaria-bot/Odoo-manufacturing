@@ -13,11 +13,22 @@ const INITIAL_MESSAGES = [
 ]
 
 export default function ChatPanel({ isOpen, onClose }) {
-  const [messages,  setMessages]  = useState(INITIAL_MESSAGES)
-  const [input,     setInput]     = useState('')
-  const [minimized, setMinimized] = useState(false)
+  const [messages,     setMessages]     = useState(INITIAL_MESSAGES)
+  const [input,        setInput]        = useState('')
+  const [minimized,    setMinimized]    = useState(false)
+  const [dotsMenuOpen, setDotsMenuOpen] = useState(false)
   const messagesEndRef = useRef(null)
   const textareaRef    = useRef(null)
+  const dotsRef        = useRef(null)
+
+  useEffect(() => {
+    if (!dotsMenuOpen) return
+    function handleMouseDown(e) {
+      if (dotsRef.current && !dotsRef.current.contains(e.target)) setDotsMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [dotsMenuOpen])
 
   useEffect(() => {
     if (!minimized && isOpen) {
@@ -43,10 +54,47 @@ export default function ChatPanel({ isOpen, onClose }) {
     }
   }
 
+  function handleHide() {
+    setDotsMenuOpen(false)
+    onClose()
+  }
+
+  function handleCloseAll() {
+    setMessages(INITIAL_MESSAGES)
+    setMinimized(false)
+    setDotsMenuOpen(false)
+    onClose()
+  }
+
   if (!isOpen) return null
 
   return (
     <div className={`chat-panel${minimized ? ' chat-panel--minimized' : ' chat-panel--expanded'}`}>
+
+      {/* ── Dots action button ── */}
+      <div ref={dotsRef} className="chat-dots-wrapper">
+        <button
+          className={`chat-dots-btn${dotsMenuOpen ? ' chat-dots-btn--open' : ''}`}
+          aria-label="Chat options"
+          onClick={() => setDotsMenuOpen(p => !p)}
+        >
+          <svg width="14" height="4" viewBox="0 0 14 4" fill="currentColor">
+            <circle cx="2"  cy="2" r="1.5" />
+            <circle cx="7"  cy="2" r="1.5" />
+            <circle cx="12" cy="2" r="1.5" />
+          </svg>
+        </button>
+        {dotsMenuOpen && (
+          <div className="chat-dots-menu">
+            <button className="chat-dots-menu__item" onClick={handleHide}>
+              <span>👁</span> Hide all conversations
+            </button>
+            <button className="chat-dots-menu__item" onClick={handleCloseAll}>
+              <span>✕</span> Close all conversations
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* ── Header ── */}
       <div className="chat-header">

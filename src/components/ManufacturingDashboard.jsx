@@ -203,8 +203,7 @@ export default function ManufacturingDashboard() {
       <TopNav
         activePage={activePage}
         onSelect={(section, subItem) => setActivePage({ section, subItem, params: null })}
-        onChatToggle={() => setIsChatOpen(p => !p)}
-        isChatOpen={isChatOpen}
+        onOpenChat={() => setIsChatOpen(true)}
       />
 
       {isOverview ? (
