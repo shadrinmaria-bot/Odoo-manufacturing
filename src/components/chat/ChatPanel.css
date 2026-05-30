@@ -1,15 +1,15 @@
 /* ── Outer fixed wrapper (positions the panel + keeps dots outside) ───────── */
 .chat-panel-outer {
   position: fixed;
-  bottom:   24px;
-  right:    100px;
+  bottom:   1.5rem;
+  right:    6.25rem;
   z-index:  500;
 }
 
 /* ── ChatPanel ───────────────────────────────────────────────────────────── */
 .chat-panel {
   position:         relative;
-  width:            370px;
+  width:            23.125rem;
   display:          flex;
   flex-direction:   column;
   background:       var(--color-bg);
@@ -21,7 +21,7 @@
   overflow:         hidden;
 }
 
-.chat-panel--expanded  { height: 620px; }
+.chat-panel--expanded  { height: 38.75rem; }
 .chat-panel--minimized { height: auto; }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -235,7 +235,7 @@
   display:        flex;
   flex-direction: column;
   gap:            3px;
-  max-width:      220px;
+  max-width:      13.75rem;
 }
 .chat-msg--user .chat-msg__body { align-items: flex-end; }
 
@@ -333,8 +333,8 @@
   font-size:   var(--chat-fs-input);
   color:       var(--color-text);
   resize:      none;
-  min-height:  22px;
-  max-height:  80px;
+  min-height:  1.375rem;
+  max-height:  5rem;
   overflow-y:  auto;
   outline:     none;
   line-height: 1.45;
