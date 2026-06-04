@@ -43,17 +43,6 @@ const WORK_CENTER_DEFS = [
 const DEMO_INCIDENTS = {
   carpentry: [
     {
-      id: 'c1', title: 'Overexertion injury — Saw B area',
-      severity: 'critical',
-      reportedBy: 'Emma Granger', incidentDate: 'Apr 28, 3:00 PM',
-      date: 'Apr 28', location: 'Carpentry Workshop',
-      injuredWorker: 'Valeria Kulishov', workerId: '2014321860', jobTitle: 'Chief Executive Officer',
-      incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
-      incidentDetails: "Worker was unloading heavy freight boxes (15–20 kg) from a delivery truck at Warehouse 2. While repositioning a shifted oversized box, it made sudden contact with the worker's upper body, forcing an awkward twisting motion. Worker reported immediate sharp pain in the lower back and right shoulder and was escorted to the on-site medical station. Contributing factors include absence of mechanical lifting aid and time pressure from the delivery schedule.",
-      injuryType: { id: 'overexertion', label: 'Overexertion injury' },
-      actionsTaken: 'First Aid Provided, Supervisor Notified, Worker Removed from Duty, Ambulance was Called',
-    },
-    {
       id: 'c2', title: 'PPE signage faded',
       severity: 'attention',
       reportedBy: 'J. Miller', incidentDate: 'Apr 30, 9:15 AM',
