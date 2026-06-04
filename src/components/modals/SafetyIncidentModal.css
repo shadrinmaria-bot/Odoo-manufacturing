@@ -67,12 +67,13 @@
 
 /* ── Reporter row ────────────────────────────────────────────────────────── */
 .sim-reporter-row {
-  display:       flex;
-  align-items:   center;
-  gap:           40px;
-  padding:       4px 0 16px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid var(--color-border);
+  display:               grid;
+  grid-template-columns: 1.4fr 1.4fr 1fr;
+  gap:                   28px;
+  align-items:           center;
+  padding:               4px 0 16px;
+  margin-bottom:         18px;
+  border-bottom:         1px solid var(--color-border);
 }
 
 .sim-reporter-row__group {
