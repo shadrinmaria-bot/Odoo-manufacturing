@@ -98,6 +98,8 @@ function ConfigDropdown({ prefix, value, options, onChange, includeNone = false,
 
 const GROUP_BY_DIMS = DIMENSIONS.filter(d => d.id !== 'month' && d.id !== 'dayOfWeek')
 const COMPARE_BY_IDS = new Set(['workCenter', 'injuryType'])
+const DATE_FILTER_IDS = new Set(['last7', 'thisMonth', 'thisQuarter', 'all'])
+const STATS_DATE_FILTERS = DATE_FILTERS.filter(d => DATE_FILTER_IDS.has(d.id))
 
 function StatsToolbar({
   groupById, onGroupByChange,
@@ -127,7 +129,7 @@ function StatsToolbar({
       {showCompareBy && (
         <ConfigDropdown prefix="Compare by" value={compareById} options={compareByOptions} onChange={onCompareByChange} includeNone />
       )}
-      <ConfigDropdown prefix="Date" value={dateFilterId} options={DATE_FILTERS} onChange={onDateChange} minWidth={210} />
+      <ConfigDropdown prefix="Date" value={dateFilterId} options={STATS_DATE_FILTERS} onChange={onDateChange} minWidth={210} />
 
       <ButtonGroup gap={3} style={{ marginLeft: 4 }}>
         <Button active={graphType === 'bar'}  onClick={() => onGraphTypeChange('bar')}  title="Bar chart"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
@@ -255,7 +257,9 @@ function StatsSubHeader({ filteredCenter, onClearFilter, onOpenModal }) {
 export default function SafetyStatisticsPage({ initialParams = null, onOpenModal }) {
   const [groupById,     setGroupById]     = useState(initialParams?.initialGroupBy   ?? 'workCenter')
   const [compareById,   setCompareById]   = useState(initialParams?.initialCompareBy ?? null)
-  const [dateFilterId,  setDateFilterId]  = useState(initialParams?.initialDate      ?? 'last90')
+  const [dateFilterId,  setDateFilterId]  = useState(
+    DATE_FILTER_IDS.has(initialParams?.initialDate) ? initialParams.initialDate : 'last7'
+  )
   const [graphType,     setGraphType]     = useState(initialParams?.initialGraphType  ?? 'bar')
   const [stacked,       setStacked]       = useState(false)
   const [sortOrder,     setSortOrder]     = useState(null)
@@ -296,7 +300,7 @@ export default function SafetyStatisticsPage({ initialParams = null, onOpenModal
 
   const groupBy    = findDimension(groupById)
   const compareBy  = compareById ? findDimension(compareById) : null
-  const dateFilter = findDateFilter(dateFilterId) ?? DATE_FILTERS[2]
+  const dateFilter = findDateFilter(dateFilterId) ?? STATS_DATE_FILTERS[0]
 
   const filteredIncidents = INCIDENTS.filter(i => {
     if (!dateFilter.predicate(i)) return false

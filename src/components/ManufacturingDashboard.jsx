@@ -207,7 +207,7 @@ export default function ManufacturingDashboard() {
         initialFilter:    workCenterName,
         initialGroupBy:   'month',
         initialCompareBy: null,
-        initialDate:      'last90',
+        initialDate:      'last7',
         initialGraphType: 'line',
       },
     })
