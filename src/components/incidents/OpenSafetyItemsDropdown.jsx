@@ -14,7 +14,7 @@ function CriticalIcon() {
 }
 
 function AttentionIcon() {
-  return <Icon char={"\uF071"} size={14} color="#008FE3" />
+  return <Icon char={"\uF017"} size={14} color="#008FE3" />
 }
 
 function ChevronRightIcon() {
