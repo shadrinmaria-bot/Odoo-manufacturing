@@ -19,6 +19,10 @@
   --color-worker-avatar:#5A7BA0;
   --font-ui:            'Segoe UI', sans-serif;
 
+  /* ── Work center bar chart ─────────────────────────────────────────────── */
+  --color-bar-up:   #60375C; /* axis reference line + upward (todo) bar   */
+  --color-bar-down: #007A76; /* downward (completed) bar                  */
+
   /* ── Chat panel tokens ─────────────────────────────────────────────────── */
   --color-chat-bubble-bot:  #1D3046;   /* bot message bubble — desaturated navy */
   --color-chat-bubble-user: #183629;   /* user message bubble — dark green */

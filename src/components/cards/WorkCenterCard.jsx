@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
-  ResponsiveContainer,
+  ResponsiveContainer, ReferenceLine,
 } from 'recharts'
 import StatusBadge from '../badges/StatusBadge'
 import OpenSafetyItemsDropdown from '../incidents/OpenSafetyItemsDropdown'
@@ -22,7 +22,7 @@ function StatusDot({ hasCritical }) {
 
 function CustomTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
-    const total = payload.reduce((s, p) => s + (p.value || 0), 0)
+    const total = payload.reduce((s, p) => s + Math.abs(p.value || 0), 0)
     return (
       <div className="wc-tooltip">
         <p className="wc-tooltip__label">{label}</p>
@@ -128,17 +128,18 @@ export default function WorkCenterCard({
           <div className="wc-card__chart-spacer" />
           <div className="wc-card__chart-area">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }} barCategoryGap="30%">
+              <BarChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }} barCategoryGap="15%">
                 <XAxis
                   dataKey="week"
                   tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
                   axisLine={false} tickLine={false}
                   interval="preserveStartEnd"
                 />
-                <YAxis hide domain={[0, 'auto']} />
+                <YAxis hide domain={[-5, 5]} />
                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
-                <Bar dataKey="done" stackId="orders" fill="#1AD3BB" isAnimationActive={false} />
-                <Bar dataKey="todo" stackId="orders" fill="#6B3E66" isAnimationActive={false} />
+                <ReferenceLine y={0} stroke="#60375C" strokeWidth={1.5} />
+                <Bar dataKey="up"   stackId="orders" fill="#60375C" isAnimationActive={false} />
+                <Bar dataKey="down" stackId="orders" fill="#007A76" isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </div>
