@@ -198,7 +198,7 @@ export default function ManufacturingDashboard() {
       subItem: 'Safety Statistics',
       params: {
         initialFilter:    workCenterName,
-        initialGroupBy:   'month',
+        initialGroupBy:   'workCenter',
         initialCompareBy: null,
         initialDate:      'last7',
         initialGraphType: 'line',
