@@ -14,13 +14,7 @@ function CriticalIcon() {
 }
 
 function AttentionIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="osd-row__icon">
-      <circle cx="8" cy="8" r="6.5" stroke="#008FE3" strokeWidth="1.4" />
-      <line x1="8" y1="5" x2="8" y2="9" stroke="#008FE3" strokeWidth="1.4" strokeLinecap="round" />
-      <circle cx="8" cy="11" r="0.7" fill="#008FE3" />
-    </svg>
-  )
+  return <Icon char={"\uF071"} size={14} color="#008FE3" />
 }
 
 function ChevronRightIcon() {
