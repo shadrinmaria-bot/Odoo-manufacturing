@@ -95,10 +95,14 @@ const DEMO_INCIDENTS = {
 // ── Label maps (used when building new incidents from modal form) ─────────────
 
 const WORKERS_MAP = {
-  'john-doe':     'John Doe',
-  'jane-smith':   'Jane Smith',
-  'mike-johnson': 'Mike Johnson',
-  'sara-lee':     'Sara Lee',
+  'john-doe':         'John Doe',
+  'jane-smith':       'Jane Smith',
+  'mike-johnson':     'Mike Johnson',
+  'sara-lee':         'Sara Lee',
+  'maria-lan':        'Maria Lan',
+  'valeria-kulishov': 'Valeria Kulishov',
+  'amit-tzadik':      'Amit Tzadik',
+  'oran-shuster':     'Oran Shuster',
 }
 
 const WORK_CENTER_DISPLAY = {
@@ -230,7 +234,7 @@ export default function ManufacturingDashboard() {
       id:               `${workCenterId}-${Date.now()}`,
       title:            injuryLabel.length > 35 ? injuryLabel.slice(0, 35) + '…' : injuryLabel,
       severity,
-      reportedBy:       'Emma Granger',
+      reportedBy:       WORKERS_MAP[formData.reportedBy] || formData.reportedBy || 'Unknown',
       incidentDate:     dateStr,
       date:             shortDate,
       location:         locationLabel,

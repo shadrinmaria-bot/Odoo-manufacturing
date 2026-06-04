@@ -247,13 +247,13 @@ function SuccessPopup({ onClose }) {
 
 export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   const modalRef = useRef(null)
-  const [avatarErrored, setAvatarErrored] = useState(false)
 
   const now = new Date()
   const incidentDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
     ', ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
   const emptyForm = {
+    reportedBy: '',
     injuredWorker: '', jobTitle: '', workerId: '',
     incidentLocation: '', otherLocation: '', workCenterLocation: '',
     selectedInjuryType: '', otherInjuryText: '',
@@ -369,19 +369,18 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
         <div className="sim-body">
           {/* Reporter row */}
           <div className="sim-reporter-row">
-            <div className="sim-reporter-row__group">
-              <span className="sim-inline-label">Reported By</span>
-              {avatarErrored ? (
-                <div className="sim-reporter-avatar">E</div>
-              ) : (
-                <img
-                  src="/avatar-emma.png"
-                  alt="Emma Granger"
-                  className="sim-reporter-avatar sim-reporter-avatar--img"
-                  onError={() => setAvatarErrored(true)}
+            <div className="sim-inline-row sim-inline-row--wide">
+              <label className="sim-inline-label">Reported By</label>
+              <div className="sim-inline-field">
+                <FormDropdown
+                  value={form.reportedBy}
+                  options={WORKER_OPTIONS}
+                  onChange={v => setForm(f => ({ ...f, reportedBy: v }))}
+                  placeholder="Select Reporter"
+                  withAvatars
+                  ariaLabel="Reported By"
                 />
-              )}
-              <span className="sim-reporter-name">Emma Granger</span>
+              </div>
             </div>
             <div className="sim-reporter-row__group">
               <span className="sim-inline-label">Incident Date</span>
