@@ -43,19 +43,21 @@ const WORK_CENTER_DEFS = [
 const DEMO_INCIDENTS = {
   carpentry: [
     {
-      id: 'c1', title: 'Machine guard missing - Saw B',
-      subtitle: 'Linked to MR-0219 - Reported Apr 28', severity: 'attention',
-      reportedBy: 'Emma Granger', incidentDate: 'Apr 25, 3:00 PM',
+      id: 'c1', title: 'Overexertion injury — Saw B area',
+      severity: 'critical',
+      reportedBy: 'Emma Granger', incidentDate: 'Apr 28, 3:00 PM',
+      date: 'Apr 28', location: 'Carpentry Workshop',
       injuredWorker: 'Valeria Kulishov', workerId: '2014321860', jobTitle: 'Chief Executive Officer',
       incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
       incidentDetails: "Worker was unloading heavy freight boxes (15–20 kg) from a delivery truck at Warehouse 2. While repositioning a shifted oversized box, it made sudden contact with the worker's upper body, forcing an awkward twisting motion. Worker reported immediate sharp pain in the lower back and right shoulder and was escorted to the on-site medical station. Contributing factors include absence of mechanical lifting aid and time pressure from the delivery schedule.",
-      injuryType: { id: 'overexertion', label: 'Overexertion involving outside sources' },
+      injuryType: { id: 'overexertion', label: 'Overexertion injury' },
       actionsTaken: 'First Aid Provided, Supervisor Notified, Worker Removed from Duty, Ambulance was Called',
     },
     {
-      id: 'c2', title: 'PPE signage faded - North entrance',
-      subtitle: 'Flagged during morning walk - Apr 30', severity: 'attention',
-      reportedBy: 'Emma Granger', incidentDate: 'Apr 30, 9:15 AM',
+      id: 'c2', title: 'PPE signage faded',
+      severity: 'attention',
+      reportedBy: 'J. Miller', incidentDate: 'Apr 30, 9:15 AM',
+      date: 'Apr 30', location: 'North entrance',
       injuredWorker: 'John Doe', workerId: '2012380163', jobTitle: 'Machine Operator',
       incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
       incidentDetails: 'PPE safety signage at the north entrance has faded to the point of being illegible. Workers may not be aware of required PPE for the area.',
@@ -63,9 +65,10 @@ const DEMO_INCIDENTS = {
       actionsTaken: 'Area Secured, Supervisor Notified',
     },
     {
-      id: 'c3', title: 'Emergency exit check',
-      subtitle: 'Audit - May 20', severity: 'attention',
+      id: 'c3', title: 'Emergency exit obstructed',
+      severity: 'attention',
       reportedBy: 'Emma Granger', incidentDate: 'May 20, 2:00 PM',
+      date: 'May 20', location: 'East side exit',
       injuredWorker: 'Jane Smith', workerId: '2012380164', jobTitle: 'Quality Inspector',
       incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
       incidentDetails: 'Emergency exit door on the east side of the carpentry workshop was found partially obstructed during routine audit. Exit path was blocked by stored materials.',
@@ -75,9 +78,10 @@ const DEMO_INCIDENTS = {
   ],
   paint: [
     {
-      id: 'p1', title: 'Chemical spill near mixing station',
-      subtitle: 'Reported by floor supervisor - Apr 22', severity: 'attention',
-      reportedBy: 'Emma Granger', incidentDate: 'Apr 22, 11:30 AM',
+      id: 'p1', title: 'Chemical spill — mixing station',
+      severity: 'attention',
+      reportedBy: 'Floor Supervisor', incidentDate: 'Apr 22, 11:30 AM',
+      date: 'Apr 22', location: 'Paint — Warehouse 2',
       injuredWorker: 'Mike Johnson', workerId: '2012380165', jobTitle: 'Forklift Operator',
       incidentLocation: 'Paint', workCenterLocation: 'Warehouse 2',
       incidentDetails: 'Minor chemical spill occurred near the paint mixing station. No injuries reported. Area was immediately cordoned off.',
@@ -85,9 +89,10 @@ const DEMO_INCIDENTS = {
       actionsTaken: 'First Aid Administered, Area Secured',
     },
     {
-      id: 'p2', title: 'Ventilation system partially blocked',
-      subtitle: 'Maintenance inspection - May 1', severity: 'attention',
+      id: 'p2', title: 'Ventilation partially blocked',
+      severity: 'attention',
       reportedBy: 'Emma Granger', incidentDate: 'May 1, 8:00 AM',
+      date: 'May 1', location: 'Paint booth area',
       injuredWorker: 'Sara Lee', workerId: '2012380166', jobTitle: 'Assembly Technician',
       incidentLocation: 'Paint', workCenterLocation: 'Warehouse 2',
       incidentDetails: 'Routine maintenance inspection found ventilation ducts partially blocked with paint residue. Risk of fume accumulation in the paint booth area.',
@@ -230,17 +235,20 @@ export default function ManufacturingDashboard() {
     const now = new Date()
     const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
       ', ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    const shortDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    const locationLabel = WORK_CENTER_DISPLAY[workCenterId] || workCenterId
     const newIncident = {
       id:               `${workCenterId}-${Date.now()}`,
       title:            injuryLabel.length > 35 ? injuryLabel.slice(0, 35) + '…' : injuryLabel,
-      subtitle:         `Reported by ${workerLabel} — ${dateStr}`,
       severity,
       reportedBy:       'Emma Granger',
       incidentDate:     dateStr,
+      date:             shortDate,
+      location:         locationLabel,
       injuredWorker:    workerLabel,
       workerId:         formData.workerId,
       jobTitle:         formData.jobTitle,
-      incidentLocation: WORK_CENTER_DISPLAY[workCenterId] || workCenterId,
+      incidentLocation: locationLabel,
       workCenterLocation: formData.workCenterLocation || 'Warehouse 2',
       incidentDetails:  formData.incidentDetails,
       injuryType:       { id: formData.selectedInjuryType, label: injuryLabel },

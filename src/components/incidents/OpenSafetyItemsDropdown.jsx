@@ -32,14 +32,32 @@ function ChevronRightIcon() {
 }
 
 function IncidentRow({ incident, onView }) {
+  const isCritical = incident.severity === 'critical'
+
+  const title = isCritical
+    ? (incident.injuredWorker || 'Unknown Worker')
+    : (incident.title || 'Untitled')
+
+  const subtitle = isCritical
+    ? [
+        incident.injuryType?.label || 'Injury',
+        incident.date || incident.incidentDate,
+        incident.location || incident.incidentLocation,
+      ].filter(Boolean).join(' · ')
+    : [
+        incident.reportedBy ? `Reported by ${incident.reportedBy}` : null,
+        incident.date || incident.incidentDate,
+        incident.location || incident.incidentLocation,
+      ].filter(Boolean).join(' · ')
+
   return (
     <div className="osd-row" onClick={() => onView(incident)}>
       <div className="osd-row__icon">
-        {incident.severity === 'critical' ? <CriticalIcon /> : <AttentionIcon />}
+        {isCritical ? <CriticalIcon /> : <AttentionIcon />}
       </div>
       <div className="osd-row__text">
-        <span className="osd-row__title">{incident.injuredWorker || 'Unknown Worker'}</span>
-        <span className="osd-row__subtitle">{incident.subtitle}</span>
+        <span className="osd-row__title">{title}</span>
+        <span className="osd-row__subtitle">{subtitle}</span>
       </div>
       <button
         className="osd-row__arrow"
