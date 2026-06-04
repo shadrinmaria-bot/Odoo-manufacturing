@@ -38,7 +38,7 @@ function IncidentRow({ incident, onView }) {
         {incident.severity === 'critical' ? <CriticalIcon /> : <AttentionIcon />}
       </div>
       <div className="osd-row__text">
-        <span className="osd-row__title">{incident.title}</span>
+        <span className="osd-row__title">{incident.injuredWorker || 'Unknown Worker'}</span>
         <span className="osd-row__subtitle">{incident.subtitle}</span>
       </div>
       <button

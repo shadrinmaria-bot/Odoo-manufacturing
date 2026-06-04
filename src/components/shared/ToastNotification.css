@@ -59,9 +59,10 @@
 
 /* ── Bottom progress bar ──────────────────────────────────────────────────── */
 .toast__progress {
-  height:    3px;
-  width:     100%;
-  animation: toastProgressDrain 4s linear forwards;
+  height:           3px;
+  width:            100%;
+  transform-origin: right;
+  animation:        toastProgressDrain 4s linear forwards;
 }
 
 /* ── Keyframes ────────────────────────────────────────────────────────────── */
@@ -76,6 +77,6 @@
 }
 
 @keyframes toastProgressDrain {
-  from { width: 100%; }
-  to   { width: 0%; }
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
 }
