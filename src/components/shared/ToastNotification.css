@@ -1,0 +1,81 @@
+/* ── Toast wrapper ────────────────────────────────────────────────────────── */
+.toast {
+  position:      fixed;
+  top:           24px;
+  right:         24px;
+  z-index:       1200;
+  width:         320px;
+  background:    var(--color-card);
+  border-radius: 4px;
+  box-shadow:    0 4px 20px rgba(0, 0, 0, 0.45);
+  overflow:      hidden;
+  animation:     toastSlideIn 0.2s ease;
+}
+
+.toast--dismissing {
+  animation: toastFadeOut 0.28s ease forwards;
+}
+
+/* ── Inner row: left bar + text + close ───────────────────────────────────── */
+.toast__row {
+  display:     flex;
+  align-items: stretch;
+}
+
+.toast__bar {
+  width:       4px;
+  flex-shrink: 0;
+}
+
+.toast__content {
+  flex:        1;
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  padding:     13px 12px;
+}
+
+.toast__text {
+  flex:        1;
+  font-family: var(--font-ui);
+  font-size:   13px;
+  color:       var(--color-text);
+  line-height: 1.4;
+}
+
+.toast__close {
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  padding:     2px;
+  color:       var(--color-text-muted);
+  display:     flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition:  color 0.12s;
+  border-radius: 3px;
+}
+.toast__close:hover { color: var(--color-text); }
+
+/* ── Bottom progress bar ──────────────────────────────────────────────────── */
+.toast__progress {
+  height:    3px;
+  width:     100%;
+  animation: toastProgressDrain 4s linear forwards;
+}
+
+/* ── Keyframes ────────────────────────────────────────────────────────────── */
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastFadeOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(14px); }
+}
+
+@keyframes toastProgressDrain {
+  from { width: 100%; }
+  to   { width: 0%; }
+}

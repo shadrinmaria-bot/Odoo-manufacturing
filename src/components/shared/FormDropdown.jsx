@@ -1,28 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react'
-import Icon from './Icon'
+import React, { useState, useEffect, useRef } from 'react'
 import './FormDropdown.css'
 
-function Caret({ open }) {
-  return (
-    <span className="form-dd__caret">
-      <Icon char={open ? '' : ''} size={11} color="#F5F5F6" />
-    </span>
-  )
-}
-
-function InitialsCircle({ text }) {
-  return <span className="form-dd__avatar form-dd__avatar--fallback">{text || '?'}</span>
-}
-
-function WorkerAvatar({ src, initial }) {
+function WorkerAvatar({ value, label }) {
   const [errored, setErrored] = useState(false)
-  useEffect(() => { setErrored(false) }, [src])
-  if (!src || errored) return <InitialsCircle text={initial} />
+  const initials = label.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+  if (errored) {
+    return <div className="fdp-worker-avatar fdp-worker-avatar--initials">{initials}</div>
+  }
   return (
     <img
-      src={src}
-      alt=""
-      className="form-dd__avatar form-dd__avatar--img"
+      className="fdp-worker-avatar"
+      src={`/avatars/${value}.png`}
+      alt={label}
       onError={() => setErrored(true)}
     />
   )
@@ -30,22 +19,17 @@ function WorkerAvatar({ src, initial }) {
 
 export default function FormDropdown({
   value,
+  placeholder,
   options,
   onChange,
-  placeholder = 'Select…',
-  error = false,
   onBlur,
-  withAvatars = false,
-  footerLabel,
-  panelMinWidth,
-  ariaLabel,
+  error,
+  showWorkerPhotos = false,
+  showSearchMore = false,
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
-  const triggerRef = useRef(null)
-
-  const current = options.find(o => o.value === value) || null
-  const displayLabel = current ? current.label : placeholder
+  const current = value ? options.find(o => o.value === value) : null
 
   useEffect(() => {
     if (!open) return
@@ -55,77 +39,59 @@ export default function FormDropdown({
         if (onBlur) onBlur()
       }
     }
-    function handleKey(e) {
+    function handleKeyDown(e) {
       if (e.key === 'Escape') {
         setOpen(false)
         if (onBlur) onBlur()
-        triggerRef.current?.focus()
       }
     }
     document.addEventListener('mousedown', handleMouseDown)
-    document.addEventListener('keydown', handleKey)
+    document.addEventListener('keydown', handleKeyDown)
     return () => {
       document.removeEventListener('mousedown', handleMouseDown)
-      document.removeEventListener('keydown', handleKey)
+      document.removeEventListener('keydown', handleKeyDown)
     }
   }, [open, onBlur])
 
-  function selectOption(val) {
-    onChange(val)
-    setOpen(false)
-    if (onBlur) onBlur()
-    triggerRef.current?.focus()
-  }
-
-  const triggerClass = [
-    'form-dd__trigger',
-    open       ? 'form-dd__trigger--open'  : '',
-    error      ? 'form-dd__trigger--error' : '',
-    !current   ? 'form-dd__trigger--empty' : '',
-  ].filter(Boolean).join(' ')
-
   return (
-    <div ref={ref} className="form-dd">
+    <div ref={ref} className="fdp-wrap">
       <button
-        ref={triggerRef}
         type="button"
-        className={triggerClass}
+        className={`fdp-trigger${open ? ' fdp-trigger--open' : ''}${error ? ' fdp-trigger--error' : ''}`}
         onClick={() => setOpen(o => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={ariaLabel}
       >
-        <span className="form-dd__value">{displayLabel}</span>
-        <Caret open={open} />
+        <span className={`fdp-trigger__value${!current ? ' fdp-trigger__value--placeholder' : ''}`}>
+          {current ? current.label : (placeholder || 'Select…')}
+        </span>
+        <svg
+          className={`fdp-caret${open ? ' fdp-caret--open' : ''}`}
+          width="10" height="10" viewBox="0 0 24 24"
+          fill="none" stroke="#03F9E3" strokeWidth="2.5" strokeLinecap="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </button>
 
       {open && (
-        <div
-          className="form-dd__panel"
-          style={panelMinWidth ? { minWidth: panelMinWidth } : undefined}
-          role="listbox"
-        >
-          {options.map(opt => {
-            const selected = opt.value === value
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                role="option"
-                aria-selected={selected}
-                onClick={() => selectOption(opt.value)}
-                className={`form-dd__item${selected ? ' form-dd__item--selected' : ''}`}
-              >
-                {withAvatars && (
-                  <WorkerAvatar src={opt.avatar} initial={opt.initial} />
-                )}
-                <span className="form-dd__item-label">{opt.label}</span>
-              </button>
-            )
-          })}
-          {footerLabel && (
-            <div className="form-dd__footer" aria-hidden="true">
-              {footerLabel}
+        <div className="fdp-panel" role="listbox">
+          {options.map(opt => (
+            <button
+              key={opt.value}
+              type="button"
+              role="option"
+              aria-selected={opt.value === value}
+              className={`fdp-item${opt.value === value ? ' fdp-item--selected' : ''}`}
+              onClick={() => { onChange(opt.value); setOpen(false) }}
+            >
+              {showWorkerPhotos && <WorkerAvatar value={opt.value} label={opt.label} />}
+              {opt.label}
+            </button>
+          ))}
+          {showSearchMore && (
+            <div className="fdp-item fdp-item--search-more" aria-hidden="true">
+              Search more…
             </div>
           )}
         </div>

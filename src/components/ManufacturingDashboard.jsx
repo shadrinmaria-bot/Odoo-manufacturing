@@ -5,6 +5,7 @@ import SafetyIncidentModal from './modals/SafetyIncidentModal'
 import IncidentDetailModal from './modals/IncidentDetailModal'
 import SafetyStatisticsPage from '../pages/SafetyStatisticsPage'
 import ChatPanel from './chat/ChatPanel'
+import ToastNotification from './shared/ToastNotification'
 import './ManufacturingDashboard.css'
 
 // ── Work center chart data ────────────────────────────────────────────────────
@@ -43,7 +44,7 @@ const DEMO_INCIDENTS = {
   carpentry: [
     {
       id: 'c1', title: 'Machine guard missing - Saw B',
-      subtitle: 'Linked to MR-0219 - Reported Apr 28', severity: 'critical',
+      subtitle: 'Linked to MR-0219 - Reported Apr 28', severity: 'attention',
       reportedBy: 'Emma Granger', incidentDate: 'Apr 25, 3:00 PM',
       injuredWorker: 'Valeria Kulishov', workerId: '2014321860', jobTitle: 'Chief Executive Officer',
       incidentLocation: 'Carpentry Workshop', workCenterLocation: 'Warehouse 2',
@@ -137,6 +138,11 @@ export default function ManufacturingDashboard() {
   const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null, params: null })
   const [isChatOpen,     setIsChatOpen]     = useState(false)
   const [chatSession,    setChatSession]    = useState(null)
+  const [toast,          setToast]          = useState({ key: 0, severity: null })
+
+  function showToast(severity) {
+    setToast(t => ({ key: t.key + 1, severity }))
+  }
 
   function buildSharedIncidentMessage(incident) {
     const sevLabel = incident.severity === 'critical' ? 'Critical' : 'Needs Attention'
@@ -214,7 +220,11 @@ export default function ManufacturingDashboard() {
   }
 
   function handleSubmitIncident(workCenterId, severity, formData) {
-    if (!workCenterId || workCenterId === 'other') { setIsModalOpen(false); return }
+    if (!workCenterId || workCenterId === 'other') {
+      showToast(severity)
+      setIsModalOpen(false)
+      return
+    }
     const workerLabel = WORKERS_MAP[formData.injuredWorker] || formData.injuredWorker
     const injuryLabel = INJURY_LABELS[formData.selectedInjuryType] || formData.otherInjuryText || 'Other'
     const now = new Date()
@@ -237,6 +247,7 @@ export default function ManufacturingDashboard() {
       actionsTaken:     formData.actionsTaken,
     }
     setIncidents(prev => ({ ...prev, [workCenterId]: [...(prev[workCenterId] || []), newIncident] }))
+    showToast(severity)
     setIsModalOpen(false)
   }
 
@@ -315,6 +326,14 @@ export default function ManufacturingDashboard() {
         contact={chatSession?.contact}
         initialMessages={chatSession?.initialMessages}
       />
+
+      {toast.severity && (
+        <ToastNotification
+          key={toast.key}
+          severity={toast.severity}
+          onClose={() => setToast(t => ({ ...t, severity: null }))}
+        />
+      )}
     </div>
   )
 }
