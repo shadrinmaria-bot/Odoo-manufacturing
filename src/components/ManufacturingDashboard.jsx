@@ -31,14 +31,18 @@ function weekRangeLabel(monday) {
 }
 
 // Builds 5-point weekly data centred on this week: offsets -2, -1, 0, +1, +2.
-// "This Week" label sits at the centre (index 2).
+// Future weeks get null values so no bar is rendered.
+// Each non-future point is split into done (teal) + todo (purple) for stacked bars.
 function buildWeeklyData(orders) {
   const thisMonday = getMondayOf(new Date())
   return orders.map((count, i) => {
     const offset = i - 2
     const monday = new Date(thisMonday)
     monday.setDate(monday.getDate() + offset * 7)
-    return { week: offset === 0 ? 'This Week' : weekRangeLabel(monday), orders: offset > 0 ? null : count }
+    const week = offset === 0 ? 'This Week' : weekRangeLabel(monday)
+    if (offset > 0 || !count) return { week, done: null, todo: null }
+    const todo = count > 1 ? Math.max(1, Math.round(count * 0.33)) : 0
+    return { week, done: count - todo, todo }
   })
 }
 

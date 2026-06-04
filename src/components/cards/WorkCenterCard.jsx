@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip,
-  ResponsiveContainer, ReferenceLine,
+  BarChart, Bar, XAxis, YAxis, Tooltip,
+  ResponsiveContainer,
 } from 'recharts'
 import StatusBadge from '../badges/StatusBadge'
 import OpenSafetyItemsDropdown from '../incidents/OpenSafetyItemsDropdown'
@@ -22,10 +22,11 @@ function StatusDot({ hasCritical }) {
 
 function CustomTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
+    const total = payload.reduce((s, p) => s + (p.value || 0), 0)
     return (
       <div className="wc-tooltip">
         <p className="wc-tooltip__label">{label}</p>
-        <p>Orders: <strong style={{ color: '#F5F5F6' }}>{payload[0].value}</strong></p>
+        <p>Orders: <strong style={{ color: '#F5F5F6' }}>{total}</strong></p>
       </div>
     )
   }
@@ -127,7 +128,7 @@ export default function WorkCenterCard({
           <div className="wc-card__chart-spacer" />
           <div className="wc-card__chart-area">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }}>
+              <BarChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }} barCategoryGap="30%">
                 <XAxis
                   dataKey="week"
                   tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
@@ -135,15 +136,10 @@ export default function WorkCenterCard({
                   interval="preserveStartEnd"
                 />
                 <YAxis hide domain={[0, 'auto']} />
-                <Tooltip content={<CustomTooltip />} />
-                <ReferenceLine x="This Week" stroke="rgba(255,255,255,0.1)" strokeDasharray="3 3" />
-                <Line
-                  type="monotone" dataKey="orders"
-                  stroke="#6B3E66" strokeWidth={1.89}
-                  dot={false} activeDot={{ r: 4, fill: '#6B3E66', strokeWidth: 0 }}
-                  isAnimationActive={false}
-                />
-              </LineChart>
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+                <Bar dataKey="done" stackId="orders" fill="#1AD3BB" isAnimationActive={false} />
+                <Bar dataKey="todo" stackId="orders" fill="#6B3E66" isAnimationActive={false} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
