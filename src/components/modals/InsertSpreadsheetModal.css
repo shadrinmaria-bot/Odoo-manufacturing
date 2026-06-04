@@ -389,3 +389,26 @@
   font-size:    13px;
   white-space:  nowrap;
 }
+
+/* ── CHANGE 1: dashboard tile — square corners ───────────────────────────── */
+.ism-card           { border-radius: 0; }
+.ism-card--selected { border-radius: 0; }
+
+/* ── CHANGE 3: tab bar — full-width purple indicator ─────────────────────── */
+.ism-tabs-row {
+  margin-left:   -20px;
+  margin-right:  -20px;
+  padding-left:   20px;
+  padding-right:  20px;
+  border-bottom:  2px solid var(--color-purple);
+}
+.ism-tab--active {
+  color:               var(--color-purple);
+  border-bottom-color: transparent;
+}
+
+/* ── CHANGE 4: graph name — explicit horizontal row ─────────────────────── */
+.ism-graph-name-row { flex-direction: row; }
+
+/* ── CHANGE 5: narrower modal ────────────────────────────────────────────── */
+.ism-panel { max-width: 860px; }

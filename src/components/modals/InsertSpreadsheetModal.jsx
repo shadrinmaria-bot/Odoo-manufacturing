@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '../shared/Icon'
-import FormDropdown from '../shared/FormDropdown'
 import './InsertSpreadsheetModal.css'
 
 const SECTION_OPTIONS = [
@@ -47,14 +46,10 @@ export default function InsertSpreadsheetModal({
   onClose,
   onInsert,
 }) {
-  const [graphName,       setGraphName]       = useState(defaultGraphName)
-  const [selectedId,      setSelectedId]      = useState(dashboards[0]?.id || null)
-  const [query,           setQuery]           = useState('')
-  const [page,            setPage]            = useState(0)
-  const [createOpen,      setCreateOpen]      = useState(false)
-  const [newName,         setNewName]         = useState('')
-  const [newSection,      setNewSection]      = useState('Safety')
-  const [newGroup,        setNewGroup]        = useState('')
+  const [graphName,  setGraphName]  = useState(defaultGraphName)
+  const [selectedId, setSelectedId] = useState(dashboards[0]?.id || null)
+  const [query,      setQuery]      = useState('')
+  const [page,       setPage]       = useState(0)
   const closeRef = useRef(null)
 
   useEffect(() => { if (isOpen) setGraphName(defaultGraphName) }, [isOpen, defaultGraphName])
@@ -63,10 +58,6 @@ export default function InsertSpreadsheetModal({
     if (!isOpen) {
       setQuery('')
       setPage(0)
-      setCreateOpen(false)
-      setNewName('')
-      setNewSection('Safety')
-      setNewGroup('')
       return
     }
     function handleKey(e) { if (e.key === 'Escape') onClose() }
@@ -105,17 +96,6 @@ export default function InsertSpreadsheetModal({
     const dashboard = dashboards.find(d => d.id === selectedId)
     if (!dashboard) return
     onInsert({ dashboard, graphName: graphName.trim() || defaultGraphName })
-  }
-
-  function handleSaveNew() {
-    const name = newName.trim()
-    if (!name) return
-    const id = onCreateDashboard({ name, section: newSection, group: newGroup.trim() })
-    setSelectedId(id)
-    setCreateOpen(false)
-    setNewName('')
-    setNewGroup('')
-    setNewSection('Safety')
   }
 
   return (
@@ -212,70 +192,6 @@ export default function InsertSpreadsheetModal({
             ))}
           </div>
 
-          {/* Create a new dashboard */}
-          {!createOpen ? (
-            <button
-              type="button"
-              className="ism-create-link"
-              onClick={() => setCreateOpen(true)}
-            >+ Create a New Dashboard</button>
-          ) : (
-            <div className="ism-create-form" role="group" aria-label="Create a new dashboard">
-              <div className="ism-create-form__header">
-                <span className="ism-create-form__title">Create a New Dashboard</span>
-                <button
-                  type="button"
-                  className="ism-close-btn ism-close-btn--inline"
-                  onClick={() => setCreateOpen(false)}
-                  aria-label="Cancel"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <div className="ism-create-grid">
-                <label className="ism-field">
-                  <span className="ism-field__label">Name</span>
-                  <input
-                    type="text"
-                    className="ism-field__input"
-                    value={newName}
-                    onChange={e => setNewName(e.target.value)}
-                    placeholder="Dashboard name"
-                  />
-                </label>
-                <label className="ism-field">
-                  <span className="ism-field__label">Section</span>
-                  <FormDropdown
-                    value={newSection}
-                    options={SECTION_OPTIONS}
-                    onChange={setNewSection}
-                    placeholder="Select section"
-                    ariaLabel="Section"
-                  />
-                </label>
-                <label className="ism-field">
-                  <span className="ism-field__label">Group</span>
-                  <input
-                    type="text"
-                    className="ism-field__input"
-                    value={newGroup}
-                    onChange={e => setNewGroup(e.target.value)}
-                    placeholder="Optional group"
-                  />
-                </label>
-              </div>
-              <div className="ism-create-actions">
-                <button
-                  type="button"
-                  className="ism-btn ism-btn--save"
-                  onClick={handleSaveNew}
-                  disabled={!newName.trim()}
-                >Save</button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer */}
