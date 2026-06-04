@@ -10,27 +10,41 @@ import './ManufacturingDashboard.css'
 
 // ── Work center chart data ────────────────────────────────────────────────────
 
-const carpentryData = [
-  { week: '19-25 Apr', orders: 2 },
-  { week: 'This Week', orders: 5 },
-  { week: '3-9 May',   orders: 3 },
-  { week: '10-16 May', orders: 4 },
-  { week: '17-23 May', orders: 1 },
-]
-const paintData = [
-  { week: '19-25 Apr', orders: 1 },
-  { week: 'This Week', orders: 3 },
-  { week: '3-9 May',   orders: 4 },
-  { week: '10-16 May', orders: 2 },
-  { week: '17-23 May', orders: 3 },
-]
-const assemblyData = [
-  { week: '19-25 Apr', orders: 3 },
-  { week: 'This Week', orders: 2 },
-  { week: '3-9 May',   orders: 1 },
-  { week: '10-16 May', orders: 3 },
-  { week: '17-23 May', orders: 2 },
-]
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+
+function getMondayOf(d) {
+  const date = new Date(d)
+  const day  = date.getDay()               // 0 = Sunday
+  date.setDate(date.getDate() - (day === 0 ? 6 : day - 1))
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+function weekRangeLabel(monday) {
+  const end = new Date(monday)
+  end.setDate(end.getDate() + 6)
+  const s  = monday.getDate()
+  const e  = end.getDate()
+  const sm = MONTHS[monday.getMonth()]
+  const em = MONTHS[end.getMonth()]
+  return sm === em ? `${s}-${e} ${sm}` : `${s} ${sm}-${e} ${em}`
+}
+
+// Builds 5-point weekly data centred on this week: offsets -2, -1, 0, +1, +2.
+// "This Week" label sits at the centre (index 2).
+function buildWeeklyData(orders) {
+  const thisMonday = getMondayOf(new Date())
+  return orders.map((count, i) => {
+    const offset = i - 2
+    const monday = new Date(thisMonday)
+    monday.setDate(monday.getDate() + offset * 7)
+    return { week: offset === 0 ? 'This Week' : weekRangeLabel(monday), orders: count }
+  })
+}
+
+const carpentryData = buildWeeklyData([2, 5, 3, 4, 1])
+const paintData     = buildWeeklyData([1, 3, 4, 2, 3])
+const assemblyData  = buildWeeklyData([3, 2, 1, 3, 2])
 
 const WORK_CENTER_DEFS = [
   { id: 'carpentry', name: 'Carpentry Workshop', accentColor: '#FF71A7', statusLabel: 'Late',        statusCount: 3,    oee: 100, data: carpentryData },
