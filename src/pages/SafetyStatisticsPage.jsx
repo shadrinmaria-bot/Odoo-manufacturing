@@ -8,6 +8,8 @@ import {
 } from 'recharts'
 import Icon from '../components/shared/Icon'
 import { Button, ButtonGroup } from '../components/shared/Button'
+import InsertSpreadsheetModal from '../components/modals/InsertSpreadsheetModal'
+import '../components/modals/InsertSpreadsheetModal.css'
 import {
   INCIDENTS, DIMENSIONS, DATE_FILTERS,
   findDimension, findDateFilter,
@@ -104,6 +106,7 @@ function StatsToolbar({
   graphType, onGraphTypeChange,
   stacked, onStackedToggle,
   sortOrder, onSortChange,
+  onInsertSpreadsheet,
 }) {
   const isLast7ByDay      = dateFilterId === 'last7ByDay'
   const compareByOptions  = DIMENSIONS.filter(d => COMPARE_BY_IDS.has(d.id) && d.id !== groupById)
@@ -145,6 +148,15 @@ function StatsToolbar({
           <Button active={sortOrder === 'asc'}  onClick={() => onSortChange(sortOrder === 'asc'  ? null : 'asc')}  title="Sort ascending"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
         </ButtonGroup>
       )}
+
+      <Button
+        onClick={onInsertSpreadsheet}
+        title="Insert in Spreadsheet"
+        className="btn-insert-spreadsheet"
+      >
+        <Icon char={"\uF0CE"} size={13} />
+        <span>Insert in Spreadsheet</span>
+      </Button>
     </div>
   )
 }
@@ -249,6 +261,31 @@ export default function SafetyStatisticsPage({ initialParams = null, onOpenModal
   const [sortOrder,     setSortOrder]     = useState(null)
   const [filteredCenter, setFilteredCenter] = useState(initialParams?.initialFilter ?? null)
 
+  const [isInsertOpen, setIsInsertOpen] = useState(false)
+  const [toast,        setToast]        = useState(null)
+  const [dashboards,   setDashboards]   = useState([
+    { id: 'blank',           name: 'Blank dashboard', blank: true },
+    { id: 'safety-overview', name: 'Safety Overview' },
+    { id: 'monthly-report',  name: 'Monthly Report' },
+  ])
+
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 3000)
+    return () => clearTimeout(t)
+  }, [toast])
+
+  function handleCreateDashboard({ name, section, group }) {
+    const id = `dash-${Date.now()}`
+    setDashboards(prev => [...prev, { id, name, section, group }])
+    return id
+  }
+
+  function handleInsert({ dashboard, graphName }) {
+    setIsInsertOpen(false)
+    setToast({ dashboardName: dashboard.name, graphName })
+  }
+
   useEffect(() => {
     if (compareById && compareById === groupById) setCompareById(null)
   }, [groupById, compareById])
@@ -287,6 +324,7 @@ export default function SafetyStatisticsPage({ initialParams = null, onOpenModal
           graphType={graphType}       onGraphTypeChange={setGraphType}
           stacked={stacked}           onStackedToggle={() => setStacked(s => !s)}
           sortOrder={sortOrder}       onSortChange={setSortOrder}
+          onInsertSpreadsheet={() => setIsInsertOpen(true)}
         />
         <div className="stats-chart-container">
           <ResponsiveContainer width="100%" height="100%">
@@ -320,6 +358,22 @@ export default function SafetyStatisticsPage({ initialParams = null, onOpenModal
           </ResponsiveContainer>
         </div>
       </main>
+
+      <InsertSpreadsheetModal
+        isOpen={isInsertOpen}
+        defaultGraphName={groupBy?.label || 'Graph'}
+        dashboards={dashboards}
+        onCreateDashboard={handleCreateDashboard}
+        onClose={() => setIsInsertOpen(false)}
+        onInsert={handleInsert}
+      />
+
+      {toast && (
+        <div className="ism-toast" role="status">
+          {toast.graphName ? <>“<span className="ism-toast__accent">{toast.graphName}</span>” inserted into <span className="ism-toast__accent">{toast.dashboardName}</span></>
+            : <>Graph inserted into <span className="ism-toast__accent">{toast.dashboardName}</span></>}
+        </div>
+      )}
     </>
   )
 }
