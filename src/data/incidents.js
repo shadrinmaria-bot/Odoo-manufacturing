@@ -172,6 +172,7 @@ function startOfMonth(d) { const x = new Date(d); x.setDate(1); x.setHours(0,0,0
 function startOfQuarter(d) {
   const x = new Date(d); x.setMonth(Math.floor(x.getMonth() / 3) * 3, 1); x.setHours(0,0,0,0); return x
 }
+function startOfYear(d) { const x = new Date(d); x.setMonth(0, 1); x.setHours(0,0,0,0); return x }
 
 export const DATE_FILTERS = [
   { id: 'last7',      label: 'Last 7 days',              predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 7  * 86400000 },
@@ -180,6 +181,7 @@ export const DATE_FILTERS = [
   { id: 'last90',     label: 'Last 90 days',    predicate: i => REFERENCE_NOW - new Date(i.reportDate) <= 90 * 86400000 },
   { id: 'thisMonth',  label: 'This Month',      predicate: i => new Date(i.reportDate) >= startOfMonth(REFERENCE_NOW) },
   { id: 'thisQuarter',label: 'This Quarter',    predicate: i => new Date(i.reportDate) >= startOfQuarter(REFERENCE_NOW) },
+  { id: 'thisYear',   label: 'This Year',       predicate: i => new Date(i.reportDate) >= startOfYear(REFERENCE_NOW) },
   { id: 'all',        label: 'All time',        predicate: () => true },
 ]
 

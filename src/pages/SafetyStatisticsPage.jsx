@@ -98,7 +98,7 @@ function ConfigDropdown({ prefix, value, options, onChange, includeNone = false,
 
 const GROUP_BY_DIMS = DIMENSIONS.filter(d => d.id !== 'month' && d.id !== 'dayOfWeek')
 const COMPARE_BY_IDS = new Set(['workCenter', 'injuryType'])
-const DATE_FILTER_IDS = new Set(['last7', 'thisMonth', 'thisQuarter', 'all'])
+const DATE_FILTER_IDS = new Set(['last7', 'thisMonth', 'thisQuarter', 'thisYear', 'all'])
 const STATS_DATE_FILTERS = DATE_FILTERS.filter(d => DATE_FILTER_IDS.has(d.id))
 
 function StatsToolbar({
