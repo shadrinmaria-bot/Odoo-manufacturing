@@ -38,7 +38,7 @@ function buildWeeklyData(orders) {
     const offset = i - 2
     const monday = new Date(thisMonday)
     monday.setDate(monday.getDate() + offset * 7)
-    return { week: offset === 0 ? 'This Week' : weekRangeLabel(monday), orders: count }
+    return { week: offset === 0 ? 'This Week' : weekRangeLabel(monday), orders: offset > 0 ? null : count }
   })
 }
 
