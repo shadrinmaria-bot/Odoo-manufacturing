@@ -4,10 +4,14 @@ import FormDropdown from '../shared/FormDropdown'
 import './SafetyIncidentModal.css'
 
 const WORKERS = [
-  { value: 'john-doe',     label: 'John Doe',     title: 'Machine Operator',      workerId: '2012380163' },
-  { value: 'jane-smith',   label: 'Jane Smith',   title: 'Quality Inspector',     workerId: '2012380164' },
-  { value: 'mike-johnson', label: 'Mike Johnson', title: 'Forklift Operator',     workerId: '2012380165' },
-  { value: 'sara-lee',     label: 'Sara Lee',     title: 'Assembly Technician',   workerId: '2012380166' },
+  { value: 'john-doe',        label: 'John Doe',        title: 'Machine Operator',      workerId: '2012380163' },
+  { value: 'jane-smith',      label: 'Jane Smith',      title: 'Quality Inspector',     workerId: '2012380164' },
+  { value: 'mike-johnson',    label: 'Mike Johnson',    title: 'Forklift Operator',     workerId: '2012380165' },
+  { value: 'sara-lee',        label: 'Sara Lee',        title: 'Assembly Technician',   workerId: '2012380166' },
+  { value: 'maria-lan',       label: 'Maria Lan',       title: 'Production Operator',   workerId: '2012380167' },
+  { value: 'valeria-kulishov',label: 'Valeria Kulishov',title: 'Chief Executive Officer',workerId: '2014321860' },
+  { value: 'amit-tzadik',     label: 'Amit Tzadik',     title: 'Safety Officer',        workerId: '2012380168' },
+  { value: 'oran-shuster',    label: 'Oran Shuster',    title: 'Maintenance Technician',workerId: '2012380169' },
 ]
 
 const SEVERITY_OPTIONS = [
