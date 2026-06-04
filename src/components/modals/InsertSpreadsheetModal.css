@@ -390,25 +390,44 @@
   white-space:  nowrap;
 }
 
-/* ── CHANGE 1: dashboard tile — square corners ───────────────────────────── */
+/* ── Square tile corners ─────────────────────────────────────────────────── */
 .ism-card           { border-radius: 0; }
 .ism-card--selected { border-radius: 0; }
 
-/* ── CHANGE 3: tab bar — full-width purple indicator ─────────────────────── */
-.ism-tabs-row {
-  margin-left:   -20px;
-  margin-right:  -20px;
-  padding-left:   20px;
-  padding-right:  20px;
-  border-bottom:  2px solid var(--color-purple);
-}
-.ism-tab--active {
-  color:               var(--color-purple);
-  border-bottom-color: transparent;
-}
-
-/* ── CHANGE 4: graph name — explicit horizontal row ─────────────────────── */
+/* ── Graph name — explicit horizontal row ────────────────────────────────── */
 .ism-graph-name-row { flex-direction: row; }
 
-/* ── CHANGE 5: narrower modal ────────────────────────────────────────────── */
+/* ── Narrower modal ──────────────────────────────────────────────────────── */
 .ism-panel { max-width: 860px; }
+
+/* ── Tab bar: top-border style, no full-width bar ────────────────────────── */
+.ism-tabs-row {
+  margin-left:  0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-bottom: none;
+}
+.ism-tab {
+  border-bottom: none;
+  border-top:    2px solid var(--color-border);
+  padding:       8px 0 4px;
+  color:         var(--color-text-muted);
+}
+.ism-tab--active {
+  border-top-color:    var(--color-purple);
+  border-bottom-color: transparent;
+  color:               var(--color-purple);
+}
+
+/* ── Selected tile: purple border ────────────────────────────────────────── */
+.ism-card--selected { border-color: var(--color-purple); }
+
+/* ── Graph name row: underline on input only, not full row ───────────────── */
+.ism-graph-name-row  { border-bottom: none; padding-bottom: 4px; }
+.ism-graph-name-input {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 4px;
+  transition:     border-color 0.12s;
+}
+.ism-graph-name-input:focus { border-bottom-color: #03F9E3; }
