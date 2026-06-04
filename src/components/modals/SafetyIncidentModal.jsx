@@ -105,6 +105,44 @@ const ACTIONS_SUGGESTIONS = [
   'Management Informed',
 ]
 
+const OTHER_SUGGESTIONS = [
+  'Chemical exposure',
+  'Electrical shock',
+  'Burn injury',
+  'Eye injury',
+  'Hearing damage',
+  'Crush injury',
+  'Laceration',
+  'Allergic reaction',
+  'Heat exhaustion',
+  'Toxic inhalation',
+  'Hypothermia',
+  'Insect or animal bite',
+]
+
+const INJURY_STOP_WORDS = new Set([
+  'the','a','an','or','and','of','in','by','on','at','to','for',
+  'is','are','was','with','without','from','into','involving','same','bodily','injury'
+])
+
+function sigWords(str) {
+  return str.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/)
+    .filter(w => w.length >= 4 && !INJURY_STOP_WORDS.has(w))
+}
+
+const MAIN_INJURY_TYPES   = INJURY_TYPES.filter(t => t.id !== 'other')
+const OTHER_INJURY_TYPE   = INJURY_TYPES.find(t => t.id === 'other')
+
+function findSimilarTile(text) {
+  const input = sigWords(text)
+  if (!input.length) return null
+  for (const t of MAIN_INJURY_TYPES) {
+    const tile = sigWords(t.label)
+    if (input.some(w => tile.some(tw => tw.startsWith(w) || w.startsWith(tw)))) return t
+  }
+  return null
+}
+
 // ── Field building blocks ────────────────────────────────────────────────────
 
 function initialsOf(label) {
@@ -148,12 +186,12 @@ function InjuryIcon({ type }) {
   )
 }
 
-function InjuryCard({ type, selected, onSelect }) {
+function InjuryCard({ type, selected, onSelect, conflict }) {
   return (
     <button
       type="button"
       onClick={() => onSelect(type.id)}
-      className={`sim-injury-card${selected ? ' sim-injury-card--selected' : ''}`}
+      className={`sim-injury-card${selected ? ' sim-injury-card--selected' : ''}${conflict ? ' sim-injury-card--conflict' : ''}`}
     >
       <div className="sim-injury-card__tile">
         <InjuryIcon type={type} />
@@ -163,20 +201,69 @@ function InjuryCard({ type, selected, onSelect }) {
   )
 }
 
-function InjuryOtherCard({ type, selected, value, onChange, onFocus }) {
+function OtherInjuryField({ selected, value, onChange, onFocus, onBlur, showError, conflictType }) {
+  const [acOpen, setAcOpen] = useState(false)
+  const ref = useRef(null)
+  const suggestions = value.trim()
+    ? OTHER_SUGGESTIONS.filter(s => s.toLowerCase().includes(value.toLowerCase()))
+    : []
+
+  useEffect(() => {
+    if (!acOpen) return
+    function handleMouseDown(e) {
+      if (ref.current && !ref.current.contains(e.target)) setAcOpen(false)
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [acOpen])
+
+  const hasBlankError    = showError && !value.trim()
+  const hasConflict      = showError && !!conflictType && !!value.trim()
+  const inputHasError    = hasBlankError || hasConflict
+
   return (
-    <div className={`sim-injury-card${selected ? ' sim-injury-card--selected' : ''}`}>
-      <div className="sim-injury-card__tile">
-        <InjuryIcon type={type} />
+    <div className="sim-other-wrap">
+      <div className={`sim-injury-card${selected ? ' sim-injury-card--selected' : ''}`}>
+        <div className="sim-injury-card__tile">
+          <InjuryIcon type={OTHER_INJURY_TYPE} />
+        </div>
+        <div ref={ref} className="sim-other-input-wrap">
+          <input
+            type="text"
+            className={`sim-uline sim-injury-card__other-input${inputHasError ? ' sim-uline--error' : ''}`}
+            placeholder="Other…"
+            value={value}
+            onChange={e => { onChange(e); setAcOpen(true) }}
+            onFocus={() => { onFocus(); if (value.trim()) setAcOpen(true) }}
+            onKeyDown={e => e.key === 'Escape' && setAcOpen(false)}
+            onBlur={onBlur}
+          />
+          {acOpen && suggestions.length > 0 && (
+            <div className="sim-other-ac">
+              {suggestions.map(s => (
+                <button
+                  key={s}
+                  type="button"
+                  className="sim-ac__item"
+                  onMouseDown={e => { e.preventDefault(); onChange({ target: { value: s } }); setAcOpen(false) }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-      <input
-        type="text"
-        className="sim-uline sim-injury-card__other-input"
-        placeholder="Other…"
-        value={value}
-        onChange={onChange}
-        onFocus={onFocus}
-      />
+      {hasBlankError && (
+        <p className="sim-other-msg sim-other-msg--error">
+          Please describe the injury type or select an existing option
+        </p>
+      )}
+      {hasConflict && (
+        <p className="sim-other-msg sim-other-msg--warn">
+          This matches an existing option — please select <em>'{conflictType.label}'</em> instead
+        </p>
+      )}
     </div>
   )
 }
@@ -276,8 +363,9 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   }
 
   function isFormValid() {
-    const otherTextOk     = form.selectedInjuryType !== 'other' || !!form.otherInjuryText
-    const otherLocationOk = form.incidentLocation !== 'other'   || !!form.otherLocation
+    const otherTextOk     = form.selectedInjuryType !== 'other'
+      || (!!form.otherInjuryText.trim() && !findSimilarTile(form.otherInjuryText))
+    const otherLocationOk = form.incidentLocation !== 'other' || !!form.otherLocation
     return REQUIRED_FIELDS.every(k => form[k]) && form.selectedInjuryType && otherTextOk && otherLocationOk
   }
 
@@ -339,9 +427,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
 
   if (!isOpen) return null
 
-  const injuryGridError = showErrors && !form.selectedInjuryType
-  const otherType       = INJURY_TYPES.find(t => t.id === 'other')
-  const mainInjuryTypes = INJURY_TYPES.filter(t => t.id !== 'other')
+  const injuryGridError  = showErrors && !form.selectedInjuryType
+  const otherConflict    = form.selectedInjuryType === 'other' && form.otherInjuryText.trim()
+    ? findSimilarTile(form.otherInjuryText)
+    : null
+  const showOtherErrors  = showErrors || !!touched.otherInjuryText
 
   return (
     <div className="sim-overlay" onClick={handleClose}>
@@ -471,21 +561,22 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               {injuryGridError && <span className="sim-section-subtitle">— please select one</span>}
             </span>
             <div className="sim-injury-grid">
-              {mainInjuryTypes.slice(0, 8).map(type => (
+              {MAIN_INJURY_TYPES.slice(0, 8).map(type => (
                 <InjuryCard
                   key={type.id}
                   type={type}
                   selected={form.selectedInjuryType === type.id}
+                  conflict={otherConflict?.id === type.id}
                   onSelect={id => setForm(f => ({
                     ...f,
                     selectedInjuryType: f.selectedInjuryType === id ? '' : id,
+                    otherInjuryText: f.selectedInjuryType === id ? f.otherInjuryText : '',
                   }))}
                 />
               ))}
 
-              {/* "Other..." card with inline input */}
-              <InjuryOtherCard
-                type={otherType}
+              {/* "Other..." card with autocomplete + validation */}
+              <OtherInjuryField
                 selected={form.selectedInjuryType === 'other'}
                 value={form.otherInjuryText}
                 onChange={e => setForm(f => ({
@@ -494,17 +585,22 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                   otherInjuryText: e.target.value,
                 }))}
                 onFocus={() => setForm(f => ({ ...f, selectedInjuryType: 'other' }))}
+                onBlur={() => touch('otherInjuryText')}
+                showError={showOtherErrors}
+                conflictType={otherConflict}
               />
 
               {/* Row 4 */}
-              {mainInjuryTypes.slice(8).map(type => (
+              {MAIN_INJURY_TYPES.slice(8).map(type => (
                 <InjuryCard
                   key={type.id}
                   type={type}
                   selected={form.selectedInjuryType === type.id}
+                  conflict={otherConflict?.id === type.id}
                   onSelect={id => setForm(f => ({
                     ...f,
                     selectedInjuryType: f.selectedInjuryType === id ? '' : id,
+                    otherInjuryText: f.selectedInjuryType === id ? f.otherInjuryText : '',
                   }))}
                 />
               ))}

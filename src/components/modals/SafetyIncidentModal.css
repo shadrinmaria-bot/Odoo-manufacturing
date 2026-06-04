@@ -424,3 +424,45 @@
   transition:  background 0.1s;
 }
 .sim-ac__item:hover { background: rgba(255, 255, 255, 0.05); }
+
+/* ── Conflict highlight on matching tile ─────────────────────────────────── */
+.sim-injury-card--conflict .sim-injury-card__tile {
+  border-color: var(--color-danger);
+}
+
+/* ── Other injury field wrapper ──────────────────────────────────────────── */
+.sim-other-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.sim-other-input-wrap {
+  position:  relative;
+  flex:      1;
+  min-width: 0;
+}
+
+/* ── Other injury autocomplete ────────────────────────────────────────────── */
+.sim-other-ac {
+  position:      absolute;
+  top:           calc(100% + 2px);
+  left:          0;
+  right:         0;
+  z-index:       60;
+  background:    var(--color-card);
+  border:        1px solid var(--color-border);
+  border-radius: 4px;
+  overflow:      hidden;
+  animation:     navDropdownFadeIn 0.12s ease;
+}
+
+/* ── Other injury inline messages ────────────────────────────────────────── */
+.sim-other-msg {
+  font-family: var(--font-ui);
+  font-size:   11px;
+  line-height: 1.35;
+  margin:      4px 0 0 62px; /* 50px tile + 12px gap */
+  padding:     0;
+}
+.sim-other-msg--error { color: var(--color-danger); }
+.sim-other-msg--warn  { color: var(--color-danger-dark); font-style: italic; }

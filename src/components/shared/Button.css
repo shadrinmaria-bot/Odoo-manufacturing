@@ -124,3 +124,8 @@
   width:  32px;
   height: 32px;
 }
+
+/* ── Discard button: grey background + white text (secondary style) ───────── */
+.btn-modal-discard {
+  color: var(--color-text);
+}
