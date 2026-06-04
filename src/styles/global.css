@@ -6,7 +6,7 @@
   --color-border:       #3C3E4A;
   --color-border-light: #5A5E6B;
   --color-text:         #F5F5F6;
-  --color-text-muted:   #8A8D9A;
+  --color-text-muted:   #8A8D9A; /* Secondary (grey) buttons: use --color-text (white) for enabled text/icons; --color-text-muted for disabled — never grey text on an enabled secondary button */
   --color-text-dim:     #626363;
   --color-text-mid:     #A0A4AF;
   --color-accent:       #1AD3BB;

@@ -35,10 +35,13 @@
   background: #8B5185;
 }
 
-/* ── Gray ────────────────────────────────────────────────────────────────── */
+/* ── Gray (secondary) ────────────────────────────────────────────────────── */
+/* Default + hover: white text on grey background.                            */
+/* Disabled: grey text (--color-text-muted) to signal non-interactivity.     */
+/* Active / on: teal (see rule below). Never use grey text on enabled state. */
 .btn--gray {
   background: #3C3E4B;
-  color:      #A0A4AF;
+  color:      var(--color-text);
 }
 .btn--gray:hover:not(:disabled):not(.btn--on) {
   background: #5A5E6B;
@@ -48,6 +51,9 @@
   background:   #17373B;
   border-color: #03F9E3;
   color:        #03F9E3;
+}
+.btn--gray:disabled {
+  color: var(--color-text-muted);
 }
 
 /* ── Shared sizing classes used across the app ───────────────────────────── */
