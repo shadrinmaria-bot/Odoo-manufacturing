@@ -147,6 +147,7 @@ export default function InsertSpreadsheetModal({
           {/* Graph name */}
           <div className="ism-graph-name-row">
             <label htmlFor="ism-graph-name" className="ism-graph-name-label">Graph name</label>
+            <div className="ism-graph-name-divider" aria-hidden="true" />
             <input
               id="ism-graph-name"
               type="text"
@@ -157,12 +158,14 @@ export default function InsertSpreadsheetModal({
             />
           </div>
 
-          {/* Tab + search + pagination */}
+          {/* Tabs */}
           <div className="ism-tabs-row">
             <button type="button" className="ism-tab ism-tab--active">Dashboards</button>
-            <div className="ism-tabs-spacer" />
+          </div>
+
+          {/* Search (underline) + pagination */}
+          <div className="ism-search-row">
             <div className="ism-search">
-              <Icon char={"\uF002"} size={11} color="#8A8D9A" />
               <input
                 type="text"
                 className="ism-search-input"
@@ -170,6 +173,7 @@ export default function InsertSpreadsheetModal({
                 value={query}
                 onChange={e => { setQuery(e.target.value); setPage(0) }}
               />
+              <Icon char={"\uF002"} size={12} color="#8A8D9A" />
             </div>
             <div className="ism-pager">
               <span className="ism-pager__range">{rangeLabel}</span>

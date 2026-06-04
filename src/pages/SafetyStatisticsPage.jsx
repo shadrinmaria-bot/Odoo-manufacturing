@@ -131,6 +131,14 @@ function StatsToolbar({
       )}
       <ConfigDropdown prefix="Date" value={dateFilterId} options={STATS_DATE_FILTERS} onChange={onDateChange} minWidth={210} />
 
+      <Button
+        onClick={onInsertSpreadsheet}
+        title="Insert in Spreadsheet"
+        className="btn-insert-spreadsheet"
+      >
+        <span>Insert in Spreadsheet</span>
+      </Button>
+
       <ButtonGroup gap={3} style={{ marginLeft: 4 }}>
         <Button active={graphType === 'bar'}  onClick={() => onGraphTypeChange('bar')}  title="Bar chart"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
         <Button active={graphType === 'line'} onClick={() => onGraphTypeChange('line')} title="Line chart" className="btn-stats-icon"><Icon char="" size={14} /></Button>
@@ -150,15 +158,6 @@ function StatsToolbar({
           <Button active={sortOrder === 'asc'}  onClick={() => onSortChange(sortOrder === 'asc'  ? null : 'asc')}  title="Sort ascending"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
         </ButtonGroup>
       )}
-
-      <Button
-        onClick={onInsertSpreadsheet}
-        title="Insert in Spreadsheet"
-        className="btn-insert-spreadsheet"
-      >
-        <Icon char={"\uF0CE"} size={13} />
-        <span>Insert in Spreadsheet</span>
-      </Button>
     </div>
   )
 }
