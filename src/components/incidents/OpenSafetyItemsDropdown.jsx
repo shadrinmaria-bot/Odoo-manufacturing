@@ -97,7 +97,12 @@ export default function OpenSafetyItemsDropdown({
       {incidents.length === 0 ? (
         <div className="osd-empty">No open safety items.</div>
       ) : (
-        incidents.map((incident) => (
+        [...incidents]
+          .sort((a, b) => {
+            const rank = s => s === 'critical' ? 0 : 1
+            return rank(a.severity) - rank(b.severity)
+          })
+          .map((incident) => (
           <div key={incident.id} className="osd-item">
             <IncidentRow
               incident={incident}

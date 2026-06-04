@@ -389,3 +389,37 @@
   margin:      0 0 20px;
 }
 
+
+/* ── Actions Taken autocomplete ───────────────────────────────────────────── */
+.sim-ac {
+  position: relative;
+  width:    100%;
+}
+
+.sim-ac__panel {
+  position:    absolute;
+  top:         calc(100% + 2px);
+  left:        0;
+  right:       0;
+  z-index:     50;
+  background:  var(--color-card);
+  border:      1px solid var(--color-border);
+  border-radius: 4px;
+  overflow:    hidden;
+  animation:   navDropdownFadeIn 0.12s ease;
+}
+
+.sim-ac__item {
+  display:     block;
+  width:       100%;
+  padding:     8px 10px;
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  font-family: var(--font-ui);
+  font-size:   13px;
+  color:       var(--color-text);
+  text-align:  left;
+  transition:  background 0.1s;
+}
+.sim-ac__item:hover { background: rgba(255, 255, 255, 0.05); }

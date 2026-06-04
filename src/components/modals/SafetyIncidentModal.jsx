@@ -86,6 +86,21 @@ const WORK_CENTERS = [
 
 const REQUIRED_FIELDS = ['injuredWorker', 'jobTitle', 'workerId', 'incidentLocation', 'actionsTaken', 'severity']
 
+const ACTIONS_SUGGESTIONS = [
+  'First Aid Provided',
+  'Supervisor Notified',
+  'Worker Removed from Duty',
+  'Ambulance Called',
+  'Area Secured',
+  'Equipment Shut Down',
+  'Incident Photographed',
+  'Safety Officer Alerted',
+  'Medical Examination Scheduled',
+  'Corrective Action Initiated',
+  'Witness Statements Collected',
+  'Management Informed',
+]
+
 // ── Field building blocks ────────────────────────────────────────────────────
 
 function initialsOf(label) {
@@ -158,6 +173,52 @@ function InjuryOtherCard({ type, selected, value, onChange, onFocus }) {
         onChange={onChange}
         onFocus={onFocus}
       />
+    </div>
+  )
+}
+
+function ActionsAutocomplete({ value, onValueChange, onBlur, error }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const suggestions = value.trim()
+    ? ACTIONS_SUGGESTIONS.filter(s => s.toLowerCase().includes(value.toLowerCase()))
+    : []
+
+  useEffect(() => {
+    if (!open) return
+    function handleMouseDown(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [open])
+
+  return (
+    <div ref={ref} className="sim-ac">
+      <input
+        type="text"
+        placeholder="Example: First Aid Provided…"
+        className={`sim-uline${error ? ' sim-uline--error' : ''}`}
+        value={value}
+        onChange={e => { onValueChange(e.target.value); setOpen(true) }}
+        onFocus={() => { if (value.trim()) setOpen(true) }}
+        onKeyDown={e => { if (e.key === 'Escape') setOpen(false) }}
+        onBlur={onBlur}
+      />
+      {open && suggestions.length > 0 && (
+        <div className="sim-ac__panel">
+          {suggestions.map(s => (
+            <button
+              type="button"
+              key={s}
+              className="sim-ac__item"
+              onMouseDown={e => { e.preventDefault(); onValueChange(s); setOpen(false) }}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -465,13 +526,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             {/* Right: Actions Taken / Time / Severity */}
             <div className="sim-bottom-right">
               <InlineRow label="Actions Taken" error={err('actionsTaken')} wide>
-                <input
-                  type="text"
-                  placeholder="Example: First Aid Provided…"
-                  className={`sim-uline${err('actionsTaken') ? ' sim-uline--error' : ''}`}
+                <ActionsAutocomplete
                   value={form.actionsTaken}
-                  onChange={e => setForm(f => ({ ...f, actionsTaken: e.target.value }))}
+                  onValueChange={v => setForm(f => ({ ...f, actionsTaken: v }))}
                   onBlur={() => touch('actionsTaken')}
+                  error={err('actionsTaken')}
                 />
               </InlineRow>
 

@@ -10,6 +10,35 @@ const RECIPIENTS = [
   { id: 'shift-sup', type: 'group',  name: 'Shift Supervisors', role: 'Group', initial: 'S' },
 ]
 
+function RecipientRow({ r, checked, onToggle }) {
+  return (
+    <li
+      className={`sip-recipient${checked ? ' sip-recipient--checked' : ''}`}
+      onClick={() => onToggle(r.id)}
+      role="option"
+      aria-selected={checked}
+    >
+      <span className="sip-check" aria-hidden="true">
+        {checked && <Icon char={""} size={12} color="#03F9E3" />}
+      </span>
+      <span className={`sip-avatar sip-avatar--${r.type}`}>
+        {r.type === 'group' ? (
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        ) : (
+          r.initial
+        )}
+      </span>
+      <span className="sip-recipient__text">
+        <span className="sip-recipient__name">{r.name}</span>
+        <span className="sip-recipient__role">{r.role}</span>
+      </span>
+    </li>
+  )
+}
+
 export default function ShareIncidentPopup({ isOpen, onClose, onConfirm }) {
   const [query, setQuery]                 = useState('')
   const [selectedIds, setSelectedIds]     = useState([])
@@ -34,12 +63,13 @@ export default function ShareIncidentPopup({ isOpen, onClose, onConfirm }) {
     }
   }, [isOpen, onClose])
 
-  const filtered = useMemo(() => {
+  const { filteredPeople, filteredGroups } = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return RECIPIENTS
-    return RECIPIENTS.filter(r =>
-      r.name.toLowerCase().includes(q) || r.role.toLowerCase().includes(q)
-    )
+    const match = r => !q || r.name.toLowerCase().includes(q) || r.role.toLowerCase().includes(q)
+    return {
+      filteredPeople: RECIPIENTS.filter(r => r.type === 'person' && match(r)),
+      filteredGroups: RECIPIENTS.filter(r => r.type === 'group'  && match(r)),
+    }
   }, [query])
 
   if (!isOpen) return null
@@ -98,40 +128,42 @@ export default function ShareIncidentPopup({ isOpen, onClose, onConfirm }) {
               />
             </div>
 
-            <ul className="sip-recipient-list" role="listbox" aria-multiselectable="true">
-              {filtered.length === 0 ? (
-                <li className="sip-empty">No matches</li>
-              ) : filtered.map(r => {
-                const checked = selectedIds.includes(r.id)
-                return (
-                  <li
-                    key={r.id}
-                    className={`sip-recipient ${checked ? 'sip-recipient--checked' : ''}`}
-                    onClick={() => toggleRecipient(r.id)}
-                    role="option"
-                    aria-selected={checked}
-                  >
-                    <span className="sip-check" aria-hidden="true">
-                      {checked && <Icon char={"\uF00C"} size={12} color="#03F9E3" />}
-                    </span>
-                    <span className={`sip-avatar sip-avatar--${r.type}`}>
-                      {r.type === 'group' ? (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-                          <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                        </svg>
-                      ) : (
-                        r.initial
-                      )}
-                    </span>
-                    <span className="sip-recipient__text">
-                      <span className="sip-recipient__name">{r.name}</span>
-                      <span className="sip-recipient__role">{r.role}</span>
-                    </span>
-                  </li>
-                )
-              })}
-            </ul>
+            {filteredPeople.length === 0 && filteredGroups.length === 0 ? (
+              <div className="sip-empty">No matches</div>
+            ) : (
+              <div className="sip-groups">
+                {filteredPeople.length > 0 && (
+                  <div className="sip-group-card">
+                    <div className="sip-group-card__header">People</div>
+                    <ul className="sip-recipient-list" role="listbox" aria-multiselectable="true">
+                      {filteredPeople.map(r => (
+                        <RecipientRow
+                          key={r.id}
+                          r={r}
+                          checked={selectedIds.includes(r.id)}
+                          onToggle={toggleRecipient}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {filteredGroups.length > 0 && (
+                  <div className="sip-group-card">
+                    <div className="sip-group-card__header">Groups</div>
+                    <ul className="sip-recipient-list" role="listbox" aria-multiselectable="true">
+                      {filteredGroups.map(r => (
+                        <RecipientRow
+                          key={r.id}
+                          r={r}
+                          checked={selectedIds.includes(r.id)}
+                          onToggle={toggleRecipient}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="sip-section sip-section--options">
