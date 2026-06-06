@@ -113,10 +113,22 @@
   color:      #FFFFFF;
 }
 
-/* ── Sub-header search sizing: responsive (max 600px), 33px tall ─────────── */
-.sub-header {
-  gap:           16px;
+/* ── Top nav bar: 46px, #1B1D26, no bright separator ─────────────────────── */
+.top-nav {
+  height:        46px;
+  background:    #1B1D26;
   border-bottom: none;
+}
+
+/* ── Sub-header (control panel): 58px, padded, with 16px gap ─────────────── */
+.sub-header {
+  height:        58px;
+  background:    #262A36;
+  padding:       8px 16px 16px;
+  gap:           16px;
+  flex:          0 0 auto;
+  border-bottom: 1px solid #3C3E4B;
+  box-sizing:    border-box;
 }
 .sub-header__search {
   flex:        1;
