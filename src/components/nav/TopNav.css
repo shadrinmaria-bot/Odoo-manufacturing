@@ -113,6 +113,19 @@
   color:      #FFFFFF;
 }
 
+/* ── Sub-header search sizing: responsive (max 600px), 33px tall ─────────── */
+.sub-header {
+  gap:           16px;
+  border-bottom: none;
+}
+.sub-header__search {
+  flex:        1;
+  width:       auto;
+  max-width:   600px;
+  height:      33px;
+  box-sizing:  border-box;
+}
+
 /* ── NavIcons (right side) ───────────────────────────────────────────────── */
 .nav-icons {
   display:     flex;
