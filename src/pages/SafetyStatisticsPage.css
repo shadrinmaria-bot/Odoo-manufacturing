@@ -153,3 +153,16 @@
   padding: 0 16px 16px;
   height:  calc(100vh - 156px);
 }
+
+/* ── Sub-header search sizing: responsive (max 600px), 33px tall ─────────── */
+.stats-sub-header {
+  gap:           16px;
+  border-bottom: none;
+}
+.stats-sub-header__search {
+  flex:        1;
+  width:       auto;
+  max-width:   600px;
+  height:      33px;
+  box-sizing:  border-box;
+}
