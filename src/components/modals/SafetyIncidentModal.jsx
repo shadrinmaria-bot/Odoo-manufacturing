@@ -189,10 +189,13 @@ const WORKER_OPTIONS = WORKERS.map(w => ({
 
 const LOCATION_OPTIONS = WORK_CENTERS.map(wc => ({ value: wc.id, label: wc.label }))
 
-function InlineRow({ label, error, htmlFor, children, wide }) {
+function InlineRow({ label, error, htmlFor, children, wide, mutedLabel }) {
   return (
     <div className={`sim-inline-row${wide ? ' sim-inline-row--wide' : ''}`}>
-      <label htmlFor={htmlFor} className={`sim-inline-label${error ? ' sim-inline-label--error' : ''}`}>
+      <label
+        htmlFor={htmlFor}
+        className={`sim-inline-label${error ? ' sim-inline-label--error' : ''}${mutedLabel ? ' sim-inline-label--muted' : ''}`}
+      >
         {label}
       </label>
       <div className="sim-inline-field">{children}</div>
@@ -532,13 +535,13 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               />
             </InlineRow>
 
-            <InlineRow label="Worker ID" error={err('workerId')} wide>
+            <InlineRow label="Worker ID" error={err('workerId')} wide mutedLabel>
               <span className={`sim-static-value${!form.workerId ? ' sim-static-value--empty' : ''}`}>
                 {form.workerId || 'Select ID'}
               </span>
             </InlineRow>
 
-            <InlineRow label="Job Title" error={err('jobTitle')}>
+            <InlineRow label="Job Title" error={err('jobTitle')} mutedLabel>
               <span className={`sim-static-value${!form.jobTitle ? ' sim-static-value--empty' : ''}`}>
                 {form.jobTitle || 'Title'}
               </span>
@@ -574,7 +577,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               )}
             </InlineRow>
 
-            <InlineRow label="Work Center Location" wide>
+            <InlineRow label="Work Center Location" wide mutedLabel>
               <span className={`sim-static-value${!form.workCenterLocation ? ' sim-static-value--empty' : ''}`}>
                 {form.workCenterLocation || 'Warehouse 2'}
               </span>

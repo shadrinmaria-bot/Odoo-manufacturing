@@ -30,13 +30,16 @@ export default function FormDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [dropUp, setDropUp] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const ref = useRef(null)
   const triggerRef = useRef(null)
   const current = value ? options.find(o => o.value === value) : null
   // When a cap is set, only the first N options are listed (the rest live
-  // behind "Search more…"). The trigger still shows the selected label even
-  // if it falls outside the visible slice.
-  const visibleOptions = maxVisible ? options.slice(0, maxVisible) : options
+  // behind "Show more…", which expands the list in place). The trigger still
+  // shows the selected label even if it falls outside the visible slice.
+  const capped = maxVisible && !expanded
+  const visibleOptions = capped ? options.slice(0, maxVisible) : options
+  const hasMore = maxVisible && options.length > maxVisible && !expanded
 
   // Open upward when the field is near the bottom of its scroll container and
   // there's more room above than below (keeps the panel from being clipped).
@@ -52,7 +55,7 @@ export default function FormDropdown({
   function toggleOpen() {
     setOpen(o => {
       const next = !o
-      if (next) decideDirection()
+      if (next) { decideDirection(); setExpanded(false) }
       return next
     })
   }
@@ -116,10 +119,14 @@ export default function FormDropdown({
               {opt.label}
             </button>
           ))}
-          {showSearchMore && (
-            <div className="fdp-item fdp-item--search-more" aria-hidden="true">
-              Search more…
-            </div>
+          {showSearchMore && hasMore && (
+            <button
+              type="button"
+              className="fdp-item fdp-item--search-more"
+              onClick={() => setExpanded(true)}
+            >
+              Show more…
+            </button>
           )}
         </div>
       )}
