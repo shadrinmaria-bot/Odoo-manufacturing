@@ -98,6 +98,11 @@
   opacity: 0.55;
   cursor:  default;
 }
+.nav-dropdown-item,
+.nav-dropdown-item:disabled {
+  color:   #F5F5F6;
+  opacity: 1;
+}
 
 /* ── NavIcons (right side) ───────────────────────────────────────────────── */
 .nav-icons {

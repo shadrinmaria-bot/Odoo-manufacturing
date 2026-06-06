@@ -400,33 +400,35 @@
 /* ── Narrower modal ──────────────────────────────────────────────────────── */
 .ism-panel { max-width: 860px; }
 
-/* ── Tab bar: top-border style, no full-width bar ────────────────────────── */
+/* ── Tab bar: full-width purple underline with the tab forming a lozenge ── */
 .ism-tabs-row {
-  margin-left:  0;
-  margin-right: 0;
-  padding-left: 0;
+  border-bottom: 1px solid var(--color-purple);
+  padding-left:  0;
   padding-right: 0;
-  border-bottom: none;
+  margin-bottom: 0;
 }
 .ism-tab {
-  border-bottom: none;
-  border-top:    2px solid var(--color-border);
-  padding:       8px 0 4px;
-  color:         var(--color-text-muted);
+  border-top:    1px solid var(--color-purple);
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  padding:       6px 16px 8px;
+  color:         var(--color-purple);
+  margin-bottom: -1px;
+  background:    transparent;
 }
 .ism-tab--active {
-  border-top-color:    var(--color-purple);
-  border-bottom-color: transparent;
-  color:               var(--color-purple);
+  border-top-color: var(--color-purple);
+  color:            var(--color-purple);
+  background:       transparent;
 }
 
 /* ── Selected tile: purple border ────────────────────────────────────────── */
 .ism-card--selected { border-color: var(--color-purple); }
 
 /* ── Graph name row: underline on input only, not full row ───────────────── */
-.ism-graph-name-row  { border-bottom: none; padding-bottom: 4px; }
+.ism-graph-name-row   { border-bottom: none; padding-bottom: 4px; }
 .ism-graph-name-input {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom:  1px solid var(--color-border);
   padding-bottom: 4px;
   transition:     border-color 0.12s;
 }

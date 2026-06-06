@@ -151,7 +151,7 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
     <div style={{ position: 'relative' }}>
       <button
         onClick={handleClick}
-        className="nav-btn"
+        className={`nav-btn${isOpen ? ' nav-btn--active' : ''}`}
       >
         {section.label}
       </button>
