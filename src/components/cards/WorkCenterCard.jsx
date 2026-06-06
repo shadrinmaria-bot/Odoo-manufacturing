@@ -10,6 +10,8 @@ import Icon from '../shared/Icon'
 import { Button, ButtonGroup } from '../shared/Button'
 import './WorkCenterCard.css'
 
+const THRESHOLD_H = 30   // hours — must match ManufacturingDashboard.THRESHOLD_HOURS
+
 // ── StatusDot ─────────────────────────────────────────────────────────────────
 
 function StatusDot({ hasCritical }) {
@@ -116,27 +118,25 @@ export default function WorkCenterCard({
   const badgeVariant  = getVariantFromIncidents(incidents)
 
   const DivergingBar = useCallback((props) => {
-    // Recharts spreads the data entry into shape props, so down/up/load
-    // are available directly — do NOT use center.data[index] because
-    // Recharts may not pass a reliable `index` prop to custom shapes.
-    const { x, y, width, height, index, down: downVal, up: upVal } = props
-    if (!downVal) return null   // null / undefined / 0 → no bar
-    // For a negative-value bar, Recharts sets y = yScale(0) (the zero line)
-    const zeroY = y
-    const isHov = index === activeIdx
-    const upHeight = (upVal != null && height > 0)
-      ? Math.round(upVal * height / Math.abs(downVal))
-      : 0
+    // props.value is guaranteed by Recharts (= entry[dataKey] = entry.down = -load).
+    // y = yScale(0) for negative-value bars (Recharts anchors the top at the baseline).
+    // height = pixel height of the bar going downward.
+    const { x, y, width, height, value } = props
+    if (!value || height <= 0) return null
+    const load   = Math.abs(value)
+    const excess = Math.max(0, load - THRESHOLD_H)
+    const upH    = excess > 0 ? Math.round(excess / load * height) : 0
+    const isHov  = props.index === activeIdx
     return (
       <g style={{ cursor: 'pointer' }}>
         <rect
-          x={x} y={zeroY} width={width} height={Math.max(0, height)}
+          x={x} y={y} width={width} height={height}
           fill={isHov ? '#60375C' : '#007A76'}
           style={{ transition: 'fill 0.15s ease' }}
         />
-        {upHeight > 0 && (
+        {upH > 0 && (
           <rect
-            x={x} y={zeroY - upHeight} width={width} height={upHeight}
+            x={x} y={y - upH} width={width} height={upH}
             fill={isHov ? '#5B3457' : '#60375C'}
             style={{ transition: 'fill 0.15s ease' }}
           />
