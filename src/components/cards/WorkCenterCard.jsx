@@ -116,20 +116,21 @@ export default function WorkCenterCard({
   const badgeVariant  = getVariantFromIncidents(incidents)
 
   const DivergingBar = useCallback((props) => {
-    const { x, y, width, height, index } = props
-    const d = center.data[index]
-    if (!d?.down) return null
+    // Recharts spreads the data entry into shape props, so down/up/load
+    // are available directly — do NOT use center.data[index] because
+    // Recharts may not pass a reliable `index` prop to custom shapes.
+    const { x, y, width, height, index, down: downVal, up: upVal } = props
+    if (!downVal) return null   // null / undefined / 0 → no bar
     // For a negative-value bar, Recharts sets y = yScale(0) (the zero line)
     const zeroY = y
     const isHov = index === activeIdx
-    // Compute purple segment height proportionally to the teal height
-    const upHeight = (d.up != null && height > 0)
-      ? Math.round(d.up * height / Math.abs(d.down))
+    const upHeight = (upVal != null && height > 0)
+      ? Math.round(upVal * height / Math.abs(downVal))
       : 0
     return (
       <g style={{ cursor: 'pointer' }}>
         <rect
-          x={x} y={zeroY} width={width} height={height}
+          x={x} y={zeroY} width={width} height={Math.max(0, height)}
           fill={isHov ? '#60375C' : '#007A76'}
           style={{ transition: 'fill 0.15s ease' }}
         />
@@ -142,7 +143,7 @@ export default function WorkCenterCard({
         )}
       </g>
     )
-  }, [activeIdx, center.data])
+  }, [activeIdx])
 
   function handleBadgeClick() {
     if (badgeRef.current) setAnchorRect(badgeRef.current.getBoundingClientRect())
