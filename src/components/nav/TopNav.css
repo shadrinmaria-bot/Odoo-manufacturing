@@ -113,10 +113,10 @@
   color:      #FFFFFF;
 }
 
-/* ── Top nav bar: 46px, #1B1D26, no bright separator ─────────────────────── */
+/* ── Top nav bar: 46px, #262A36, no bright separator ─────────────────────── */
 .top-nav {
   height:        46px;
-  background:    #1B1D26;
+  background:    #262A36;
   border-bottom: none;
 }
 
