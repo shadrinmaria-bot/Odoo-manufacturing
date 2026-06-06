@@ -139,7 +139,6 @@ function DiscussDropdown({ onOpenChat }) {
 // ── NavSection ────────────────────────────────────────────────────────────────
 
 function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSelect }) {
-  const isActive = activePage.section === section.label
   const isOpen = openDropdown === section.label
   const hasItems = !!section.items
 
@@ -152,7 +151,7 @@ function NavSection({ section, activePage, openDropdown, onToggleDropdown, onSel
     <div style={{ position: 'relative' }}>
       <button
         onClick={handleClick}
-        className={`nav-btn${isActive ? ' nav-btn--active' : ''}`}
+        className="nav-btn"
       >
         {section.label}
       </button>

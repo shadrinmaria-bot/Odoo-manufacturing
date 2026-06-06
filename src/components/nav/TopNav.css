@@ -48,6 +48,14 @@
   border-color: rgba(26, 211, 187, 0.4);
   background: rgba(26, 211, 187, 0.05);
 }
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+.nav-btn:active {
+  color:        #1AD3BB;
+  border-color: rgba(26, 211, 187, 0.4);
+  background:   rgba(26, 211, 187, 0.05);
+}
 
 /* ── Nav dropdown panel ──────────────────────────────────────────────────── */
 .nav-dropdown {
