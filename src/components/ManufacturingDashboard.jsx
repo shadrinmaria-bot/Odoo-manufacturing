@@ -33,29 +33,27 @@ function weekRangeLabel(monday) {
 // Threshold for weekly load hours — bars above this show a purple overflow segment.
 const THRESHOLD_HOURS = 30
 
-// Builds N weekly bars ending on "This Week" (rightmost / last element).
-// loadHours[n-1] = this week, loadHours[n-2] = last week, etc.
-// Produces { week, load, down } per point:
-//   load  — raw hours (for tooltip)
-//   down  — negative load  → Bar dataKey; DivergingBar splits teal / purple
+// "This Week" is always the SECOND column (index 1), matching the reference:
+// 1 past week on the left, 3 scheduled future weeks on the right.
+const THIS_WEEK_COL = 1   // 0-based column index for "This Week"
+
 function buildWeeklyData(loadHours) {
-  const n          = loadHours.length
   const thisMonday = getMondayOf(new Date())
   return loadHours.map((hours, i) => {
-    const weeksBack = (n - 1) - i          // 0 = this week, 1 = last week, …
-    const monday    = new Date(thisMonday)
-    monday.setDate(monday.getDate() - weeksBack * 7)
-    const week = weeksBack === 0 ? 'This Week' : weekRangeLabel(monday)
+    const offset = i - THIS_WEEK_COL   // negative = past, 0 = this week, positive = future
+    const monday = new Date(thisMonday)
+    monday.setDate(monday.getDate() + offset * 7)
+    const week = offset === 0 ? 'This Week' : weekRangeLabel(monday)
     if (!hours) return { week, load: null, down: null }
     return { week, load: hours, down: -hours }
   })
 }
 
-// 5 full historical weeks — "This Week" is always the rightmost bar.
-// Any week > 30 h gets a purple overflow cap; the rest are teal-only.
-const carpentryData = buildWeeklyData([35, 22, 18, 42, 44])
-const paintData     = buildWeeklyData([28, 38, 20, 32, 28])
-const assemblyData  = buildWeeklyData([15, 25, 48, 30, 22])
+// 5-column layout: [last wk, This Week, +1 wk, +2 wk, +3 wk]
+// Values > 30 h get a purple overflow cap; ≤ 30 h are teal only.
+const carpentryData = buildWeeklyData([22, 44, 38, 28, 35])
+const paintData     = buildWeeklyData([28, 32, 20, 38, 25])
+const assemblyData  = buildWeeklyData([48, 22, 30, 15, 42])
 
 const WORK_CENTER_DEFS = [
   { id: 'carpentry', name: 'Carpentry Workshop', accentColor: '#FF71A7', statusLabel: 'Late',        statusCount: 3,    oee: 100, data: carpentryData },
