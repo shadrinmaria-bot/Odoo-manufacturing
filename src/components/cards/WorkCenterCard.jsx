@@ -116,26 +116,26 @@ export default function WorkCenterCard({
   const badgeVariant  = getVariantFromIncidents(incidents)
 
   const DivergingBar = useCallback((props) => {
-    const { x, width, index, yAxis } = props
+    const { x, y, width, height, index } = props
     const d = center.data[index]
-    if (!d?.down && !d?.up) return null
-    const zeroY = yAxis?.scale?.(0)
-    if (zeroY == null) return null
+    if (!d?.down) return null
+    // For a negative-value bar, Recharts sets y = yScale(0) (the zero line)
+    const zeroY = y
     const isHov = index === activeIdx
+    // Compute purple segment height proportionally to the teal height
+    const upHeight = (d.up != null && height > 0)
+      ? Math.round(d.up * height / Math.abs(d.down))
+      : 0
     return (
       <g style={{ cursor: 'pointer' }}>
-        {d.down != null && (
+        <rect
+          x={x} y={zeroY} width={width} height={height}
+          fill={isHov ? '#60375C' : '#007A76'}
+          style={{ transition: 'fill 0.15s ease' }}
+        />
+        {upHeight > 0 && (
           <rect
-            x={x} y={zeroY} width={width}
-            height={Math.max(0, yAxis.scale(d.down) - zeroY)}
-            fill={isHov ? '#60375C' : '#007A76'}
-            style={{ transition: 'fill 0.15s ease' }}
-          />
-        )}
-        {d.up != null && (
-          <rect
-            x={x} y={yAxis.scale(d.up)} width={width}
-            height={Math.max(0, zeroY - yAxis.scale(d.up))}
+            x={x} y={zeroY - upHeight} width={width} height={upHeight}
             fill={isHov ? '#5B3457' : '#60375C'}
             style={{ transition: 'fill 0.15s ease' }}
           />
