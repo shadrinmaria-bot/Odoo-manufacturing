@@ -203,7 +203,8 @@ function InjuryCard({ type, selected, onSelect, conflict }) {
 
 function OtherInjuryField({ selected, value, onChange, onFocus, onBlur, showError, conflictType }) {
   const [acOpen, setAcOpen] = useState(false)
-  const ref = useRef(null)
+  const ref      = useRef(null)
+  const inputRef = useRef(null)
   const suggestions = value.trim()
     ? OTHER_SUGGESTIONS.filter(s => s.toLowerCase().includes(value.toLowerCase()))
     : []
@@ -224,11 +225,16 @@ function OtherInjuryField({ selected, value, onChange, onFocus, onBlur, showErro
   return (
     <div className="sim-other-wrap">
       <div className={`sim-injury-card${selected ? ' sim-injury-card--selected' : ''}`}>
-        <div className="sim-injury-card__tile">
+        <div
+          className="sim-injury-card__tile"
+          onClick={() => inputRef.current?.focus()}
+          style={{ cursor: 'pointer' }}
+        >
           <InjuryIcon type={OTHER_INJURY_TYPE} />
         </div>
         <div ref={ref} className="sim-other-input-wrap">
           <input
+            ref={inputRef}
             type="text"
             className={`sim-uline sim-injury-card__other-input${inputHasError ? ' sim-uline--error' : ''}`}
             placeholder="Other…"
@@ -496,25 +502,15 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             </InlineRow>
 
             <InlineRow label="Worker ID" error={err('workerId')} wide>
-              <input
-                type="text"
-                placeholder="Select ID"
-                className={`sim-uline${err('workerId') ? ' sim-uline--error' : ''}`}
-                value={form.workerId}
-                readOnly
-              />
+              <span className={`sim-static-value${!form.workerId ? ' sim-static-value--empty' : ''}`}>
+                {form.workerId || 'Select ID'}
+              </span>
             </InlineRow>
 
             <InlineRow label="Job Title" error={err('jobTitle')}>
-              <input
-                type="text"
-                placeholder="Title"
-                className={`sim-uline${err('jobTitle') ? ' sim-uline--error' : ''}`}
-                value={form.jobTitle}
-                onChange={e => setForm(f => ({ ...f, jobTitle: e.target.value }))}
-                onBlur={() => touch('jobTitle')}
-                readOnly={!!form.injuredWorker}
-              />
+              <span className={`sim-static-value${!form.jobTitle ? ' sim-static-value--empty' : ''}`}>
+                {form.jobTitle || 'Title'}
+              </span>
             </InlineRow>
           </div>
 
@@ -536,7 +532,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                   placeholder="Please specify the location..."
                   className={`sim-uline sim-uline--secondary${(showErrors || touched.otherLocation) && !form.otherLocation ? ' sim-uline--error' : ''}`}
                   value={form.otherLocation}
-                  onChange={e => setForm(f => ({ ...f, otherLocation: e.target.value }))}
+                  onChange={e => setForm(f => ({
+                    ...f,
+                    otherLocation:      e.target.value,
+                    workCenterLocation: e.target.value,
+                  }))}
                   onBlur={() => touch('otherLocation')}
                   autoFocus
                 />
@@ -544,13 +544,9 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             </InlineRow>
 
             <InlineRow label="Work Center Location" wide>
-              <input
-                type="text"
-                placeholder="Warehouse 2"
-                className="sim-uline sim-wc-location"
-                value={form.workCenterLocation}
-                readOnly
-              />
+              <span className={`sim-static-value${!form.workCenterLocation ? ' sim-static-value--empty' : ''}`}>
+                {form.workCenterLocation || 'Warehouse 2'}
+              </span>
             </InlineRow>
           </div>
 

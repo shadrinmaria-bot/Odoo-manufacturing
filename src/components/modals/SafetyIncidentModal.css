@@ -469,3 +469,16 @@
 
 /* ── Work Center Location — always white text when auto-filled ──────────────── */
 .sim-wc-location { color: var(--color-text); }
+
+/* ── Static (non-interactive) auto-filled fields ────────────────────────────── */
+.sim-static-value {
+  display:       block;
+  color:         var(--color-text);
+  font-family:   var(--font-ui);
+  font-size:     13px;
+  padding:       2px 0;
+  border-bottom: 1px solid var(--color-border);
+  cursor:        default;
+  min-height:    1.4em;
+}
+.sim-static-value--empty { color: var(--color-text-dim); }
