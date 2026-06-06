@@ -466,3 +466,6 @@
 }
 .sim-other-msg--error { color: var(--color-danger); }
 .sim-other-msg--warn  { color: var(--color-danger-dark); font-style: italic; }
+
+/* ── Work Center Location — always white text when auto-filled ──────────────── */
+.sim-wc-location { color: var(--color-text); }

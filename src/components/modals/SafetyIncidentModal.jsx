@@ -82,11 +82,13 @@ const INJURY_TYPES = [
 ]
 
 const WORK_CENTERS = [
-  { id: 'carpentry', label: 'Carpentry Workshop' },
-  { id: 'paint',     label: 'Paint' },
-  { id: 'assembly',  label: 'Assembly' },
-  { id: 'other',     label: 'Other' },
+  { id: 'carpentry', label: 'Carpentry Workshop', warehouseLocation: 'Warehouse 2' },
+  { id: 'paint',     label: 'Paint',              warehouseLocation: 'Warehouse 1' },
+  { id: 'assembly',  label: 'Assembly',            warehouseLocation: 'Warehouse 3' },
+  { id: 'other',     label: 'Other',               warehouseLocation: '' },
 ]
+
+const CURRENT_USER = 'Emma Granger'
 
 const REQUIRED_FIELDS = ['injuredWorker', 'jobTitle', 'workerId', 'incidentLocation', 'actionsTaken', 'severity']
 
@@ -156,8 +158,6 @@ const WORKER_OPTIONS = WORKERS.map(w => ({
   avatar:  `/avatars/${w.value}.png`,
   initial: initialsOf(w.label),
 }))
-
-const WORKER_ID_OPTIONS = WORKERS.map(w => ({ value: w.workerId, label: w.workerId }))
 
 const LOCATION_OPTIONS = WORK_CENTERS.map(wc => ({ value: wc.id, label: wc.label }))
 
@@ -340,7 +340,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
     ', ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
   const emptyForm = {
-    reportedBy: '',
+    reportedBy: CURRENT_USER,
     injuredWorker: '', jobTitle: '', workerId: '',
     incidentLocation: '', otherLocation: '', workCenterLocation: '',
     selectedInjuryType: '', otherInjuryText: '',
@@ -393,14 +393,22 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
     }))
   }
 
-  function handleWorkerIdChange(value) {
-    const w = WORKERS.find(x => x.workerId === value)
+  function handleLocationChange(value) {
+    const wc = WORK_CENTERS.find(x => x.id === value)
     setForm(f => ({
       ...f,
-      workerId:      value,
-      injuredWorker: w ? w.value : f.injuredWorker,
-      jobTitle:      w ? w.title : f.jobTitle,
+      incidentLocation:   value,
+      workCenterLocation: wc ? wc.warehouseLocation : '',
     }))
+  }
+
+  function handleMainTileSelect(id) {
+    setForm(f => ({
+      ...f,
+      selectedInjuryType: f.selectedInjuryType === id ? '' : id,
+      otherInjuryText:    '',
+    }))
+    setTouched(t => { const n = { ...t }; delete n.otherInjuryText; return n })
   }
 
   useEffect(() => {
@@ -462,14 +470,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             <div className="sim-inline-row sim-inline-row--wide">
               <label className="sim-inline-label">Reported By</label>
               <div className="sim-inline-field">
-                <FormDropdown
-                  value={form.reportedBy}
-                  options={WORKER_OPTIONS}
-                  onChange={v => setForm(f => ({ ...f, reportedBy: v }))}
-                  placeholder="Select Reporter"
-                  withAvatars
-                  ariaLabel="Reported By"
-                />
+                <span className="sim-date-text">{form.reportedBy}</span>
               </div>
             </div>
             <div className="sim-reporter-row__group">
@@ -495,14 +496,12 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             </InlineRow>
 
             <InlineRow label="Worker ID" error={err('workerId')} wide>
-              <FormDropdown
-                value={form.workerId}
-                options={WORKER_ID_OPTIONS}
-                onChange={handleWorkerIdChange}
-                onBlur={() => touch('workerId')}
+              <input
+                type="text"
                 placeholder="Select ID"
-                error={err('workerId')}
-                ariaLabel="Worker ID"
+                className={`sim-uline${err('workerId') ? ' sim-uline--error' : ''}`}
+                value={form.workerId}
+                readOnly
               />
             </InlineRow>
 
@@ -514,6 +513,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 value={form.jobTitle}
                 onChange={e => setForm(f => ({ ...f, jobTitle: e.target.value }))}
                 onBlur={() => touch('jobTitle')}
+                readOnly={!!form.injuredWorker}
               />
             </InlineRow>
           </div>
@@ -524,7 +524,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               <FormDropdown
                 value={form.incidentLocation}
                 options={LOCATION_OPTIONS}
-                onChange={v => setForm(f => ({ ...f, incidentLocation: v }))}
+                onChange={handleLocationChange}
                 onBlur={() => touch('incidentLocation')}
                 placeholder="Select Work Center"
                 error={err('incidentLocation')}
@@ -547,9 +547,9 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               <input
                 type="text"
                 placeholder="Warehouse 2"
-                className="sim-uline"
+                className="sim-uline sim-wc-location"
                 value={form.workCenterLocation}
-                onChange={e => setForm(f => ({ ...f, workCenterLocation: e.target.value }))}
+                readOnly
               />
             </InlineRow>
           </div>
@@ -567,11 +567,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                   type={type}
                   selected={form.selectedInjuryType === type.id}
                   conflict={otherConflict?.id === type.id}
-                  onSelect={id => setForm(f => ({
-                    ...f,
-                    selectedInjuryType: f.selectedInjuryType === id ? '' : id,
-                    otherInjuryText: f.selectedInjuryType === id ? f.otherInjuryText : '',
-                  }))}
+                  onSelect={handleMainTileSelect}
                 />
               ))}
 
@@ -597,11 +593,7 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                   type={type}
                   selected={form.selectedInjuryType === type.id}
                   conflict={otherConflict?.id === type.id}
-                  onSelect={id => setForm(f => ({
-                    ...f,
-                    selectedInjuryType: f.selectedInjuryType === id ? '' : id,
-                    otherInjuryText: f.selectedInjuryType === id ? f.otherInjuryText : '',
-                  }))}
+                  onSelect={handleMainTileSelect}
                 />
               ))}
               <div className="sim-injury-card sim-injury-card--empty" aria-hidden="true" />
