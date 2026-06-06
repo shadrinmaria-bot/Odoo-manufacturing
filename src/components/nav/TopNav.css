@@ -103,6 +103,15 @@
   color:   #F5F5F6;
   opacity: 1;
 }
+.nav-dropdown-item {
+  transition: background 0.12s, color 0.12s;
+}
+.nav-dropdown-item:hover:not(.nav-dropdown-item--active),
+.nav-dropdown-item:hover:not(:disabled):not(.nav-dropdown-item--active),
+.nav-dropdown-item:disabled:hover:not(.nav-dropdown-item--active) {
+  background: rgba(255, 255, 255, 0.08);
+  color:      #FFFFFF;
+}
 
 /* ── NavIcons (right side) ───────────────────────────────────────────────── */
 .nav-icons {
