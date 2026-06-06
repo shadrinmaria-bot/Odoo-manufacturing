@@ -240,3 +240,6 @@
   border-color: #5A5E6B;
   color:        #A0A4AF;
 }
+
+/* ── Chart label overflow — allow X-axis labels to render outside SVG clip ── */
+.wc-card__chart-area svg { overflow: visible; }

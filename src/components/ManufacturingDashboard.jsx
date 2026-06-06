@@ -52,9 +52,9 @@ function buildWeeklyData(loadHours) {
   })
 }
 
-const carpentryData = buildWeeklyData([22, 18, 35, 0, 0])
-const paintData     = buildWeeklyData([28, 32, 20, 0, 0])
-const assemblyData  = buildWeeklyData([15, 25, 38, 0, 0])
+const carpentryData = buildWeeklyData([22, 18, 42, 0, 0])   // this week 42h → +12h above threshold
+const paintData     = buildWeeklyData([28, 38, 20, 0, 0])   // last week 38h → +8h above threshold
+const assemblyData  = buildWeeklyData([15, 25, 48, 0, 0])   // this week 48h → +18h above threshold
 
 const WORK_CENTER_DEFS = [
   { id: 'carpentry', name: 'Carpentry Workshop', accentColor: '#FF71A7', statusLabel: 'Late',        statusCount: 3,    oee: 100, data: carpentryData },
