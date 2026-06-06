@@ -33,31 +33,29 @@ function weekRangeLabel(monday) {
 // Threshold for weekly load hours — bars above this show a purple overflow segment.
 const THRESHOLD_HOURS = 30
 
-// Builds weekly data for the last N weeks ending on "This Week".
-// The last element of loadHours corresponds to this week (offset 0);
-// earlier elements step back one week each.
-// Each point produces:
-//   load (raw hours for tooltip)
-//   down (negative)  → teal bar grows downward from the threshold line
-//   up   (positive)  → purple bar grows upward ONLY when load > THRESHOLD_HOURS
+// Builds N weekly bars ending on "This Week" (rightmost / last element).
+// loadHours[n-1] = this week, loadHours[n-2] = last week, etc.
+// Produces { week, load, down } per point:
+//   load  — raw hours (for tooltip)
+//   down  — negative load  → Bar dataKey; DivergingBar splits teal / purple
 function buildWeeklyData(loadHours) {
-  const n = loadHours.length
+  const n          = loadHours.length
   const thisMonday = getMondayOf(new Date())
   return loadHours.map((hours, i) => {
-    const offset = i - (n - 1)   // last item = 0 (this week), earlier = negative
-    const monday = new Date(thisMonday)
-    monday.setDate(monday.getDate() + offset * 7)
-    const week = offset === 0 ? 'This Week' : weekRangeLabel(monday)
-    if (offset > 0 || !hours) return { week, up: null, down: null, load: null }
-    const up = hours > THRESHOLD_HOURS ? hours - THRESHOLD_HOURS : null
-    return { week, up, down: -hours, load: hours }
+    const weeksBack = (n - 1) - i          // 0 = this week, 1 = last week, …
+    const monday    = new Date(thisMonday)
+    monday.setDate(monday.getDate() - weeksBack * 7)
+    const week = weeksBack === 0 ? 'This Week' : weekRangeLabel(monday)
+    if (!hours) return { week, load: null, down: null }
+    return { week, load: hours, down: -hours }
   })
 }
 
-// 5 full historical weeks; values > 30 h produce a purple overflow segment
-const carpentryData = buildWeeklyData([35, 22, 18, 42, 44])  // wk-4=35h, wk-2=42h, this=44h
-const paintData     = buildWeeklyData([28, 38, 20, 32, 28])  // wk-3=38h, wk-1=32h above threshold
-const assemblyData  = buildWeeklyData([15, 25, 48, 30, 22])  // wk-2=48h above threshold
+// 5 full historical weeks — "This Week" is always the rightmost bar.
+// Any week > 30 h gets a purple overflow cap; the rest are teal-only.
+const carpentryData = buildWeeklyData([35, 22, 18, 42, 44])
+const paintData     = buildWeeklyData([28, 38, 20, 32, 28])
+const assemblyData  = buildWeeklyData([15, 25, 48, 30, 22])
 
 const WORK_CENTER_DEFS = [
   { id: 'carpentry', name: 'Carpentry Workshop', accentColor: '#FF71A7', statusLabel: 'Late',        statusCount: 3,    oee: 100, data: carpentryData },

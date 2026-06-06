@@ -154,10 +154,15 @@
   height:  calc(100vh - 156px);
 }
 
-/* ── Sub-header search sizing: responsive (max 600px), 33px tall ─────────── */
+/* ── Sub-header (control panel): 58px, padded, with 16px gap ─────────────── */
 .stats-sub-header {
+  height:        58px;
+  background:    #262A36;
+  padding:       8px 16px 16px;
   gap:           16px;
-  border-bottom: none;
+  flex:          0 0 auto;
+  border-bottom: 1px solid #3C3E4B;
+  box-sizing:    border-box;
 }
 .stats-sub-header__search {
   flex:        1;
