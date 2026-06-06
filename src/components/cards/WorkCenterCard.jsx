@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
@@ -110,9 +110,39 @@ export default function WorkCenterCard({
 }) {
   const badgeRef = useRef(null)
   const [anchorRect, setAnchorRect] = useState(null)
+  const [activeIdx, setActiveIdx] = useState(null)
 
   const incidentCount = incidents.length
   const badgeVariant  = getVariantFromIncidents(incidents)
+
+  const DivergingBar = useCallback((props) => {
+    const { x, width, index, yAxis } = props
+    const d = center.data[index]
+    if (!d?.down && !d?.up) return null
+    const zeroY = yAxis?.scale?.(0)
+    if (zeroY == null) return null
+    const isHov = index === activeIdx
+    return (
+      <g style={{ cursor: 'pointer' }}>
+        {d.down != null && (
+          <rect
+            x={x} y={zeroY} width={width}
+            height={Math.max(0, yAxis.scale(d.down) - zeroY)}
+            fill={isHov ? '#60375C' : '#007A76'}
+            style={{ transition: 'fill 0.15s ease' }}
+          />
+        )}
+        {d.up != null && (
+          <rect
+            x={x} y={yAxis.scale(d.up)} width={width}
+            height={Math.max(0, zeroY - yAxis.scale(d.up))}
+            fill={isHov ? '#5B3457' : '#60375C'}
+            style={{ transition: 'fill 0.15s ease' }}
+          />
+        )}
+      </g>
+    )
+  }, [activeIdx, center.data])
 
   function handleBadgeClick() {
     if (badgeRef.current) setAnchorRect(badgeRef.current.getBoundingClientRect())
@@ -130,7 +160,17 @@ export default function WorkCenterCard({
           <div className="wc-card__chart-spacer" />
           <div className="wc-card__chart-area">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={center.data} margin={{ top: 4, right: 28, left: 12, bottom: 2 }} barCategoryGap="8%">
+              <BarChart
+                data={center.data}
+                margin={{ top: 4, right: 28, left: 12, bottom: 2 }}
+                barCategoryGap="8%"
+                onMouseMove={state => setActiveIdx(state.isTooltipActive ? state.activeTooltipIndex : null)}
+                onMouseLeave={() => setActiveIdx(null)}
+                onClick={state => {
+                  const entry = state?.activePayload?.[0]?.payload
+                  if (entry?.load) console.log(`[WorkCenter] ${entry.week}: ${entry.load}h`)
+                }}
+              >
                 <XAxis
                   dataKey="week"
                   tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif', textAnchor: 'middle' }}
@@ -140,12 +180,7 @@ export default function WorkCenterCard({
                 <YAxis hide domain={[-55, 22]} width={0} />
                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
                 <ReferenceLine y={0} stroke="#60375C" strokeWidth={1.5} />
-                <Bar dataKey="up"   stackId="orders" fill="#60375C" isAnimationActive={false}
-                  activeBar={{ fill: '#5B3457' }}
-                />
-                <Bar dataKey="down" stackId="orders" fill="#007A76" isAnimationActive={false}
-                  activeBar={{ fill: '#60375C' }}
-                />
+                <Bar dataKey="down" shape={DivergingBar} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </div>
