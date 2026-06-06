@@ -627,6 +627,8 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                   className="sim-uline sim-uline--time"
                   value={form.timeOfIncident}
                   onChange={e => setForm(f => ({ ...f, timeOfIncident: e.target.value }))}
+                  onFocus={e => { try { e.target.showPicker?.() } catch {} }}
+                  onClick={e => { try { e.target.showPicker?.() } catch {} }}
                 />
               </InlineRow>
 

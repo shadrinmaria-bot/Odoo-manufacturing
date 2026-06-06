@@ -144,6 +144,9 @@
   display:        flex;
   flex-direction: column;
   gap:            18px;
+  /* Offset down so the column lines up with the textarea on the left, not
+     with the "Incident Details" title above it (14px title + 12px margin). */
+  margin-top:     29px;
 }
 
 /* ── Inline (label-left) rows ────────────────────────────────────────────── */
@@ -434,6 +437,7 @@
 .sim-other-wrap {
   display: flex;
   flex-direction: column;
+  position: relative; /* anchor for the absolutely-positioned validation msg */
 }
 
 .sim-other-input-wrap {
@@ -457,11 +461,17 @@
 }
 
 /* ── Other injury inline messages ────────────────────────────────────────── */
+/* Absolutely positioned so the message doesn't grow its grid row and shift
+   the surrounding injury tiles when the error/warning appears. */
 .sim-other-msg {
+  position:    absolute;
+  top:         calc(100% + 4px);
+  left:        62px; /* 50px tile + 12px gap */
+  right:       0;
   font-family: var(--font-ui);
   font-size:   11px;
   line-height: 1.35;
-  margin:      4px 0 0 62px; /* 50px tile + 12px gap */
+  margin:      0;
   padding:     0;
 }
 .sim-other-msg--error { color: var(--color-danger); }
