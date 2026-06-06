@@ -30,27 +30,31 @@ function weekRangeLabel(monday) {
   return sm === em ? `${s}-${e} ${sm}` : `${s} ${sm}-${e} ${em}`
 }
 
+// Threshold for weekly load hours — bars above this show a purple overflow segment.
+const THRESHOLD_HOURS = 30
+
 // Builds 5-point weekly data centred on this week: offsets -2, -1, 0, +1, +2.
-// Future weeks get null values so no bar renders.
-// Each past/current point is split into:
-//   up   (positive) → purple bar extending above the axis  (remaining/todo)
-//   down (negative) → teal bar extending below the axis   (completed/done)
-function buildWeeklyData(orders) {
+// Future weeks (offset > 0) render no bar (null values).
+// Each non-future point produces:
+//   load (raw hours for tooltip)
+//   down (negative)  → teal bar grows downward from y=0 (the threshold line)
+//   up   (positive)  → purple bar grows upward ONLY when load > THRESHOLD_HOURS
+function buildWeeklyData(loadHours) {
   const thisMonday = getMondayOf(new Date())
-  return orders.map((count, i) => {
+  return loadHours.map((hours, i) => {
     const offset = i - 2
     const monday = new Date(thisMonday)
     monday.setDate(monday.getDate() + offset * 7)
     const week = offset === 0 ? 'This Week' : weekRangeLabel(monday)
-    if (offset > 0 || !count) return { week, up: null, down: null }
-    const up = count > 1 ? Math.max(1, Math.round(count * 0.33)) : 0
-    return { week, up: up || null, down: -(count - up) }
+    if (offset > 0 || !hours) return { week, up: null, down: null, load: null }
+    const up = hours > THRESHOLD_HOURS ? hours - THRESHOLD_HOURS : null
+    return { week, up, down: -hours, load: hours }
   })
 }
 
-const carpentryData = buildWeeklyData([2, 5, 3, 4, 1])
-const paintData     = buildWeeklyData([1, 3, 4, 2, 3])
-const assemblyData  = buildWeeklyData([3, 2, 1, 3, 2])
+const carpentryData = buildWeeklyData([22, 18, 35, 0, 0])
+const paintData     = buildWeeklyData([28, 32, 20, 0, 0])
+const assemblyData  = buildWeeklyData([15, 25, 38, 0, 0])
 
 const WORK_CENTER_DEFS = [
   { id: 'carpentry', name: 'Carpentry Workshop', accentColor: '#FF71A7', statusLabel: 'Late',        statusCount: 3,    oee: 100, data: carpentryData },

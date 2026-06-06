@@ -20,17 +20,18 @@ function StatusDot({ hasCritical }) {
 
 // ── CustomTooltip ─────────────────────────────────────────────────────────────
 
-function CustomTooltip({ active, payload, label }) {
-  if (active && payload && payload.length) {
-    const total = payload.reduce((s, p) => s + Math.abs(p.value || 0), 0)
-    return (
-      <div className="wc-tooltip">
-        <p className="wc-tooltip__label">{label}</p>
-        <p>Orders: <strong style={{ color: '#F5F5F6' }}>{total}</strong></p>
-      </div>
-    )
-  }
-  return null
+function CustomTooltip({ active, payload }) {
+  if (!active || !payload?.length) return null
+  const load = payload[0]?.payload?.load
+  if (!load) return null
+  return (
+    <div className="wc-tooltip">
+      <p style={{ display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
+        <span style={{ display: 'inline-block', width: 8, height: 8, background: '#007A76', borderRadius: 2, flexShrink: 0 }} />
+        <span>Total Load: <strong style={{ color: '#F5F5F6' }}>{load}h</strong></span>
+      </p>
+    </div>
+  )
 }
 
 // ── WorkOrderButtons ──────────────────────────────────────────────────────────
@@ -128,18 +129,20 @@ export default function WorkCenterCard({
           <div className="wc-card__chart-spacer" />
           <div className="wc-card__chart-area">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }} barCategoryGap="15%">
+              <BarChart data={center.data} margin={{ top: 4, right: 16, left: -28, bottom: 2 }} barCategoryGap="8%">
                 <XAxis
                   dataKey="week"
-                  tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif' }}
+                  tick={{ fill: '#626363', fontSize: 12, fontFamily: 'Arial, sans-serif', textAnchor: 'middle' }}
                   axisLine={false} tickLine={false}
-                  interval="preserveStartEnd"
+                  interval={0}
                 />
-                <YAxis hide domain={[-5, 5]} />
+                <YAxis hide domain={[-40, 12]} />
                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
                 <ReferenceLine y={0} stroke="#60375C" strokeWidth={1.5} />
                 <Bar dataKey="up"   stackId="orders" fill="#60375C" isAnimationActive={false} />
-                <Bar dataKey="down" stackId="orders" fill="#007A76" isAnimationActive={false} />
+                <Bar dataKey="down" stackId="orders" fill="#007A76" isAnimationActive={false}
+                  activeBar={{ fill: '#60375C' }}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
