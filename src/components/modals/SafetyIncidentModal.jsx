@@ -90,6 +90,18 @@ const WORK_CENTERS = [
 
 const CURRENT_USER = 'Emma Granger'
 
+// Time-of-incident options at 15-min intervals, rendered through FormDropdown
+// so the picker matches the other dropdowns (teal selected highlight, etc.).
+const TIME_OPTIONS = Array.from({ length: 24 * 4 }, (_, i) => {
+  const h24 = Math.floor(i / 4)
+  const m = (i % 4) * 15
+  const hh = String(h24).padStart(2, '0')
+  const mm = String(m).padStart(2, '0')
+  const period = h24 < 12 ? 'AM' : 'PM'
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12
+  return { value: `${hh}:${mm}`, label: `${h12}:${mm} ${period}` }
+})
+
 const REQUIRED_FIELDS = ['injuredWorker', 'jobTitle', 'workerId', 'incidentLocation', 'actionsTaken', 'severity']
 
 const ACTIONS_SUGGESTIONS = [
@@ -150,6 +162,22 @@ function findSimilarTile(text) {
 function initialsOf(label) {
   const parts = label.split(/\s+/).filter(Boolean)
   return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase()
+}
+
+// Avatar with photo + initials fallback. Used for the "Reported By" name.
+function PersonAvatar({ name, slug }) {
+  const [errored, setErrored] = useState(false)
+  if (errored || !slug) {
+    return <div className="sim-reporter-avatar">{initialsOf(name)}</div>
+  }
+  return (
+    <img
+      className="sim-reporter-avatar sim-reporter-avatar--img"
+      src={`/avatars/${slug}.png`}
+      alt={name}
+      onError={() => setErrored(true)}
+    />
+  )
 }
 
 const WORKER_OPTIONS = WORKERS.map(w => ({
@@ -476,7 +504,10 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
             <div className="sim-inline-row sim-inline-row--wide">
               <label className="sim-inline-label">Reported By</label>
               <div className="sim-inline-field">
-                <span className="sim-date-text">{form.reportedBy}</span>
+                <div className="sim-reporter-name-group">
+                  <PersonAvatar name={form.reportedBy} slug="emma-granger" />
+                  <span className="sim-date-text">{form.reportedBy}</span>
+                </div>
               </div>
             </div>
             <div className="sim-reporter-row__group">
@@ -495,9 +526,9 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
                 onBlur={() => touch('injuredWorker')}
                 placeholder="Select Worker"
                 error={err('injuredWorker')}
-                withAvatars
-                footerLabel="Search more…"
-                ariaLabel="Injured Worker"
+                showWorkerPhotos
+                showSearchMore
+                maxVisible={4}
               />
             </InlineRow>
 
@@ -622,13 +653,11 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
               </InlineRow>
 
               <InlineRow label="Time of Incident" wide>
-                <input
-                  type="time"
-                  className="sim-uline sim-uline--time"
+                <FormDropdown
                   value={form.timeOfIncident}
-                  onChange={e => setForm(f => ({ ...f, timeOfIncident: e.target.value }))}
-                  onFocus={e => { try { e.target.showPicker?.() } catch {} }}
-                  onClick={e => { try { e.target.showPicker?.() } catch {} }}
+                  options={TIME_OPTIONS}
+                  onChange={v => setForm(f => ({ ...f, timeOfIncident: v }))}
+                  placeholder="Select time"
                 />
               </InlineRow>
 

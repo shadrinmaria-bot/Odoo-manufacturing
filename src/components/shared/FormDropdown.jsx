@@ -26,10 +26,36 @@ export default function FormDropdown({
   error,
   showWorkerPhotos = false,
   showSearchMore = false,
+  maxVisible,
 }) {
   const [open, setOpen] = useState(false)
+  const [dropUp, setDropUp] = useState(false)
   const ref = useRef(null)
+  const triggerRef = useRef(null)
   const current = value ? options.find(o => o.value === value) : null
+  // When a cap is set, only the first N options are listed (the rest live
+  // behind "Search more…"). The trigger still shows the selected label even
+  // if it falls outside the visible slice.
+  const visibleOptions = maxVisible ? options.slice(0, maxVisible) : options
+
+  // Open upward when the field is near the bottom of its scroll container and
+  // there's more room above than below (keeps the panel from being clipped).
+  function decideDirection() {
+    const el = triggerRef.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    const PANEL_MAX = 264
+    const below = window.innerHeight - r.bottom
+    setDropUp(below < PANEL_MAX && r.top > below)
+  }
+
+  function toggleOpen() {
+    setOpen(o => {
+      const next = !o
+      if (next) decideDirection()
+      return next
+    })
+  }
 
   useEffect(() => {
     if (!open) return
@@ -56,9 +82,10 @@ export default function FormDropdown({
   return (
     <div ref={ref} className="fdp-wrap">
       <button
+        ref={triggerRef}
         type="button"
         className={`fdp-trigger${open ? ' fdp-trigger--open' : ''}${error ? ' fdp-trigger--error' : ''}`}
-        onClick={() => setOpen(o => !o)}
+        onClick={toggleOpen}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -75,8 +102,8 @@ export default function FormDropdown({
       </button>
 
       {open && (
-        <div className="fdp-panel" role="listbox">
-          {options.map(opt => (
+        <div className={`fdp-panel${dropUp ? ' fdp-panel--up' : ''}`} role="listbox">
+          {visibleOptions.map(opt => (
             <button
               key={opt.value}
               type="button"

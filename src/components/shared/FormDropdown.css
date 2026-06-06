@@ -56,13 +56,20 @@
   left:          0;
   right:         0;
   min-width:     180px;
+  max-height:    260px;
+  overflow-y:    auto;
   background:    #363B47;
   border:        1px solid var(--color-border-light);
   border-radius: 6px;
   box-shadow:    0 6px 20px rgba(0, 0, 0, 0.45);
   z-index:       600;
-  overflow:      hidden;
   animation:     navDropdownFadeIn 0.12s ease;
+}
+
+/* Drop-up variant for fields near the bottom of a scroll container. */
+.fdp-panel--up {
+  top:    auto;
+  bottom: calc(100% + 4px);
 }
 
 /* ── Items ────────────────────────────────────────────────────────────────── */

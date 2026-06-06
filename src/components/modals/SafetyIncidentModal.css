@@ -99,6 +99,12 @@
 }
 .sim-reporter-avatar--img { object-fit: cover; }
 
+.sim-reporter-name-group {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+}
+
 .sim-reporter-name {
   font-family: var(--font-ui);
   font-size:   13.5px;
@@ -481,13 +487,14 @@
 .sim-wc-location { color: var(--color-text); }
 
 /* ── Static (non-interactive) auto-filled fields ────────────────────────────── */
+/* Worker ID / Job Title / Work Center Location: plain grey text, no underline,
+   to read as read-only values rather than editable underline fields. */
 .sim-static-value {
   display:       block;
-  color:         var(--color-text);
+  color:         #E4E4E4;
   font-family:   var(--font-ui);
   font-size:     13px;
   padding:       2px 0;
-  border-bottom: 1px solid var(--color-border);
   cursor:        default;
   min-height:    1.4em;
 }
