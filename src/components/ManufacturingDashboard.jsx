@@ -63,7 +63,8 @@ const WORK_CENTER_DEFS = [
 
 // ── Demo incidents ────────────────────────────────────────────────────────────
 
-const DEMO_INCIDENTS = {
+// Mock incident records kept for reference — overview starts clean (grey badges).
+const MOCK_INCIDENT_RECORDS = {
   carpentry: [
     {
       id: 'c2', title: 'PPE signage faded',
@@ -114,6 +115,9 @@ const DEMO_INCIDENTS = {
   ],
   assembly: [],
 }
+
+// Overview starts with grey "0 Incidents" badges on every card.
+const DEMO_INCIDENTS = { carpentry: [], paint: [], assembly: [] }
 
 // ── Label maps (used when building new incidents from modal form) ─────────────
 
