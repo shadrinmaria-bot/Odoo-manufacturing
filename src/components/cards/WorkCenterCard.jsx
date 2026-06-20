@@ -94,7 +94,9 @@ function GreyBadgeDropdown({ isOpen, anchorRect, onClose, onReportIncident }) {
 
 function getVariantFromIncidents(list) {
   if (!list?.length) return 'grey'
-  if (list.some(i => i.severity === 'critical')) return 'red'
+  const unacked = list.filter(i => !i.acknowledged)
+  if (!unacked.length) return 'grey'
+  if (unacked.some(i => i.severity === 'critical')) return 'red'
   return 'blue'
 }
 

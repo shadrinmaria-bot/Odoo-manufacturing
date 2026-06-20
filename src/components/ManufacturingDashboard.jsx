@@ -191,6 +191,7 @@ export default function ManufacturingDashboard() {
 
   function handleShareIncident(incident, shareOptions) {
     if (!incident) return
+    acknowledgeIncident(incident.id)
     const recipients = shareOptions?.recipients ?? []
     const first = recipients[0] ?? { name: 'Maria Shadrin', initial: 'M' }
     const extras = Math.max(0, recipients.length - 1)
@@ -244,6 +245,18 @@ export default function ManufacturingDashboard() {
     })
   }
 
+  function acknowledgeIncident(incidentId) {
+    setIncidents(prev => {
+      const next = {}
+      for (const key in prev) {
+        next[key] = prev[key].map(inc =>
+          inc.id === incidentId ? { ...inc, acknowledged: true } : inc
+        )
+      }
+      return next
+    })
+  }
+
   function handleSubmitIncident(workCenterId, severity, formData) {
     if (!workCenterId || workCenterId === 'other') {
       showToast(severity)
@@ -261,6 +274,7 @@ export default function ManufacturingDashboard() {
       id:               `${workCenterId}-${Date.now()}`,
       title:            injuryLabel.length > 35 ? injuryLabel.slice(0, 35) + '…' : injuryLabel,
       severity,
+      acknowledged:     false,
       reportedBy:       WORKERS_MAP[formData.reportedBy] || formData.reportedBy || 'Unknown',
       incidentDate:     dateStr,
       date:             shortDate,

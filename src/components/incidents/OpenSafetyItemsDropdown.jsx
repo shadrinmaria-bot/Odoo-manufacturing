@@ -45,7 +45,11 @@ function IncidentRow({ incident, onView }) {
       ].filter(Boolean).join(' · ')
 
   return (
-    <div className="osd-row" onClick={() => onView(incident)}>
+    <div
+      className="osd-row"
+      onClick={() => onView(incident)}
+      style={incident.acknowledged ? { opacity: 0.45 } : undefined}
+    >
       <div className="osd-row__icon">
         {isCritical ? <CriticalIcon /> : <AttentionIcon />}
       </div>

@@ -476,7 +476,9 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   const otherConflict    = form.selectedInjuryType === 'other' && form.otherInjuryText.trim()
     ? findSimilarTile(form.otherInjuryText)
     : null
-  const showOtherErrors  = showErrors || !!touched.otherInjuryText
+  // Error for the Other field only shows when Other is the active selection AND the
+  // user has already attempted to submit. Switching to any other tile clears it silently.
+  const showOtherErrors  = form.selectedInjuryType === 'other' && showErrors
 
   return (
     <div className="sim-overlay" onClick={handleClose}>
