@@ -192,6 +192,7 @@ export default function ManufacturingDashboard() {
   function handleShareIncident(incident, shareOptions) {
     if (!incident) return
     acknowledgeIncident(incident.id)
+    setIncidentStatus(incident.id, 'shared')
     const recipients = shareOptions?.recipients ?? []
     const first = recipients[0] ?? { name: 'Maria Shadrin', initial: 'M' }
     const extras = Math.max(0, recipients.length - 1)
@@ -257,6 +258,23 @@ export default function ManufacturingDashboard() {
     })
   }
 
+  const STAGE_ORDER = ['open', 'shared', 'investigated', 'resolved']
+
+  function setIncidentStatus(incidentId, nextStatus) {
+    setIncidents(prev => {
+      const next = {}
+      for (const key in prev) {
+        next[key] = prev[key].map(inc => {
+          if (inc.id !== incidentId) return inc
+          const curIdx  = STAGE_ORDER.indexOf(inc.status || 'open')
+          const nextIdx = STAGE_ORDER.indexOf(nextStatus)
+          return nextIdx > curIdx ? { ...inc, status: nextStatus } : inc
+        })
+      }
+      return next
+    })
+  }
+
   function handleSubmitIncident(workCenterId, severity, formData) {
     if (!workCenterId || workCenterId === 'other') {
       showToast(severity)
@@ -275,6 +293,7 @@ export default function ManufacturingDashboard() {
       title:            injuryLabel.length > 35 ? injuryLabel.slice(0, 35) + '…' : injuryLabel,
       severity,
       acknowledged:     false,
+      status:           'open',
       reportedBy:       WORKERS_MAP[formData.reportedBy] || formData.reportedBy || 'Unknown',
       incidentDate:     dateStr,
       date:             shortDate,
@@ -361,6 +380,7 @@ export default function ManufacturingDashboard() {
         onClose={() => setDetailIncident(null)}
         onMarkAsDone={markIncidentAsDone}
         onShare={handleShareIncident}
+        onAdvanceStatus={(inc, stage) => setIncidentStatus(inc.id, stage)}
       />
       <ChatPanel
         isOpen={isChatOpen}

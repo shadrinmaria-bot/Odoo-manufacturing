@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './IncidentDetailModal.css'
 import ShareIncidentPopup from './ShareIncidentPopup'
+import IncidentStatusBar from '../shared/IncidentStatusBar'
 
 const slugify = (s) => (s || '').trim().toLowerCase().replace(/\s+/g, '-')
 
@@ -106,7 +107,7 @@ const INJURY_TYPE_LABELS = {
   other:             'Other',
 }
 
-export default function IncidentDetailModal({ incident, isOpen, onClose, onShare }) {
+export default function IncidentDetailModal({ incident, isOpen, onClose, onShare, onAdvanceStatus }) {
   const modalRef = useRef(null)
   const [isShareOpen, setIsShareOpen] = useState(false)
 
@@ -157,6 +158,10 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
               {severityLabel}
             </span>
           </div>
+          <IncidentStatusBar
+            status={incident.status || 'open'}
+            onStageClick={onAdvanceStatus ? (stage) => onAdvanceStatus(incident, stage) : undefined}
+          />
           <button className="idm-close-btn" onClick={onClose} aria-label="Close">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M18 6L6 18M6 6l12 12" />
