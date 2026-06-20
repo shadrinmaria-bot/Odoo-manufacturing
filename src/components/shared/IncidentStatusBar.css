@@ -1,77 +1,11 @@
 .isb {
   display:     flex;
-  align-items: stretch;
+  align-items: center;
   gap:         1px;
   flex-shrink: 0;
 }
 
-/* Every segment */
 .isb__seg {
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  height:          24px;
-  padding:         0 14px 0 18px;
-  font-family:     var(--font-ui, 'Segoe UI', sans-serif);
-  font-size:       11px;
-  font-weight:     600;
-  white-space:     nowrap;
-  cursor:          default;
-  user-select:     none;
-
-  /* Middle chevron shape (override per position below) */
-  clip-path: polygon(
-    0 0,
-    calc(100% - 9px) 0,
-    100% 50%,
-    calc(100% - 9px) 100%,
-    0 100%,
-    9px 50%
-  );
-}
-
-/* First segment: flat left edge */
-.isb__seg:first-child {
-  padding-left: 12px;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 9px) 0,
-    100% 50%,
-    calc(100% - 9px) 100%,
-    0 100%
-  );
-}
-
-/* Last segment: flat right edge */
-.isb__seg:last-child {
-  padding-right: 12px;
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    9px 50%
-  );
-}
-
-/* Inactive state — grey stroke via 4-directional drop-shadow (respects clip-path) */
-.isb__seg--inactive {
-  background: #3C3E4B;
-  color:      #8A8D9A;
-  filter:
-    drop-shadow(0 -1px 0 #5A5E6B)
-    drop-shadow(0  1px 0 #5A5E6B)
-    drop-shadow(-1px 0 0 #5A5E6B)
-    drop-shadow( 1px 0 0 #5A5E6B);
-}
-
-/* Active (current) state — teal stroke matching accent */
-.isb__seg--active {
-  background: #17373B;
-  color:      #03F9E3;
-  filter:
-    drop-shadow(0 -1px 0 #03F9E3)
-    drop-shadow(0  1px 0 #03F9E3)
-    drop-shadow(-1px 0 0 #03F9E3)
-    drop-shadow( 1px 0 0 #03F9E3);
+  display:    block;
+  flex-shrink: 0;
 }
