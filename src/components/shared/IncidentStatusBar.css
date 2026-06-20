@@ -17,9 +17,7 @@
   font-weight:     600;
   white-space:     nowrap;
   cursor:          default;
-  border:          none;
-  outline:         none;
-  transition:      background 0.12s, color 0.12s;
+  user-select:     none;
 
   /* Middle chevron shape (override per position below) */
   clip-path: polygon(
@@ -32,7 +30,7 @@
   );
 }
 
-/* First segment: flat left edge — drop the trailing notch point */
+/* First segment: flat left edge */
 .isb__seg:first-child {
   padding-left: 12px;
   clip-path: polygon(
@@ -44,7 +42,7 @@
   );
 }
 
-/* Last segment: flat right edge — drop the arrow point */
+/* Last segment: flat right edge */
 .isb__seg:last-child {
   padding-right: 12px;
   clip-path: polygon(
@@ -56,24 +54,24 @@
   );
 }
 
-/* Inactive state */
+/* Inactive state — grey stroke via 4-directional drop-shadow (respects clip-path) */
 .isb__seg--inactive {
   background: #3C3E4B;
   color:      #8A8D9A;
+  filter:
+    drop-shadow(0 -1px 0 #5A5E6B)
+    drop-shadow(0  1px 0 #5A5E6B)
+    drop-shadow(-1px 0 0 #5A5E6B)
+    drop-shadow( 1px 0 0 #5A5E6B);
 }
 
-/* Active (current) state */
+/* Active (current) state — teal stroke matching accent */
 .isb__seg--active {
-  background:  #17373B;
-  color:       #03F9E3;
-  box-shadow:  inset 2px 0 0 #03F9E3, 0 0 0 1px #03F9E3;
-}
-
-/* Clickable future stages */
-.isb__seg--clickable {
-  cursor: pointer;
-}
-.isb__seg--clickable:hover {
-  background: #2A3D40;
-  color:      #5ECAC5;
+  background: #17373B;
+  color:      #03F9E3;
+  filter:
+    drop-shadow(0 -1px 0 #03F9E3)
+    drop-shadow(0  1px 0 #03F9E3)
+    drop-shadow(-1px 0 0 #03F9E3)
+    drop-shadow( 1px 0 0 #03F9E3);
 }

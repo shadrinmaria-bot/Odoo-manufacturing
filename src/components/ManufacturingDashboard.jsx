@@ -380,7 +380,6 @@ export default function ManufacturingDashboard() {
         onClose={() => setDetailIncident(null)}
         onMarkAsDone={markIncidentAsDone}
         onShare={handleShareIncident}
-        onAdvanceStatus={(inc, stage) => setIncidentStatus(inc.id, stage)}
       />
       <ChatPanel
         isOpen={isChatOpen}
