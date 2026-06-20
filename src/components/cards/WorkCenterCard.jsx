@@ -234,7 +234,7 @@ export default function WorkCenterCard({
         </div>
       </div>
 
-      {badgeVariant === 'grey' ? (
+      {incidents.length === 0 ? (
         <GreyBadgeDropdown
           isOpen={isDropdownOpen}
           anchorRect={anchorRect}
