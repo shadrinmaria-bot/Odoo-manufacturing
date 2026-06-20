@@ -1,7 +1,7 @@
 .isb {
   display:     flex;
   align-items: center;
-  gap:         1px;
+  gap:         0;
   flex-shrink: 0;
 }
 

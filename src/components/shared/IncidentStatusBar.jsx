@@ -1,9 +1,9 @@
 import React from 'react'
 import './IncidentStatusBar.css'
 
-const H  = 24    // chevron height px
-const D  = 8     // arrow / notch depth px
-const S  = 0.5   // inset from SVG edge so full stroke is visible inside viewBox
+const H = 24    // chevron height px
+const D = 8     // arrow / notch depth px
+const S = 0.5   // polygon inset so stroke stays within viewBox
 
 const STAGES = [
   { key: 'open',         label: 'Incident Open', w: 110 },
@@ -34,8 +34,8 @@ export default function IncidentStatusBar({ status = 'open' }) {
         const isActive = idx === currentIdx
         const pos    = idx === 0 ? 'first' : idx === STAGES.length - 1 ? 'last' : 'middle'
         const fill   = isActive ? '#17373B' : '#3C3E4B'
-        const stroke = isActive ? '#03F9E3' : '#5A5E6B'
-        const color  = isActive ? '#03F9E3' : '#8A8D9A'
+        const stroke = isActive ? '#03F9E3' : 'none'
+        const color  = isActive ? '#03F9E3' : '#6B6E7C'
         const textX  = pos === 'first' ? (w - D) / 2 : pos === 'last' ? (w + D) / 2 : w / 2
 
         return (
@@ -59,7 +59,7 @@ export default function IncidentStatusBar({ status = 'open' }) {
               y={H / 2}
               dominantBaseline="middle"
               textAnchor="middle"
-              fill={color}
+              style={{ fill: color }}
               fontSize="11"
               fontWeight="600"
               fontFamily="'Segoe UI', sans-serif"
