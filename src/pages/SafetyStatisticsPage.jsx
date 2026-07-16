@@ -139,7 +139,7 @@ function StatsToolbar({
         <span>Insert in Spreadsheet</span>
       </Button>
 
-      <ButtonGroup gap={3} style={{ marginLeft: 4 }}>
+      <ButtonGroup gap={1} style={{ marginLeft: 4 }}>
         <Button active={graphType === 'bar'}  onClick={() => onGraphTypeChange('bar')}  title="Bar chart"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
         <Button active={graphType === 'line'} onClick={() => onGraphTypeChange('line')} title="Line chart" className="btn-stats-icon"><Icon char="" size={14} /></Button>
         <Button active={graphType === 'pie'}  onClick={() => onGraphTypeChange('pie')}  title="Pie chart"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
@@ -153,7 +153,7 @@ function StatsToolbar({
       )}
 
       {showSort && (
-        <ButtonGroup gap={3}>
+        <ButtonGroup gap={1}>
           <Button active={sortOrder === 'desc'} onClick={() => onSortChange(sortOrder === 'desc' ? null : 'desc')} title="Sort descending" className="btn-stats-icon"><Icon char={"\uF161"} size={14} /></Button>
           <Button active={sortOrder === 'asc'}  onClick={() => onSortChange(sortOrder === 'asc'  ? null : 'asc')}  title="Sort ascending"  className="btn-stats-icon"><Icon char={"\uF160"}  size={14} /></Button>
         </ButtonGroup>
@@ -217,31 +217,36 @@ function StatsSubHeader({ filteredCenter, onClearFilter, onOpenModal }) {
       </div>
 
       <div className="stats-sub-header__search">
-        <Icon char="" size={13} color="#626363" />
-        {filteredCenter && (
-          <span className="filter-chip">
-            <Icon char="" size={11} color="#D7B3D3" />
-            <span>{filteredCenter}</span>
-            <button className="filter-chip__clear" onClick={onClearFilter} title="Clear filter" aria-label="Clear filter">×</button>
+        <div className="stats-sub-header__search-field">
+          <span className="stats-sub-header__search-icon">
+            <Icon char={"\uF002"} size={14} color="#e4e4e4" />
           </span>
-        )}
-        <span className="stats-sub-header__search-placeholder">Search...</span>
-        <Icon char="" size={11} color="#626363" />
+          {filteredCenter && (
+            <span className="filter-chip">
+              <Icon char={"\uF0B0"} size={11} color="#D7B3D3" />
+              <span>{filteredCenter}</span>
+              <button className="filter-chip__clear" onClick={onClearFilter} title="Clear filter" aria-label="Clear filter">×</button>
+            </span>
+          )}
+          <span className="stats-sub-header__search-placeholder">Search...</span>
+        </div>
+        <button className="stats-sub-header__search-expand" aria-label="Expand search">
+          <Icon char={"\uF0D7"} size={11} color="#e4e4e4" />
+        </button>
       </div>
 
       <div className="stats-sub-header__actions">
-        <ButtonGroup gap={3}>
-          {[
-            { label: 'Graph view', path: <><rect x="3" y="11" width="4" height="8" rx="1" /><rect x="10" y="6" width="4" height="13" rx="1" /><rect x="17" y="9" width="4" height="10" rx="1" /></> },
-            { label: 'Pivot view', path: <><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="3" y1="15" x2="21" y2="15" /><line x1="9" y1="3" x2="9" y2="21" /><line x1="15" y1="3" x2="15" y2="21" /></> },
-            { label: 'List view',  path: <><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><circle cx="3.5" cy="6" r="1" /><circle cx="3.5" cy="12" r="1" /><circle cx="3.5" cy="18" r="1" /></> },
-          ].map(v => (
-            <Button key={v.label} title={v.label} className="btn-stats-view">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                {v.path}
-              </svg>
-            </Button>
-          ))}
+        {/* Graph is the only view built, so it stays the active one. */}
+        <ButtonGroup gap={1}>
+          <Button title="Graph view" active className="btn-stats-view">
+            <Icon char={"\uF1FE"} size={14} />
+          </Button>
+          <Button title="Pivot view" className="btn-stats-view">
+            <Icon char={"\uE800"} font="odoo" size={14} />
+          </Button>
+          <Button title="List view" className="btn-stats-view">
+            <Icon char={"\uF039"} size={14} />
+          </Button>
         </ButtonGroup>
         <button className="stats-sub-header__danger-btn" onClick={onOpenModal} title="Report Incident">
           <Icon char="" size={13} />

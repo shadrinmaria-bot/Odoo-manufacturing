@@ -29,26 +29,64 @@
   color:        #F5F5F6;
 }
 
+/* Mirrors .sub-header__search in nav/TopNav.css — same control, same styling:
+   one outline around a field plus a 30px expand button, 600px by 33px. */
 .stats-sub-header__search {
   display:       flex;
   align-items:   center;
-  gap:           8px;
-  padding:       0 12px;
-  border:        1px solid #3C3E4A;
-  background:    #1B1D26;
-  border-radius: 4px;
   flex:          1;
   max-width:     600px;
   height:        33px;
   box-sizing:    border-box;
+  border:        1px solid #3C3E4A;
+  border-radius: 4px;
+  overflow:      hidden;
 }
 
-/* Matches the Overview's search placeholder — same control, same styling. */
+.stats-sub-header__search-field {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  flex:          1;
+  min-width:     0;
+  height:        100%;
+  padding:       4px 10px;
+  box-sizing:    border-box;
+  border:        none;
+  background:    #1B1D26;
+}
+
+.stats-sub-header__search-icon {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           22px;
+  height:          21px;
+  flex-shrink:     0;
+  color:           #e4e4e4;
+}
+
 .stats-sub-header__search-placeholder {
   font-family: 'Segoe UI', sans-serif;
-  font-size:   12px;
+  font-size:   14px;
   color:       #757A88;
   flex:        1;
+}
+
+.stats-sub-header__search-expand {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           30px;
+  height:          100%;
+  padding:         5px 10px;
+  box-sizing:      border-box;
+  flex-shrink:     0;
+  border:          none;
+  border-left:     1px solid #3C3E4A;
+  background:      #262A36;
+  color:           #e4e4e4;
+  cursor:          pointer;
 }
 
 .stats-sub-header__actions {
