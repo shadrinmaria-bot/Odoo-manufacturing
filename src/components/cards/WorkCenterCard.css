@@ -48,12 +48,21 @@
 }
 
 /* ── Content layer (above chart) ─────────────────────────────────────────── */
+/* Sits on top of the full-bleed chart layer, so it would otherwise intercept
+   every bar hover. The layer itself is transparent to the mouse; the rows that
+   actually hold controls opt back in below. */
 .wc-card__content {
   position:       relative;
   z-index:        1;
   display:        flex;
   flex-direction: column;
   height:         100%;
+  pointer-events: none;
+}
+
+.wc-card__header,
+.wc-card__stats {
+  pointer-events: auto;
 }
 
 /* ── Header row ──────────────────────────────────────────────────────────── */
@@ -164,7 +173,9 @@
   line-height:  1.2;
 }
 
-.wc-card__flex-fill { flex: 1; }
+/* Pure spacer that pushes the content layer's height to 100%. It sits directly
+   over the chart underneath, so it must not swallow the bars' hover events. */
+.wc-card__flex-fill { flex: 1; pointer-events: none; }
 
 /* ── WorkOrderButtons ────────────────────────────────────────────────────── */
 /* btn-work-orders-primary and btn-work-orders-icon live in Button.css */

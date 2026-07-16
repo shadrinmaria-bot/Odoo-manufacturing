@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip,
+  BarChart, Bar, Cell, XAxis, YAxis, Tooltip,
   ResponsiveContainer, ReferenceLine,
 } from 'recharts'
 import StatusBadge from '../badges/StatusBadge'
@@ -10,11 +10,18 @@ import { Button, ButtonGroup } from '../shared/Button'
 import './WorkCenterCard.css'
 
 // Weekly load segments. Hours up to the base line are teal; hours past it are
-// purple. Hover shades are a step lighter than the resting fill.
-const COLOR_LOAD           = '#007A76'
-const COLOR_LOAD_HOVER     = '#0A9A94'
-const COLOR_EXCESS         = '#60375C'
-const COLOR_EXCESS_HOVER   = '#7B4775'
+// purple.
+//
+// Hover shading follows Odoo exactly, and it is not uniform:
+//   • teal WITH excess stacked above it → turns purple, so the whole column
+//     reads as one purple bar
+//   • teal with NO excess              → just darkens
+//   • the excess block                 → just darkens
+// Both "darken" steps use the same ×0.947 factor, so they feel identical.
+const COLOR_LOAD        = '#007A76'
+const COLOR_LOAD_DARK   = '#007470'
+const COLOR_EXCESS      = '#60375C'
+const COLOR_EXCESS_DARK = '#5B3457'
 
 // Headroom above the base line, so the line sits ~2/3 up rather than at the very
 // top. Grows in 10h steps if a work center ever books more than this.
@@ -97,11 +104,17 @@ export default function WorkCenterCard({
 }) {
   const badgeRef = useRef(null)
   const [anchorRect, setAnchorRect] = useState(null)
-  const [hovered, setHovered] = useState(null)   // 'base' | 'excess' | null
+  const [hovered, setHovered] = useState(null)   // { series: 'base'|'excess', index } | null
 
   const incidentCount = incidents.length
   const badgeVariant  = getVariantFromIncidents(incidents)
   const baseLoad      = center.baseLoad ?? 40
+
+  const isHovered  = (series, i) => hovered?.series === series && hovered.index === i
+  const baseFill   = (d, i) => !isHovered('base', i)
+    ? COLOR_LOAD
+    : (d.excess ? COLOR_EXCESS : COLOR_LOAD_DARK)
+  const excessFill = (d, i) => isHovered('excess', i) ? COLOR_EXCESS_DARK : COLOR_EXCESS
 
   function handleBadgeClick() {
     if (badgeRef.current) setAnchorRect(badgeRef.current.getBoundingClientRect())
@@ -119,10 +132,13 @@ export default function WorkCenterCard({
           <div className="wc-card__chart-spacer" />
           <div className="wc-card__chart-area">
             <ResponsiveContainer width="100%" height="100%">
+              {/* barCategoryGap is subtracted from BOTH sides of each band, so
+                  15% leaves the bar at 1 - 2×15% = 70% of its column — the ratio
+                  the reference screenshot uses. */}
               <BarChart
                 data={center.data}
                 margin={{ top: 4, right: 28, left: 12, bottom: 2 }}
-                barCategoryGap="8%"
+                barCategoryGap="15%"
                 onMouseLeave={() => setHovered(null)}
               >
                 <XAxis
@@ -135,23 +151,28 @@ export default function WorkCenterCard({
                   hide width={0}
                   domain={[0, dataMax => Math.max(Y_HEADROOM, Math.ceil(dataMax / 10) * 10)]}
                 />
-                <Tooltip
-                  content={<LoadTooltip hovered={hovered} />}
-                  cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-                />
+                <Tooltip content={<LoadTooltip hovered={hovered?.series} />} cursor={false} />
                 <ReferenceLine y={baseLoad} stroke={COLOR_EXCESS} strokeWidth={1.5} />
                 <Bar
-                  dataKey="base" stackId="load" fill={COLOR_LOAD}
-                  isAnimationActive={false}
-                  activeBar={{ fill: COLOR_LOAD_HOVER }}
-                  onMouseEnter={() => setHovered('base')}
-                />
+                  dataKey="base" stackId="load"
+                  isAnimationActive={false} activeBar={false}
+                  onMouseEnter={(_, index) => setHovered({ series: 'base', index })}
+                  onMouseLeave={() => setHovered(null)}
+                >
+                  {center.data.map((d, i) => (
+                    <Cell key={`base-${i}`} fill={baseFill(d, i)} />
+                  ))}
+                </Bar>
                 <Bar
-                  dataKey="excess" stackId="load" fill={COLOR_EXCESS}
-                  isAnimationActive={false}
-                  activeBar={{ fill: COLOR_EXCESS_HOVER }}
-                  onMouseEnter={() => setHovered('excess')}
-                />
+                  dataKey="excess" stackId="load"
+                  isAnimationActive={false} activeBar={false}
+                  onMouseEnter={(_, index) => setHovered({ series: 'excess', index })}
+                  onMouseLeave={() => setHovered(null)}
+                >
+                  {center.data.map((d, i) => (
+                    <Cell key={`excess-${i}`} fill={excessFill(d, i)} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
