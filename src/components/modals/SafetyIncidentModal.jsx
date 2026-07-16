@@ -296,23 +296,30 @@ function SuccessPopup({ onClose }) {
 
 // ── Modal ───────────────────────────────────────────────────────────────────
 
-export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
+export default function SafetyIncidentModal({ isOpen, onClose, onSubmit, initialWorkCenterId = null }) {
   const modalRef = useRef(null)
 
   const now = new Date()
   const incidentDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
     ', ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
-  const emptyForm = {
-    reportedBy: CURRENT_USER,
-    injuredWorker: '', jobTitle: '', workerId: '',
-    incidentLocation: '', otherLocation: '', workCenterLocation: '',
-    selectedInjuryType: '', otherInjuryText: '',
-    actionsTaken: '', incidentDetails: '', severity: '',
-    timeOfIncident: '',
+  // Reports started from a work-center card arrive with that center already
+  // chosen, which also pre-fills its (read-only) warehouse.
+  function blankForm(workCenterId = null) {
+    const wc = workCenterId ? WORK_CENTERS.find(x => x.id === workCenterId) : null
+    return {
+      reportedBy: CURRENT_USER,
+      injuredWorker: '', jobTitle: '', workerId: '',
+      incidentLocation: wc ? wc.id : '',
+      otherLocation: '',
+      workCenterLocation: wc ? wc.warehouseLocation : '',
+      selectedInjuryType: '', otherInjuryText: '',
+      actionsTaken: '', incidentDetails: '', severity: '',
+      timeOfIncident: '',
+    }
   }
 
-  const [form, setForm] = useState(emptyForm)
+  const [form, setForm] = useState(() => blankForm(initialWorkCenterId))
   const [showErrors, setShowErrors] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [touched, setTouched] = useState({})
@@ -320,11 +327,22 @@ export default function SafetyIncidentModal({ isOpen, onClose, onSubmit }) {
   function touch(key) { setTouched(t => ({ ...t, [key]: true })) }
 
   function resetForm() {
-    setForm(emptyForm)
+    setForm(blankForm(initialWorkCenterId))
     setShowErrors(false)
     setShowSuccess(false)
     setTouched({})
   }
+
+  // Re-seed on open: the component stays mounted between reports, so the work
+  // center picked on the *previous* report would otherwise stick around.
+  useEffect(() => {
+    if (!isOpen) return
+    setForm(blankForm(initialWorkCenterId))
+    setShowErrors(false)
+    setShowSuccess(false)
+    setTouched({})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialWorkCenterId])
 
   function isFormValid() {
     const otherTextOk     = form.selectedInjuryType !== 'other'

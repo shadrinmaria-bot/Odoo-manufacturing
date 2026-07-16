@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react'
-import ReactDOM from 'react-dom'
+import React, { useState, useRef } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, ReferenceLine,
@@ -10,7 +9,16 @@ import Icon from '../shared/Icon'
 import { Button, ButtonGroup } from '../shared/Button'
 import './WorkCenterCard.css'
 
-const THRESHOLD_H = 30   // hours — must match ManufacturingDashboard.THRESHOLD_HOURS
+// Weekly load segments. Hours up to the base line are teal; hours past it are
+// purple. Hover shades are a step lighter than the resting fill.
+const COLOR_LOAD           = '#007A76'
+const COLOR_LOAD_HOVER     = '#0A9A94'
+const COLOR_EXCESS         = '#60375C'
+const COLOR_EXCESS_HOVER   = '#7B4775'
+
+// Headroom above the base line, so the line sits ~2/3 up rather than at the very
+// top. Grows in 10h steps if a work center ever books more than this.
+const Y_HEADROOM = 60
 
 // ── StatusDot ─────────────────────────────────────────────────────────────────
 
@@ -20,19 +28,31 @@ function StatusDot({ hasCritical }) {
   )
 }
 
-// ── CustomTooltip ─────────────────────────────────────────────────────────────
+// ── LoadTooltip ───────────────────────────────────────────────────────────────
 
-function CustomTooltip({ active, payload }) {
-  if (!active || !payload?.length) return null
+/**
+ * Reports the segment under the cursor, not the column: the teal part reports
+ * the week's TOTAL load, the purple part reports only the hours over budget.
+ * `hovered` is tracked by the card, because Recharts' tooltip payload alone
+ * can't say which half of a stacked bar the pointer is on.
+ */
+function LoadTooltip({ active, payload, hovered }) {
+  if (!active || !payload?.length || !hovered) return null
   const entry = payload[0]?.payload
   if (!entry?.load) return null
-  const squareColor = entry.up != null ? '#60375C' : '#007A76'
+
+  const isExcess = hovered === 'excess'
+  if (isExcess && !entry.excess) return null
+
   return (
     <div className="wc-tooltip">
-      <p style={{ display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
-        <span style={{ display: 'inline-block', width: 8, height: 8, background: squareColor, borderRadius: 2, flexShrink: 0 }} />
-        <span>Total Load: <strong style={{ color: '#F5F5F6' }}>{entry.load}h</strong></span>
-      </p>
+      <span
+        className="wc-tooltip__swatch"
+        style={{ background: isExcess ? COLOR_EXCESS : COLOR_LOAD }}
+      />
+      <span>
+        {isExcess ? 'Excess Load' : 'Total Load'}: {isExcess ? entry.excess : entry.load} hours
+      </span>
     </div>
   )
 }
@@ -50,43 +70,6 @@ function WorkOrderButtons({ onShowChart }) {
         <Icon char="" size={13} />
       </Button>
     </ButtonGroup>
-  )
-}
-
-// ── GreyBadgeDropdown ─────────────────────────────────────────────────────────
-
-function GreyBadgeDropdown({ isOpen, anchorRect, onClose, onReportIncident }) {
-  const dropdownRef = useRef(null)
-
-  useEffect(() => {
-    if (!isOpen) return
-    function handleMouseDown(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) onClose()
-    }
-    document.addEventListener('mousedown', handleMouseDown)
-    return () => document.removeEventListener('mousedown', handleMouseDown)
-  }, [isOpen, onClose])
-
-  if (!isOpen || !anchorRect) return null
-
-  return ReactDOM.createPortal(
-    <div
-      ref={dropdownRef}
-      className="grey-badge-dropdown"
-      style={{
-        '--dropdown-top':   `${anchorRect.bottom + 6}px`,
-        '--dropdown-right': `${window.innerWidth - anchorRect.right}px`,
-      }}
-    >
-      <button
-        className="grey-badge-dropdown__report-btn"
-        onClick={() => { onClose(); onReportIncident?.() }}
-      >
-        <Icon char="" size={12} />
-        REPORT INCIDENT
-      </button>
-    </div>,
-    document.body
   )
 }
 
@@ -114,38 +97,11 @@ export default function WorkCenterCard({
 }) {
   const badgeRef = useRef(null)
   const [anchorRect, setAnchorRect] = useState(null)
-  const [activeIdx, setActiveIdx] = useState(null)
+  const [hovered, setHovered] = useState(null)   // 'base' | 'excess' | null
 
   const incidentCount = incidents.length
   const badgeVariant  = getVariantFromIncidents(incidents)
-
-  const DivergingBar = useCallback((props) => {
-    // props.value is guaranteed by Recharts (= entry[dataKey] = entry.down = -load).
-    // y = yScale(0) for negative-value bars (Recharts anchors the top at the baseline).
-    // height = pixel height of the bar going downward.
-    const { x, y, width, height, value } = props
-    if (!value || height <= 0) return null
-    const load   = Math.abs(value)
-    const excess = Math.max(0, load - THRESHOLD_H)
-    const upH    = excess > 0 ? Math.round(excess / load * height) : 0
-    const isHov  = props.index === activeIdx
-    return (
-      <g style={{ cursor: 'pointer' }}>
-        <rect
-          x={x} y={y} width={width} height={height}
-          fill={isHov ? '#60375C' : '#007A76'}
-          style={{ transition: 'fill 0.15s ease' }}
-        />
-        {upH > 0 && (
-          <rect
-            x={x} y={y - upH} width={width} height={upH}
-            fill={isHov ? '#5B3457' : '#60375C'}
-            style={{ transition: 'fill 0.15s ease' }}
-          />
-        )}
-      </g>
-    )
-  }, [activeIdx])
+  const baseLoad      = center.baseLoad ?? 40
 
   function handleBadgeClick() {
     if (badgeRef.current) setAnchorRect(badgeRef.current.getBoundingClientRect())
@@ -167,12 +123,7 @@ export default function WorkCenterCard({
                 data={center.data}
                 margin={{ top: 4, right: 28, left: 12, bottom: 2 }}
                 barCategoryGap="8%"
-                onMouseMove={state => setActiveIdx(state.isTooltipActive ? state.activeTooltipIndex : null)}
-                onMouseLeave={() => setActiveIdx(null)}
-                onClick={state => {
-                  const entry = state?.activePayload?.[0]?.payload
-                  if (entry?.load) console.log(`[WorkCenter] ${entry.week}: ${entry.load}h`)
-                }}
+                onMouseLeave={() => setHovered(null)}
               >
                 <XAxis
                   dataKey="week"
@@ -180,10 +131,27 @@ export default function WorkCenterCard({
                   axisLine={false} tickLine={false}
                   interval={0}
                 />
-                <YAxis hide domain={[-55, 22]} width={0} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
-                <ReferenceLine y={0} stroke="#60375C" strokeWidth={1.5} />
-                <Bar dataKey="down" shape={DivergingBar} isAnimationActive={false} />
+                <YAxis
+                  hide width={0}
+                  domain={[0, dataMax => Math.max(Y_HEADROOM, Math.ceil(dataMax / 10) * 10)]}
+                />
+                <Tooltip
+                  content={<LoadTooltip hovered={hovered} />}
+                  cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                />
+                <ReferenceLine y={baseLoad} stroke={COLOR_EXCESS} strokeWidth={1.5} />
+                <Bar
+                  dataKey="base" stackId="load" fill={COLOR_LOAD}
+                  isAnimationActive={false}
+                  activeBar={{ fill: COLOR_LOAD_HOVER }}
+                  onMouseEnter={() => setHovered('base')}
+                />
+                <Bar
+                  dataKey="excess" stackId="load" fill={COLOR_EXCESS}
+                  isAnimationActive={false}
+                  activeBar={{ fill: COLOR_EXCESS_HOVER }}
+                  onMouseEnter={() => setHovered('excess')}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -200,13 +168,28 @@ export default function WorkCenterCard({
               <StatusDot hasCritical={badgeVariant === 'red'} />
               <span className="wc-card__name">{center.name}</span>
             </div>
+            {/* With no incidents the badge is hidden to keep the board quiet;
+                a grey alert triangle fades in on card hover so you can still
+                report against this specific work center. */}
             <div ref={badgeRef}>
-              <StatusBadge
-                label={`${incidentCount} Incident${incidentCount !== 1 ? 's' : ''}`}
-                variant={badgeVariant}
-                isOpen={isDropdownOpen}
-                onToggle={handleBadgeClick}
-              />
+              {incidentCount === 0 ? (
+                <button
+                  type="button"
+                  className="wc-card__report-hint"
+                  title={`Report an incident at ${center.name}`}
+                  aria-label={`Report an incident at ${center.name}`}
+                  onClick={() => onReportIncident?.(center.id)}
+                >
+                  <Icon char={"\uF071"} size={15} />
+                </button>
+              ) : (
+                <StatusBadge
+                  label={`${incidentCount} Incident${incidentCount !== 1 ? 's' : ''}`}
+                  variant={badgeVariant}
+                  isOpen={isDropdownOpen}
+                  onToggle={handleBadgeClick}
+                />
+              )}
             </div>
           </div>
 
@@ -234,14 +217,7 @@ export default function WorkCenterCard({
         </div>
       </div>
 
-      {incidents.length === 0 ? (
-        <GreyBadgeDropdown
-          isOpen={isDropdownOpen}
-          anchorRect={anchorRect}
-          onClose={onCloseDropdown}
-          onReportIncident={onReportIncident}
-        />
-      ) : (
+      {incidentCount > 0 && (
         <OpenSafetyItemsDropdown
           isOpen={isDropdownOpen}
           anchorRect={anchorRect}
@@ -249,7 +225,7 @@ export default function WorkCenterCard({
           incidents={incidents}
           onClose={onCloseDropdown}
           onViewIncident={onViewIncident}
-          onReportIncident={onReportIncident}
+          onReportIncident={() => onReportIncident?.(center.id)}
         />
       )}
     </>

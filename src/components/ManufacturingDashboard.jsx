@@ -34,13 +34,23 @@ function weekRangeLabel(monday) {
   return sm === em ? `${s}-${e} ${sm}` : `${s} ${sm}-${e} ${em}`
 }
 
-// Threshold for weekly load hours — bars above this show a purple overflow segment.
-const THRESHOLD_HOURS = 30
+// Contracted working hours in a week. Load up to this is normal (teal); the
+// hours above it are excess (purple), and the card draws a base line here.
+export const BASE_LOAD_HOURS = 40
 
 // "This Week" is always the SECOND column (index 1), matching the reference:
 // 1 past week on the left, 3 scheduled future weeks on the right.
 const THIS_WEEK_COL = 1   // 0-based column index for "This Week"
 
+/**
+ * Build the 5 weekly columns for a work-center card.
+ *
+ * Each column is split into the two segments the chart stacks:
+ *   base   — hours up to BASE_LOAD_HOURS (teal)
+ *   excess — hours beyond it (purple), null when the week is within budget so
+ *            Recharts skips the segment instead of drawing a 0-height rect.
+ * `load` is kept as the total, which is what the tooltip reports.
+ */
 function buildWeeklyData(loadHours) {
   const thisMonday = getMondayOf(new Date())
   return loadHours.map((hours, i) => {
@@ -48,16 +58,22 @@ function buildWeeklyData(loadHours) {
     const monday = new Date(thisMonday)
     monday.setDate(monday.getDate() + offset * 7)
     const week = offset === 0 ? 'This Week' : weekRangeLabel(monday)
-    if (!hours) return { week, load: null, down: null }
-    return { week, load: hours, down: -hours }
+    if (!hours) return { week, load: null, base: null, excess: null }
+    return {
+      week,
+      load:   hours,
+      base:   Math.min(hours, BASE_LOAD_HOURS),
+      excess: Math.max(0, hours - BASE_LOAD_HOURS) || null,
+    }
   })
 }
 
-// 5-column layout: [last wk, This Week, +1 wk, +2 wk, +3 wk]
-// Values > 30 h get a purple overflow cap; ≤ 30 h are teal only.
-const carpentryData = buildWeeklyData([22, 44, 38, 28, 35])
-const paintData     = buildWeeklyData([28, 32, 20, 38, 25])
-const assemblyData  = buildWeeklyData([48, 22, 30, 15, 42])
+// 5-column layout: [last wk, This Week, +1 wk, +2 wk, +3 wk].
+// Tuned against the 40h base line so every card has at least one over-budget
+// week with a legible purple block (Carpentry's 53h/13h excess mirrors Odoo).
+const carpentryData = buildWeeklyData([53, 28, 46, 35, 22])
+const paintData     = buildWeeklyData([34, 47, 26, 44, 30])
+const assemblyData  = buildWeeklyData([58, 22, 39, 30, 45])
 
 const WORK_CENTER_DEFS = [
   { id: 'carpentry', name: 'Carpentry Workshop', accentColor: '#FF71A7', statusLabel: 'Late',        statusCount: 3,    oee: 100, data: carpentryData },
@@ -153,6 +169,9 @@ export default function ManufacturingDashboard() {
   const [openDropdown,   setOpenDropdown]   = useState(null)
   const [detailIncident, setDetailIncident] = useState(null)
   const [isModalOpen,    setIsModalOpen]    = useState(false)
+  // Work center to pre-select in the report form. Set when the report was
+  // started from a specific card; null when started from the global button.
+  const [modalWorkCenterId, setModalWorkCenterId] = useState(null)
   const [activePage,     setActivePage]     = useState({ section: 'Overview', subItem: null, params: null })
   const [isChatOpen,     setIsChatOpen]     = useState(false)
   const [chatSession,    setChatSession]    = useState(null)
@@ -167,6 +186,12 @@ export default function ManufacturingDashboard() {
 
   function showToast(severity) {
     setToast(t => ({ key: t.key + 1, severity }))
+  }
+
+  /** Open the report form, optionally pre-selecting the work center it came from. */
+  function openReportModal(workCenterId = null) {
+    setModalWorkCenterId(workCenterId)
+    setIsModalOpen(true)
   }
 
   function buildSharedIncidentMessage(incident) {
@@ -347,7 +372,7 @@ export default function ManufacturingDashboard() {
 
       {isOverview ? (
         <>
-          <SubHeader onOpenModal={() => setIsModalOpen(true)} />
+          <SubHeader onOpenModal={() => openReportModal()} />
           <main className="overview-main">
             <div className="cards-grid">
               {WORK_CENTER_DEFS.map(center => (
@@ -361,7 +386,7 @@ export default function ManufacturingDashboard() {
                   onViewIncident={(incident) => { closeDropdown(); setDetailIncident(incident) }}
                   onDeleteIncident={() => {}}
                   onShowStats={() => goToWorkCenterStats(center.name)}
-                  onReportIncident={() => setIsModalOpen(true)}
+                  onReportIncident={(workCenterId) => openReportModal(workCenterId)}
                 />
               ))}
             </div>
@@ -380,7 +405,7 @@ export default function ManufacturingDashboard() {
           key={activePage.params?.initialFilter ?? 'all'}
           initialParams={activePage.params}
           incidents={statsIncidents}
-          onOpenModal={() => setIsModalOpen(true)}
+          onOpenModal={() => openReportModal()}
         />
       ) : (
         <PlaceholderPage section={activePage.section} subItem={activePage.subItem} />
@@ -388,6 +413,7 @@ export default function ManufacturingDashboard() {
 
       <SafetyIncidentModal
         isOpen={isModalOpen}
+        initialWorkCenterId={modalWorkCenterId}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmitIncident}
       />

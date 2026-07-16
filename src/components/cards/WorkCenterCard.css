@@ -169,56 +169,54 @@
 /* ── WorkOrderButtons ────────────────────────────────────────────────────── */
 /* btn-work-orders-primary and btn-work-orders-icon live in Button.css */
 
-/* ── CustomTooltip ───────────────────────────────────────────────────────── */
+/* ── LoadTooltip ─────────────────────────────────────────────────────────── */
 .wc-tooltip {
+  display:       flex;
+  align-items:   center;
+  gap:           6px;
   background:    #262A36;
   border:        1px solid #3C3E4A;
   border-radius: 4px;
   padding:       4px 8px;
+  font-family:   'Segoe UI', sans-serif;
   font-size:     12px;
-  color:         #aaa;
+  color:         #F5F5F6;
+  white-space:   nowrap;
 }
 
-.wc-tooltip__label {
-  font-family:  'Segoe UI', sans-serif;
-  font-weight:  600;
-  color:        #F5F5F6;
+/* Colour chip matching the hovered segment — teal for total, purple for excess. */
+.wc-tooltip__swatch {
+  width:       9px;
+  height:      9px;
+  border:      1px solid #FFFFFF;
+  flex-shrink: 0;
 }
 
-/* ── GreyBadgeDropdown ───────────────────────────────────────────────────── */
-.grey-badge-dropdown {
-  position:      fixed;
-  top:           var(--dropdown-top);
-  right:         var(--dropdown-right);
-  background:    #2A2E3A;
-  border:        1px solid #5A5E6B;
-  border-radius: 6px;
-  box-shadow:    0 8px 32px rgba(0, 0, 0, 0.55);
-  z-index:       1500;
-  animation:     dropdownFadeIn 0.13s ease;
-  overflow:      hidden;
-  padding:       12px 14px;
-}
-
-.grey-badge-dropdown__report-btn {
-  background:      #F9464C;
-  border-radius:   4px;
-  font-family:     'Segoe UI', sans-serif;
-  font-weight:     600;
-  font-size:       13px;
-  color:           #F5F5F6;
-  border:          none;
-  cursor:          pointer;
-  height:          33px;
-  white-space:     nowrap;
-  min-width:       158px;
+/* ── Report hint (0-incident cards) ──────────────────────────────────────── */
+/* Replaces the status badge when a work center is clear, so the board stays
+   uncluttered. Only revealed on card hover, but stays visible while focused
+   so it remains reachable by keyboard. */
+.wc-card__report-hint {
   display:         flex;
   align-items:     center;
   justify-content: center;
-  gap:             6px;
-  transition:      filter 0.12s;
+  width:           24px;
+  height:          24px;
+  padding:         0;
+  background:      none;
+  border:          none;
+  color:           #8A8D99;
+  cursor:          pointer;
+  opacity:         0;
+  transition:      opacity 0.12s ease, color 0.12s ease;
 }
-.grey-badge-dropdown__report-btn:hover { filter: brightness(1.1); }
+.wc-card:hover .wc-card__report-hint,
+.wc-card__report-hint:focus-visible {
+  opacity: 1;
+}
+.wc-card__report-hint:hover {
+  color: #F5F5F6;
+}
 
 /* ── Reset button ────────────────────────────────────────────────────────── */
 .reset-btn {
