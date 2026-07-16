@@ -111,13 +111,15 @@
 }
 
 /* ── Stats row (middle row) ──────────────────────────────────────────────── */
+/* Contents hang from the top of the 58px row rather than centring in it —
+   centring pushed the buttons ~8px below where Odoo puts them. */
 .wc-card__stats {
   height:      58px;
   margin:      16px 0;
   padding:     0;
   box-sizing:  border-box;
   display:     flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .wc-card__buttons {
@@ -176,11 +178,13 @@
   line-height:  1.2;
 }
 
+/* The OEE percentage keeps its green — it reads as a health figure, not a
+   plain count like the To Launch / Late numbers beside it. */
 .wc-card__oee-value {
   font-family:  'Segoe UI', sans-serif;
   font-weight:  400;
   font-size:    14px;
-  color:        #e4e4e4;
+  color:        #1DC959;
   line-height:  1.2;
 }
 

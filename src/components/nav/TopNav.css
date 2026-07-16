@@ -35,7 +35,7 @@
 .top-nav__nav {
   display:     flex;
   align-items: center;
-  gap:         0;
+  gap:         4px;
 }
 
 /* ── NavSection button ───────────────────────────────────────────────────── */
@@ -383,8 +383,10 @@
   color:        #e4e4e4;
 }
 
-/* 600px overall (571px field + 30px expand button), 33px tall. Stays flexible
-   so it shrinks on narrower screens rather than overflowing the bar. */
+/* 600px overall (field + 30px expand button), 33px tall. The outline lives on
+   the wrapper so the field and the expand button read as one connected control,
+   the way the work-center card's button group does. Stays flexible so it
+   shrinks on narrower screens rather than overflowing the bar. */
 .sub-header__search {
   display:       flex;
   align-items:   center;
@@ -392,6 +394,9 @@
   max-width:     600px;
   height:        33px;
   box-sizing:    border-box;
+  border:        1px solid #3C3E4A;
+  border-radius: 4px;
+  overflow:      hidden;
 }
 
 .sub-header__search-field {
@@ -399,13 +404,12 @@
   align-items:   center;
   gap:           8px;
   flex:          1;
-  max-width:     571px;
+  min-width:     0;
   height:        100%;
   padding:       4px 10px;
   box-sizing:    border-box;
-  border:        1px solid #3C3E4A;
+  border:        none;
   background:    #1B1D26;
-  border-radius: 4px;
 }
 
 .sub-header__search-icon {
@@ -425,17 +429,19 @@
   flex:        1;
 }
 
-/* Expand caret — sits outside the field, on the sub-header's own background. */
+/* Expand caret — shares the wrapper's outline, divided from the field by a
+   1px rule, and keeps the sub-header's own background rather than the field's. */
 .sub-header__search-expand {
   display:         flex;
   align-items:     center;
   justify-content: center;
   width:           30px;
-  height:          33px;
+  height:          100%;
   padding:         5px 10px;
   box-sizing:      border-box;
   flex-shrink:     0;
   border:          none;
+  border-left:     1px solid #3C3E4A;
   background:      #262A36;
   color:           #e4e4e4;
   cursor:          pointer;
@@ -461,6 +467,14 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* The two arrows join into one control, like the work-center card's button
+   group: 1px apart, with only the outer corners rounded. */
+.sub-header__page-btns {
+  display:     flex;
+  align-items: center;
+  gap:         1px;
+}
+
 /* 32×33 with the chevron's 14×14 box centred by the 8px/5px padding. The SVG is
    stroke-only, so the chevron itself stays transparent. */
 .sub-header__page-btn {
@@ -474,9 +488,11 @@
   color:           #FFFFFF;
   background:      #3C3E4B;
   border:          none;
-  border-radius:   4px;
+  border-radius:   0;
   cursor:          default;
 }
+.sub-header__page-btns .sub-header__page-btn:first-child { border-radius: 4px 0 0 4px; }
+.sub-header__page-btns .sub-header__page-btn:last-child  { border-radius: 0 4px 4px 0; }
 
 .sub-header__report-btn {
   background:      #F9464C;

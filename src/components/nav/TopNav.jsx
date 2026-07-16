@@ -254,12 +254,14 @@ export function SubHeader({ onOpenModal }) {
       <div className="sub-header__actions">
         <div className="sub-header__pagination">
           <span>1-3 / 3</span>
-          <button className="sub-header__page-btn" disabled>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
-          </button>
-          <button className="sub-header__page-btn" disabled>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
-          </button>
+          <div className="sub-header__page-btns">
+            <button className="sub-header__page-btn" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <button className="sub-header__page-btn" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
+            </button>
+          </div>
         </div>
         <button className="sub-header__report-btn" onClick={onOpenModal}>
           <Icon char="" size={12} />
