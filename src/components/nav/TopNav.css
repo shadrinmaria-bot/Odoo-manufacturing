@@ -172,6 +172,13 @@
   height: 36px;
   margin: -5px 1px;
 }
+
+/* The badge hangs off the GLYPH, not the button box — the button is much wider
+   than the icon, so anchoring to it left the bubble floating out on its own. */
+.nav-icon-btn__glyph {
+  position: relative;
+  display:  inline-flex;
+}
 .nav-icon-btn:hover { opacity: 0.8; }
 
 .nav-icon-btn--relative { position: relative; }
@@ -384,14 +391,27 @@
 }
 
 /* Like the messages button: taller than the row, pulled back with negative
-   vertical margins. 12px right margin is the gap to the header's edge. */
+   vertical margins. The box itself is transparent — only the chip inside the
+   padding is purple. The right margin is negative so the chip's right edge,
+   not the button's, lines up with the sub-header's Report button below it
+   (the 4px padding + 1px border would otherwise inset it by 5px). */
 .nav-avatar {
   width:           36px;
   height:          36px;
   padding:         0 4px;
-  margin:          -5px 12px -5px 1px;
+  margin:          -5px -5px -5px 1px;
   border:          1px solid transparent;
   box-sizing:      border-box;
+  background:      none;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+
+.nav-avatar__chip {
+  width:           100%;
+  aspect-ratio:    1 / 1;
   border-radius:   4px;
   background:      #875A7B;
   font-family:     'Segoe UI', sans-serif;
@@ -401,7 +421,6 @@
   display:         flex;
   align-items:     center;
   justify-content: center;
-  flex-shrink:     0;
 }
 
 /* ── SubHeader ───────────────────────────────────────────────────────────── */
@@ -535,6 +554,10 @@
 }
 .sub-header__page-btns .sub-header__page-btn:first-child { border-radius: 4px 0 0 4px; }
 .sub-header__page-btns .sub-header__page-btn:last-child  { border-radius: 0 4px 4px 0; }
+
+/* There is only one page of records, so both arrows are disabled — and Odoo
+   fades the whole control, background included, rather than just the glyph. */
+.sub-header__page-btn:disabled { opacity: 0.5; }
 
 .sub-header__report-btn {
   background:      #F9464C;

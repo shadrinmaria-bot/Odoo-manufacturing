@@ -37,8 +37,10 @@ function NavIcons({ onOpenChat }) {
       </button>
       <div ref={discussRef} style={{ position: 'relative' }}>
         <button className="nav-icon-btn nav-icon-btn--relative nav-icon-btn--messages" aria-label="Discuss" onClick={() => setDiscussOpen(p => !p)}>
-        <Icon char="" size={18} />
-        <span className="nav-badge">3</span>
+          <span className="nav-icon-btn__glyph">
+            <Icon char={"\uF086"} size={18} />
+            <span className="nav-badge">3</span>
+          </span>
         </button>
         {discussOpen && (
           <DiscussDropdown onOpenChat={() => { onOpenChat(); setDiscussOpen(false) }} />
@@ -51,7 +53,7 @@ function NavIcons({ onOpenChat }) {
         <Icon char="" font="odoo" size={16} />
       </button>
       <span className="nav-username">ProductDesign</span>
-      <div className="nav-avatar">P</div>
+      <div className="nav-avatar"><span className="nav-avatar__chip">P</span></div>
     </div>
   )
 }
