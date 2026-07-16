@@ -27,6 +27,12 @@ const COLOR_EXCESS_DARK = '#5B3457'
 // top. Grows in 10h steps if a work center ever books more than this.
 const Y_HEADROOM = 60
 
+// Tooltip placement relative to the cursor. TIP_WIDTH only needs to be close —
+// it decides when to flip the tooltip to the left of the pointer near the right
+// edge of the card.
+const TIP_OFFSET = 14
+const TIP_WIDTH  = 150
+
 // ── StatusDot ─────────────────────────────────────────────────────────────────
 
 function StatusDot({ hasCritical }) {
@@ -68,7 +74,7 @@ function LoadTooltip({ active, payload, hovered }) {
 
 function WorkOrderButtons({ onShowChart }) {
   return (
-    <ButtonGroup gap={3}>
+    <ButtonGroup gap={1} className="wc-card__buttons">
       <Button variant="purple" className="btn-work-orders-primary">WORK ORDERS</Button>
       <Button className="btn-work-orders-icon">
         <Icon char="" size={13} />
@@ -103,8 +109,23 @@ export default function WorkCenterCard({
   onReportIncident,
 }) {
   const badgeRef = useRef(null)
+  const chartAreaRef = useRef(null)
   const [anchorRect, setAnchorRect] = useState(null)
   const [hovered, setHovered] = useState(null)   // { series: 'base'|'excess', index } | null
+  const [cursor, setCursor] = useState(null)     // { x, y, w } in chart space
+
+  // Recharts anchors the tooltip to the data point — the top-centre of the bar —
+  // so it sits still while the pointer moves inside a bar. Feeding it the live
+  // cursor instead makes it track the mouse; the wrapper's transform transition
+  // then eases it along rather than teleporting.
+  const tipPos = cursor
+    ? {
+        x: cursor.w && cursor.x + TIP_OFFSET + TIP_WIDTH > cursor.w
+          ? cursor.x - TIP_WIDTH - TIP_OFFSET     // flip left near the right edge
+          : cursor.x + TIP_OFFSET,
+        y: Math.max(0, cursor.y - TIP_OFFSET),
+      }
+    : undefined
 
   const incidentCount = incidents.length
   const badgeVariant  = getVariantFromIncidents(incidents)
@@ -130,7 +151,7 @@ export default function WorkCenterCard({
         {/* Chart layer */}
         <div className="wc-card__chart-layer">
           <div className="wc-card__chart-spacer" />
-          <div className="wc-card__chart-area">
+          <div className="wc-card__chart-area" ref={chartAreaRef}>
             <ResponsiveContainer width="100%" height="100%">
               {/* barCategoryGap is subtracted from BOTH sides of each band, so
                   15% leaves the bar at 1 - 2×15% = 70% of its column — the ratio
@@ -141,7 +162,11 @@ export default function WorkCenterCard({
                 // width of the card exactly as it does in Odoo.
                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
                 barCategoryGap="15%"
-                onMouseLeave={() => setHovered(null)}
+                onMouseMove={(state) => {
+                  if (state?.chartX == null) return
+                  setCursor({ x: state.chartX, y: state.chartY, w: chartAreaRef.current?.offsetWidth ?? 0 })
+                }}
+                onMouseLeave={() => { setHovered(null); setCursor(null) }}
               >
                 <XAxis
                   dataKey="week"
@@ -153,15 +178,11 @@ export default function WorkCenterCard({
                   hide width={0}
                   domain={[0, dataMax => Math.max(Y_HEADROOM, Math.ceil(dataMax / 10) * 10)]}
                 />
-                {/* Recharts eases the tooltip between positions, which is the
-                    "follows the mouse" feel we want — but its 400ms default is
-                    slow enough that the first appearance reads as a swoop in
-                    from wherever it last sat. 140ms keeps the glide and makes
-                    the entrance short enough for the content's fade to cover. */}
                 <Tooltip
                   content={<LoadTooltip hovered={hovered?.series} />}
                   cursor={false}
-                  animationDuration={140}
+                  position={tipPos}
+                  animationDuration={220}
                   animationEasing="ease-out"
                 />
                 <ReferenceLine y={baseLoad} stroke={COLOR_EXCESS} strokeWidth={1.5} />

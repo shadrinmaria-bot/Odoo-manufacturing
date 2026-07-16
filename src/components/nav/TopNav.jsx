@@ -48,9 +48,8 @@ function NavIcons({ onOpenChat }) {
         <Icon char="" size={18} color="#F5F5F6" />
       </button>
       <button className="nav-icon-btn" aria-label="Debug">
-        <Icon char="" font="odoo" size={18} color="#F5F5F6" />
+        <Icon char="" font="odoo" size={16} color="#F5F5F6" />
       </button>
-      <span className="nav-separator" />
       <span className="nav-username">ProductDesign</span>
       <div className="nav-avatar">P</div>
     </div>
@@ -211,7 +210,7 @@ export function TopNav({ activePage, onSelect, onOpenChat }) {
   return (
     <header className="top-nav">
       <div className="top-nav__brand">
-        <img src="/logo.png" width="22" height="22" alt="Manufacturing logo" />
+        <img className="top-nav__logo" src="/logo.png" alt="Manufacturing logo" />
         <span className="top-nav__app-name">Manufacturing</span>
       </div>
       <nav ref={navRef} className="top-nav__nav">
@@ -241,9 +240,15 @@ export function SubHeader({ onOpenModal }) {
       </div>
 
       <div className="sub-header__search">
-        <Icon char="" size={13} color="#626363" />
-        <span className="sub-header__search-placeholder">Search...</span>
-        <Icon char="" size={11} color="#626363" />
+        <div className="sub-header__search-field">
+          <span className="sub-header__search-icon">
+            <Icon char={"\uF002"} size={14} color="#e4e4e4" />
+          </span>
+          <span className="sub-header__search-placeholder">Search...</span>
+        </div>
+        <button className="sub-header__search-expand" aria-label="Expand search">
+          <Icon char={"\uF0D7"} size={11} color="#e4e4e4" />
+        </button>
       </div>
 
       <div className="sub-header__actions">

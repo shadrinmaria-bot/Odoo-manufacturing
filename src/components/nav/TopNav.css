@@ -1,12 +1,16 @@
-/* ── TopNav (header bar) ─────────────────────────────────────────────────── */
+/* ── TopNav (header bar) ─────────────────────────────────────────────────────
+   46px tall with 10px top/bottom padding, which leaves a 26px content row —
+   the height of both the logo and the nav tabs. Declared once; a second
+   .top-nav block below used to override the height back and forth.        */
 .top-nav {
-  display:     flex;
-  align-items: center;
-  padding:     0 16px;
-  height:      48px;
-  background:  #262A36;
-  border-bottom: 1px solid #3C3E4A;
-  flex-shrink: 0;
+  display:       flex;
+  align-items:   center;
+  padding:       10px 16px;
+  height:        46px;
+  box-sizing:    border-box;
+  background:    #262A36;
+  border-bottom: none;
+  flex-shrink:   0;
 }
 
 .top-nav__brand {
@@ -16,26 +20,35 @@
   margin-right: 20px;
 }
 
+.top-nav__logo {
+  height: 26px;
+  width:  auto;
+}
+
 .top-nav__app-name {
   font-family:  'Segoe UI', sans-serif;
-  font-weight:  600;
-  font-size:    17.15px;
+  font-weight:  400;
+  font-size:    16px;
   color:        #F5F5F6;
 }
 
 .top-nav__nav {
   display:     flex;
   align-items: center;
-  gap:         2px;
+  gap:         0;
 }
 
 /* ── NavSection button ───────────────────────────────────────────────────── */
 .nav-btn {
-  padding:      6px 12px;
+  height:        26px;
+  padding:       0 8px;
+  box-sizing:    border-box;
+  display:       flex;
+  align-items:   center;
   border-radius: 4px;
   font-family:   'Segoe UI', sans-serif;
   font-weight:   400;
-  font-size:     14.55px;
+  font-size:     14px;
   color:         #F5F5F6;
   border:        1px solid transparent;
   background:    transparent;
@@ -102,13 +115,6 @@
   color:      #FFFFFF;
 }
 
-/* ── Top nav bar: 46px, #262A36, no bright separator ─────────────────────── */
-.top-nav {
-  height:        46px;
-  background:    #262A36;
-  border-bottom: none;
-}
-
 /* ── Sub-header (control panel) ───────────────────────────────────────────────
    58px tall, padding 8px top / 16px sides + bottom. With box-sizing:border-box
    and the 1px bottom border, the content box lands at exactly 33px — the height
@@ -130,12 +136,13 @@
 .nav-icons {
   display:     flex;
   align-items: center;
-  gap:         13px;
+  gap:         0;
   margin-left: auto;
 }
 
+/* Buttons butt up against each other; their 4px side padding is the spacing. */
 .nav-icon-btn {
-  padding:    0;
+  padding:    0 4px;
   background: none;
   border:     none;
   cursor:     pointer;
@@ -338,16 +345,10 @@
   line-height:   1;
 }
 
-.nav-separator {
-  width:      1px;
-  height:     18px;
-  background: #3C3E4A;
-  display:    inline-block;
-}
-
 .nav-username {
   font-family:  'Segoe UI', sans-serif;
-  font-size:    14.55px;
+  font-weight:  400;
+  font-size:    14px;
   color:        #F5F5F6;
   white-space:  nowrap;
 }
@@ -355,7 +356,7 @@
 .nav-avatar {
   width:           28px;
   height:          28px;
-  border-radius:   50%;
+  border-radius:   4px;
   background:      #875A7B;
   font-family:     'Segoe UI', sans-serif;
   font-weight:     700;
@@ -378,22 +379,43 @@
 .sub-header__title {
   font-family:  'Segoe UI', sans-serif;
   font-weight:  400;
-  font-size:    16.51px;
-  color:        #F5F5F6;
+  font-size:    16px;
+  color:        #e4e4e4;
 }
 
+/* 600px overall (571px field + 30px expand button), 33px tall. Stays flexible
+   so it shrinks on narrower screens rather than overflowing the bar. */
 .sub-header__search {
   display:       flex;
   align-items:   center;
-  gap:           8px;
-  padding:       0 12px;
-  border:        1px solid #3C3E4A;
-  background:    #1B1D26;
-  border-radius: 4px;
   flex:          1;
   max-width:     600px;
   height:        33px;
   box-sizing:    border-box;
+}
+
+.sub-header__search-field {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  flex:          1;
+  max-width:     571px;
+  height:        100%;
+  padding:       4px 10px;
+  box-sizing:    border-box;
+  border:        1px solid #3C3E4A;
+  background:    #1B1D26;
+  border-radius: 4px;
+}
+
+.sub-header__search-icon {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           22px;
+  height:          21px;
+  flex-shrink:     0;
+  color:           #e4e4e4;
 }
 
 .sub-header__search-placeholder {
@@ -401,6 +423,22 @@
   font-size:   12px;
   color:       #626363;
   flex:        1;
+}
+
+/* Expand caret — sits outside the field, on the sub-header's own background. */
+.sub-header__search-expand {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           30px;
+  height:          33px;
+  padding:         5px 10px;
+  box-sizing:      border-box;
+  flex-shrink:     0;
+  border:          none;
+  background:      #262A36;
+  color:           #e4e4e4;
+  cursor:          pointer;
 }
 
 .sub-header__actions {
@@ -416,19 +454,28 @@
 .sub-header__pagination {
   display:     flex;
   align-items: center;
-  gap:         4px;
-  color:       #F5F5F6;
-  font-size:   13px;
+  gap:         8px;
+  color:       #e4e4e4;
+  font-size:   14px;
+  font-weight: 400;
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* 32×33 with the chevron's 14×14 box centred by the 8px/5px padding. The SVG is
+   stroke-only, so the chevron itself stays transparent. */
 .sub-header__page-btn {
-  padding:    2px;
-  opacity:    0.4;
-  color:      #F5F5F6;
-  background: none;
-  border:     none;
-  cursor:     default;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           32px;
+  height:          33px;
+  padding:         5px 8px;
+  box-sizing:      border-box;
+  color:           #FFFFFF;
+  background:      #3C3E4B;
+  border:          none;
+  border-radius:   4px;
+  cursor:          default;
 }
 
 .sub-header__report-btn {

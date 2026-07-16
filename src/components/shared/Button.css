@@ -63,8 +63,10 @@
 }
 
 .btn-work-orders-primary {
-  padding:     0 12px;
-  height:      32px;
+  width:       120px;
+  height:      33px;
+  padding:     5px 10px;
+  box-sizing:  border-box;
   font-family: 'Segoe UI', sans-serif;
   font-weight: 600;
   font-size:   14.5px;
@@ -72,8 +74,11 @@
 }
 
 .btn-work-orders-icon {
-  width:  32px;
-  height: 32px;
+  width:      37px;
+  height:     33px;
+  padding:    5px 10px;
+  box-sizing: border-box;
+  color:      #e4e4e4;
 }
 
 .btn-modal-submit {

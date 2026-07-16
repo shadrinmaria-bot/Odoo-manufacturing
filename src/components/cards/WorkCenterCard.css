@@ -3,6 +3,9 @@
   flex:           1 1 360px;
   min-width:      360px;
   height:         263px;
+  margin:         4px 8px;
+  padding:        8px;
+  box-sizing:     border-box;
   background:     #262A36;
   border:         0.63px solid #3C3E4A;
   border-radius:  0;
@@ -65,14 +68,16 @@
   pointer-events: auto;
 }
 
-/* ── Header row ──────────────────────────────────────────────────────────── */
+/* ── Header row (work center title) ──────────────────────────────────────── */
 .wc-card__header {
+  height:          25px;
+  margin-left:     4px;
+  padding:         0;
+  box-sizing:      border-box;
   display:         flex;
   align-items:     center;
   justify-content: space-between;
-  flex-wrap:       wrap;
   row-gap:         6px;
-  padding:         16px 16px 8px 20px;
 }
 
 .wc-card__header-left {
@@ -85,9 +90,9 @@
 
 .wc-card__name {
   font-family:  'Segoe UI', sans-serif;
-  font-weight:  600;
-  font-size:    17.03px;
-  color:        #F5F5F6;
+  font-weight:  500;
+  font-size:    16px;
+  color:        #e4e4e4;
 }
 
 /* ── Status dot ──────────────────────────────────────────────────────────── */
@@ -105,13 +110,19 @@
   border:     1px solid #C45A5A;
 }
 
-/* ── Stats row ───────────────────────────────────────────────────────────── */
+/* ── Stats row (middle row) ──────────────────────────────────────────────── */
 .wc-card__stats {
-  display:      flex;
-  align-items:  center;
-  padding-left: 20px;
-  padding-right: 16px;
-  padding-bottom: 12px;
+  height:      58px;
+  margin:      16px 0;
+  padding:     0;
+  box-sizing:  border-box;
+  display:     flex;
+  align-items: center;
+}
+
+.wc-card__buttons {
+  padding:    4px;
+  box-sizing: border-box;
 }
 
 .wc-card__stats-spacer {
@@ -136,7 +147,7 @@
 .wc-card__status-label {
   font-family:  'Segoe UI', sans-serif;
   font-weight:  400;
-  font-size:    15.14px;
+  font-size:    14px;
   color:        #1AD3BB;
   line-height:  1.2;
   white-space:  nowrap;
@@ -145,7 +156,7 @@
 .wc-card__oee-label {
   font-family:  'Segoe UI', sans-serif;
   font-weight:  400;
-  font-size:    15.14px;
+  font-size:    14px;
   color:        #1AD3BB;
   line-height:  1.2;
 }
@@ -160,16 +171,16 @@
 .wc-card__status-count {
   font-family:  'Segoe UI', sans-serif;
   font-weight:  400;
-  font-size:    15.14px;
-  color:        #F5F5F6;
+  font-size:    14px;
+  color:        #e4e4e4;
   line-height:  1.2;
 }
 
 .wc-card__oee-value {
   font-family:  'Segoe UI', sans-serif;
-  font-weight:  700;
-  font-size:    15.14px;
-  color:        #1DC959;
+  font-weight:  400;
+  font-size:    14px;
+  color:        #e4e4e4;
   line-height:  1.2;
 }
 
@@ -198,7 +209,7 @@
   white-space:   nowrap;
   /* Fades in on first appearance only: the content unmounts when you leave a
      bar, so moving between bars re-renders in place without replaying this. */
-  animation:     wcTooltipFadeIn 0.12s ease-out;
+  animation:     wcTooltipFadeIn 0.22s ease-out;
 }
 
 @keyframes wcTooltipFadeIn {

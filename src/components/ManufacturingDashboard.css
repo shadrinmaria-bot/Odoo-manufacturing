@@ -1,13 +1,15 @@
 /* ── Overview main area ──────────────────────────────────────────────────── */
 .overview-main {
   flex:    1;
-  padding: 16px;
+  padding: 8px;
 }
 
+/* Spacing between cards comes from each card's own margin (8px sides / 4px top
+   and bottom), so the grid itself carries no gap. */
 .cards-grid {
   display:   flex;
   flex-wrap: wrap;
-  gap:       10px;
+  gap:       0;
   width:     100%;
 }
 
