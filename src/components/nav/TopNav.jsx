@@ -32,23 +32,23 @@ function NavIcons({ onOpenChat }) {
 
   return (
     <div className="nav-icons">
-      <button className="nav-icon-btn" aria-label="AI">
+      <button className="nav-icon-btn nav-icon-btn--ai" aria-label="AI">
         <img src="/aiicon.png" width="18" height="18" alt="AI" />
       </button>
       <div ref={discussRef} style={{ position: 'relative' }}>
-        <button className="nav-icon-btn nav-icon-btn--relative" aria-label="Discuss" onClick={() => setDiscussOpen(p => !p)}>
-        <Icon char="" size={18} color="#F5F5F6" />
+        <button className="nav-icon-btn nav-icon-btn--relative nav-icon-btn--messages" aria-label="Discuss" onClick={() => setDiscussOpen(p => !p)}>
+        <Icon char="" size={18} />
         <span className="nav-badge">3</span>
         </button>
         {discussOpen && (
           <DiscussDropdown onOpenChat={() => { onOpenChat(); setDiscussOpen(false) }} />
         )}
       </div>
-      <button className="nav-icon-btn" aria-label="Activity">
-        <Icon char="" size={18} color="#F5F5F6" />
+      <button className="nav-icon-btn nav-icon-btn--clock" aria-label="Activity">
+        <Icon char="" size={18} />
       </button>
-      <button className="nav-icon-btn" aria-label="Debug">
-        <Icon char="" font="odoo" size={16} color="#F5F5F6" />
+      <button className="nav-icon-btn nav-icon-btn--tools" aria-label="Debug">
+        <Icon char="" font="odoo" size={16} />
       </button>
       <span className="nav-username">ProductDesign</span>
       <div className="nav-avatar">P</div>
@@ -237,6 +237,7 @@ export function SubHeader({ onOpenModal }) {
     <div className="sub-header">
       <div className="sub-header__title-area">
         <span className="sub-header__title">Work Centers Overview</span>
+        <span className="sub-header__title-gear"><Icon char={"\uF013"} size={13} /></span>
       </div>
 
       <div className="sub-header__search">
@@ -256,10 +257,10 @@ export function SubHeader({ onOpenModal }) {
           <span>1-3 / 3</span>
           <div className="sub-header__page-btns">
             <button className="sub-header__page-btn" disabled>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+              <Icon char={"\uE83A"} font="odoo" size={14} />
             </button>
             <button className="sub-header__page-btn" disabled>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
+              <Icon char={"\uE83B"} font="odoo" size={14} />
             </button>
           </div>
         </div>

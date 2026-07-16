@@ -16,22 +16,22 @@ import './ManufacturingDashboard.css'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
-function getMondayOf(d) {
+// Odoo's weeks run Sunday → Saturday, not Monday → Sunday.
+function getSundayOf(d) {
   const date = new Date(d)
-  const day  = date.getDay()               // 0 = Sunday
-  date.setDate(date.getDate() - (day === 0 ? 6 : day - 1))
+  date.setDate(date.getDate() - date.getDay())   // getDay(): 0 = Sunday
   date.setHours(0, 0, 0, 0)
   return date
 }
 
-function weekRangeLabel(monday) {
-  const end = new Date(monday)
+/**
+ * "5 - 11 Jul" — spaces around the dash, and only the END month is named, even
+ * when the week straddles two ("26 - 1 Aug").
+ */
+function weekRangeLabel(sunday) {
+  const end = new Date(sunday)
   end.setDate(end.getDate() + 6)
-  const s  = monday.getDate()
-  const e  = end.getDate()
-  const sm = MONTHS[monday.getMonth()]
-  const em = MONTHS[end.getMonth()]
-  return sm === em ? `${s}-${e} ${sm}` : `${s} ${sm}-${e} ${em}`
+  return `${sunday.getDate()} - ${end.getDate()} ${MONTHS[end.getMonth()]}`
 }
 
 // Contracted working hours in a week. Load up to this is normal (teal); the
@@ -52,12 +52,12 @@ const THIS_WEEK_COL = 1   // 0-based column index for "This Week"
  * `load` is kept as the total, which is what the tooltip reports.
  */
 function buildWeeklyData(loadHours) {
-  const thisMonday = getMondayOf(new Date())
+  const thisSunday = getSundayOf(new Date())
   return loadHours.map((hours, i) => {
     const offset = i - THIS_WEEK_COL   // negative = past, 0 = this week, positive = future
-    const monday = new Date(thisMonday)
-    monday.setDate(monday.getDate() + offset * 7)
-    const week = offset === 0 ? 'This Week' : weekRangeLabel(monday)
+    const sunday = new Date(thisSunday)
+    sunday.setDate(sunday.getDate() + offset * 7)
+    const week = offset === 0 ? 'This Week' : weekRangeLabel(sunday)
     if (!hours) return { week, load: null, base: null, excess: null }
     return {
       week,

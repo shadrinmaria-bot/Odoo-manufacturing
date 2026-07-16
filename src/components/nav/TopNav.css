@@ -32,10 +32,11 @@
   color:        #F5F5F6;
 }
 
+/* Tabs butt together — their 8px side padding is the only spacing. */
 .top-nav__nav {
   display:     flex;
   align-items: center;
-  gap:         4px;
+  gap:         0;
 }
 
 /* ── NavSection button ───────────────────────────────────────────────────── */
@@ -140,15 +141,36 @@
   margin-left: auto;
 }
 
-/* Buttons butt up against each other; their 4px side padding is the spacing. */
+/* ── Systray buttons ──────────────────────────────────────────────────────────
+   Each is a rectangular button box, not a bare glyph: 4px side padding, a 1px
+   transparent border (Odoo's buttons reserve it so hover/focus can colour it in
+   without shifting layout), and 1px side margins which supply the spacing.
+   Widths differ per item and are set individually below.                    */
 .nav-icon-btn {
-  padding:    0 4px;
-  background: none;
-  border:     none;
-  cursor:     pointer;
-  transition: opacity 0.12s;
-  display:    flex;
-  align-items: center;
+  height:          26px;
+  padding:         0 4px;
+  margin:          0 1px;
+  box-sizing:      border-box;
+  background:      none;
+  border:          1px solid transparent;
+  color:           #e4e4e4;
+  cursor:          pointer;
+  transition:      opacity 0.12s;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+
+.nav-icon-btn--ai    { width: 30px; }
+.nav-icon-btn--clock { width: 26px; }
+.nav-icon-btn--tools { width: 24px; }
+
+/* Taller to fit the notification bubble, pulled back with negative vertical
+   margins so it doesn't grow the 26px systray row. */
+.nav-icon-btn--messages {
+  width:  41px;
+  height: 36px;
+  margin: -5px 1px;
 }
 .nav-icon-btn:hover { opacity: 0.8; }
 
@@ -346,16 +368,30 @@
 }
 
 .nav-username {
+  width:        115px;
+  height:       26px;
+  padding:      0 4px;
+  margin:       0 1px;
+  border:       2px solid transparent;
+  box-sizing:   border-box;
+  display:      flex;
+  align-items:  center;
   font-family:  'Segoe UI', sans-serif;
   font-weight:  400;
   font-size:    14px;
-  color:        #F5F5F6;
+  color:        #e4e4e4;
   white-space:  nowrap;
 }
 
+/* Like the messages button: taller than the row, pulled back with negative
+   vertical margins. 12px right margin is the gap to the header's edge. */
 .nav-avatar {
-  width:           28px;
-  height:          28px;
+  width:           36px;
+  height:          36px;
+  padding:         0 4px;
+  margin:          -5px 12px -5px 1px;
+  border:          1px solid transparent;
+  box-sizing:      border-box;
   border-radius:   4px;
   background:      #875A7B;
   font-family:     'Segoe UI', sans-serif;
@@ -381,6 +417,13 @@
   font-weight:  400;
   font-size:    16px;
   color:        #e4e4e4;
+}
+
+.sub-header__title-gear {
+  display:     inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  color:       #e4e4e4;
 }
 
 /* 600px overall (field + 30px expand button), 33px tall. The outline lives on
@@ -475,8 +518,7 @@
   gap:         1px;
 }
 
-/* 32×33 with the chevron's 14×14 box centred by the 8px/5px padding. The SVG is
-   stroke-only, so the chevron itself stays transparent. */
+/* 32×33 with the chevron's 14px glyph centred by the 8px/5px padding. */
 .sub-header__page-btn {
   display:         flex;
   align-items:     center;
@@ -485,7 +527,7 @@
   height:          33px;
   padding:         5px 8px;
   box-sizing:      border-box;
-  color:           #FFFFFF;
+  color:           #e4e4e4;
   background:      #3C3E4B;
   border:          none;
   border-radius:   0;
