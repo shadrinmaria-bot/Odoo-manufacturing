@@ -84,31 +84,20 @@
   font-size:   13.5px;
   color:       #F5F5F6;
   opacity:     1;
-  transition:  background 0.12s;
+  transition:  background 0.12s, color 0.12s;
   white-space: nowrap;
-}
-.nav-dropdown-item:hover:not(:disabled):not(.nav-dropdown-item--active) {
-  background: rgba(255, 255, 255, 0.04);
 }
 .nav-dropdown-item--active {
   background: rgba(26, 211, 187, 0.07);
   color:      #1AD3BB;
 }
+/* Unavailable menu entries read as unavailable — greyed, no hover affordance. */
 .nav-dropdown-item:disabled {
+  color:   #8A8D99;
   opacity: 0.55;
   cursor:  default;
 }
-.nav-dropdown-item,
-.nav-dropdown-item:disabled {
-  color:   #F5F5F6;
-  opacity: 1;
-}
-.nav-dropdown-item {
-  transition: background 0.12s, color 0.12s;
-}
-.nav-dropdown-item:hover:not(.nav-dropdown-item--active),
-.nav-dropdown-item:hover:not(:disabled):not(.nav-dropdown-item--active),
-.nav-dropdown-item:disabled:hover:not(.nav-dropdown-item--active) {
+.nav-dropdown-item:hover:not(:disabled):not(.nav-dropdown-item--active) {
   background: rgba(255, 255, 255, 0.08);
   color:      #FFFFFF;
 }
@@ -120,8 +109,14 @@
   border-bottom: none;
 }
 
-/* ── Sub-header (control panel): 58px, padded, with 16px gap ─────────────── */
+/* ── Sub-header (control panel) ───────────────────────────────────────────────
+   58px tall, padding 8px top / 16px sides + bottom. With box-sizing:border-box
+   and the 1px bottom border, the content box lands at exactly 33px — the height
+   every control inside the bar is set to. Do not re-declare .sub-header below;
+   a second block used to override this one back down to 40px.               */
 .sub-header {
+  display:       flex;
+  align-items:   center;
   height:        58px;
   background:    #262A36;
   padding:       8px 16px 16px;
@@ -129,13 +124,6 @@
   flex:          0 0 auto;
   border-bottom: 1px solid #3C3E4B;
   box-sizing:    border-box;
-}
-.sub-header__search {
-  flex:        1;
-  width:       auto;
-  max-width:   600px;
-  height:      33px;
-  box-sizing:  border-box;
 }
 
 /* ── NavIcons (right side) ───────────────────────────────────────────────── */
@@ -380,18 +368,9 @@
 }
 
 /* ── SubHeader ───────────────────────────────────────────────────────────── */
-.sub-header {
-  display:     flex;
-  align-items: center;
-  height:      40px;
-  background:  #262A36;
-  border-bottom: 1px solid #3C3E4A;
-  flex-shrink: 0;
-}
-
 .sub-header__title-area {
   flex:        1;
-  padding:     0 16px;
+  height:      33px;
   display:     flex;
   align-items: center;
 }
@@ -404,14 +383,17 @@
 }
 
 .sub-header__search {
-  display:     flex;
-  align-items: center;
-  gap:         8px;
-  padding:     4px 12px;
-  border:      1px solid #3C3E4A;
-  background:  #1B1D26;
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  padding:       0 12px;
+  border:        1px solid #3C3E4A;
+  background:    #1B1D26;
   border-radius: 4px;
-  width:       420px;
+  flex:          1;
+  max-width:     600px;
+  height:        33px;
+  box-sizing:    border-box;
 }
 
 .sub-header__search-placeholder {
@@ -423,7 +405,7 @@
 
 .sub-header__actions {
   flex:            1;
-  padding:         0 16px;
+  height:          33px;
   display:         flex;
   justify-content: flex-end;
   align-items:     center;

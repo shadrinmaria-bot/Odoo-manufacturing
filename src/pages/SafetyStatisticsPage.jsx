@@ -154,8 +154,8 @@ function StatsToolbar({
 
       {showSort && (
         <ButtonGroup gap={3}>
-          <Button active={sortOrder === 'desc'} onClick={() => onSortChange(sortOrder === 'desc' ? null : 'desc')} title="Sort descending" className="btn-stats-icon"><Icon char="" size={14} /></Button>
-          <Button active={sortOrder === 'asc'}  onClick={() => onSortChange(sortOrder === 'asc'  ? null : 'asc')}  title="Sort ascending"  className="btn-stats-icon"><Icon char=""  size={14} /></Button>
+          <Button active={sortOrder === 'desc'} onClick={() => onSortChange(sortOrder === 'desc' ? null : 'desc')} title="Sort descending" className="btn-stats-icon"><Icon char={"\uF161"} size={14} /></Button>
+          <Button active={sortOrder === 'asc'}  onClick={() => onSortChange(sortOrder === 'asc'  ? null : 'asc')}  title="Sort ascending"  className="btn-stats-icon"><Icon char={"\uF160"}  size={14} /></Button>
         </ButtonGroup>
       )}
     </div>
@@ -213,7 +213,7 @@ function StatsSubHeader({ filteredCenter, onClearFilter, onOpenModal }) {
   return (
     <div className="stats-sub-header">
       <div className="stats-sub-header__title-area">
-        <span className="stats-sub-header__title">Work Centers Overview</span>
+        <span className="stats-sub-header__title">Safety Statistics</span>
       </div>
 
       <div className="stats-sub-header__search">

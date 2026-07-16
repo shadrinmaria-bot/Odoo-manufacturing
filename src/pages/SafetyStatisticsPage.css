@@ -1,16 +1,23 @@
 /* ── StatsSubHeader ───────────────────────────────────────────────────────── */
+/* ── Sub-header (control panel) ───────────────────────────────────────────────
+   Must stay identical to .sub-header in nav/TopNav.css: 58px tall, padding
+   8px top / 16px sides + bottom, box-sizing:border-box, 1px bottom border —
+   which leaves a 33px content box for the controls inside.                  */
 .stats-sub-header {
-  display:     flex;
-  align-items: center;
-  height:      40px;
-  background:  #262A36;
-  border-bottom: 1px solid #3C3E4A;
-  flex-shrink: 0;
+  display:       flex;
+  align-items:   center;
+  height:        58px;
+  background:    #262A36;
+  padding:       8px 16px 16px;
+  gap:           16px;
+  flex:          0 0 auto;
+  border-bottom: 1px solid #3C3E4B;
+  box-sizing:    border-box;
 }
 
 .stats-sub-header__title-area {
   flex:        1;
-  padding:     0 16px;
+  height:      33px;
   display:     flex;
   align-items: center;
 }
@@ -23,14 +30,17 @@
 }
 
 .stats-sub-header__search {
-  display:     flex;
-  align-items: center;
-  gap:         8px;
-  padding:     4px 12px;
-  border:      1px solid #3C3E4A;
-  background:  #1B1D26;
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  padding:       0 12px;
+  border:        1px solid #3C3E4A;
+  background:    #1B1D26;
   border-radius: 4px;
-  width:       420px;
+  flex:          1;
+  max-width:     600px;
+  height:        33px;
+  box-sizing:    border-box;
 }
 
 .stats-sub-header__search-placeholder {
@@ -42,7 +52,7 @@
 
 .stats-sub-header__actions {
   flex:            1;
-  padding:         0 16px;
+  height:          33px;
   display:         flex;
   justify-content: flex-end;
   align-items:     center;
@@ -51,8 +61,8 @@
 }
 
 .stats-sub-header__danger-btn {
-  width:           32px;
-  height:          32px;
+  width:           33px;
+  height:          33px;
   background:      var(--color-danger);
   border:          none;
   border-radius:   4px;
@@ -155,19 +165,3 @@
 }
 
 /* ── Sub-header (control panel): 58px, padded, with 16px gap ─────────────── */
-.stats-sub-header {
-  height:        58px;
-  background:    #262A36;
-  padding:       8px 16px 16px;
-  gap:           16px;
-  flex:          0 0 auto;
-  border-bottom: 1px solid #3C3E4B;
-  box-sizing:    border-box;
-}
-.stats-sub-header__search {
-  flex:        1;
-  width:       auto;
-  max-width:   600px;
-  height:      33px;
-  box-sizing:  border-box;
-}
