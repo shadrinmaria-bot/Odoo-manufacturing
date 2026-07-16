@@ -137,7 +137,9 @@ export default function WorkCenterCard({
                   the reference screenshot uses. */}
               <BarChart
                 data={center.data}
-                margin={{ top: 4, right: 28, left: 12, bottom: 2 }}
+                // No margins: the plot, and with it the base line, runs the full
+                // width of the card exactly as it does in Odoo.
+                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
                 barCategoryGap="15%"
                 onMouseLeave={() => setHovered(null)}
               >
@@ -151,7 +153,17 @@ export default function WorkCenterCard({
                   hide width={0}
                   domain={[0, dataMax => Math.max(Y_HEADROOM, Math.ceil(dataMax / 10) * 10)]}
                 />
-                <Tooltip content={<LoadTooltip hovered={hovered?.series} />} cursor={false} />
+                {/* Recharts eases the tooltip between positions, which is the
+                    "follows the mouse" feel we want — but its 400ms default is
+                    slow enough that the first appearance reads as a swoop in
+                    from wherever it last sat. 140ms keeps the glide and makes
+                    the entrance short enough for the content's fade to cover. */}
+                <Tooltip
+                  content={<LoadTooltip hovered={hovered?.series} />}
+                  cursor={false}
+                  animationDuration={140}
+                  animationEasing="ease-out"
+                />
                 <ReferenceLine y={baseLoad} stroke={COLOR_EXCESS} strokeWidth={1.5} />
                 <Bar
                   dataKey="base" stackId="load"

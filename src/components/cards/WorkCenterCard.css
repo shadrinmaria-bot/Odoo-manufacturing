@@ -181,18 +181,35 @@
 /* btn-work-orders-primary and btn-work-orders-icon live in Button.css */
 
 /* ── LoadTooltip ─────────────────────────────────────────────────────────── */
+/* Odoo draws these charts with Chart.js, so the tooltip keeps Chart.js's own
+   defaults rather than this app's panel styling: translucent black, no border,
+   6px radius, white text. */
 .wc-tooltip {
   display:       flex;
   align-items:   center;
   gap:           6px;
-  background:    #262A36;
-  border:        1px solid #3C3E4A;
-  border-radius: 4px;
-  padding:       4px 8px;
+  background:    rgba(0, 0, 0, 0.8);
+  border:        none;
+  border-radius: 6px;
+  padding:       6px 8px;
   font-family:   'Segoe UI', sans-serif;
   font-size:     12px;
-  color:         #F5F5F6;
+  color:         #FFFFFF;
   white-space:   nowrap;
+  /* Fades in on first appearance only: the content unmounts when you leave a
+     bar, so moving between bars re-renders in place without replaying this. */
+  animation:     wcTooltipFadeIn 0.12s ease-out;
+}
+
+@keyframes wcTooltipFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Ease the hover recolour instead of snapping between fills. */
+.wc-card__chart-area .recharts-bar-rectangle path,
+.wc-card__chart-area .recharts-bar-rectangle rect {
+  transition: fill 0.15s ease;
 }
 
 /* Colour chip matching the hovered segment — teal for total, purple for excess. */
