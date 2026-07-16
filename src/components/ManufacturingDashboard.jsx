@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { TopNav, SubHeader, PlaceholderPage } from './nav/TopNav'
 import WorkCenterCard from './cards/WorkCenterCard'
 import SafetyIncidentModal from './modals/SafetyIncidentModal'
@@ -6,6 +6,10 @@ import IncidentDetailModal from './modals/IncidentDetailModal'
 import SafetyStatisticsPage from '../pages/SafetyStatisticsPage'
 import ChatPanel from './chat/ChatPanel'
 import ToastNotification from './shared/ToastNotification'
+import {
+  WORKERS_MAP, WORK_CENTER_DISPLAY, WORK_CENTER_WAREHOUSE, INJURY_LABELS,
+} from '../data/vocabulary'
+import { SEED_INCIDENTS } from '../data/incidents'
 import './ManufacturingDashboard.css'
 
 // ── Work center chart data ────────────────────────────────────────────────────
@@ -119,38 +123,27 @@ const MOCK_INCIDENT_RECORDS = {
 // Overview starts with grey "0 Incidents" badges on every card.
 const DEMO_INCIDENTS = { carpentry: [], paint: [], assembly: [] }
 
-// ── Label maps (used when building new incidents from modal form) ─────────────
+// Label maps for building new incidents from the modal form now live in
+// data/vocabulary.js, shared with the form itself and the statistics dataset.
 
-const WORKERS_MAP = {
-  'john-doe':         'John Doe',
-  'jane-smith':       'Jane Smith',
-  'mike-johnson':     'Mike Johnson',
-  'sara-lee':         'Sara Lee',
-  'maria-lan':        'Maria Lan',
-  'valeria-kulishov': 'Valeria Kulishov',
-  'amit-tzadik':      'Amit Tzadik',
-  'oran-shuster':     'Oran Shuster',
-}
-
-const WORK_CENTER_DISPLAY = {
-  carpentry: 'Carpentry Workshop',
-  paint:     'Paint',
-  assembly:  'Assembly',
-  other:     'Other',
-}
-
-const INJURY_LABELS = {
-  overexertion:      'Overexertion involving outside sources',
-  'other-exertions': 'Other exertions or bodily reactions',
-  repetitive:        'Repetitive motions involving microtasks',
-  'fall-same':       'Falls on the same level',
-  roadway:           'Roadway incidents by motorized vehicles',
-  'struck-against':  'Struck against object or equipment',
-  'struck-by':       'Struck by object or equipment',
-  slip:              'Slip or trip without fall',
-  'fall-lower':      'Falls to lower level',
-  caught:            'Caught in equipment or objects',
-  other:             'Other',
+/**
+ * Turn the form's "HH:MM" time-of-incident into a real Date.
+ *
+ * The picker offers all 24 hours with no date field, so a time later than the
+ * current clock reads as "it happened yesterday evening, I'm filing this
+ * morning" — roll back a day rather than clamping to now, which would throw
+ * away the hour the reporter actually chose and mis-bucket Time of Day.
+ * (data/incidents.js does the same thing when generating seeds.)
+ *
+ * Falls back to `now` when the field is left blank — it is optional.
+ */
+function parseIncidentTime(timeOfIncident, now) {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(timeOfIncident || '')
+  if (!m) return now
+  const d = new Date(now)
+  d.setHours(Number(m[1]), Number(m[2]), 0, 0)
+  if (d > now) d.setDate(d.getDate() - 1)
+  return d
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
@@ -164,6 +157,13 @@ export default function ManufacturingDashboard() {
   const [isChatOpen,     setIsChatOpen]     = useState(false)
   const [chatSession,    setChatSession]    = useState(null)
   const [toast,          setToast]          = useState({ key: 0, severity: null })
+
+  // What the Safety Statistics page charts: the seeded history (all resolved,
+  // so it never lights up a card badge) plus everything reported this session.
+  const statsIncidents = useMemo(
+    () => [...SEED_INCIDENTS, ...Object.values(incidents).flat()],
+    [incidents]
+  )
 
   function showToast(severity) {
     setToast(t => ({ key: t.key + 1, severity }))
@@ -288,6 +288,12 @@ export default function ManufacturingDashboard() {
       ', ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
     const shortDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     const locationLabel = WORK_CENTER_DISPLAY[workCenterId] || workCenterId
+    const warehouse = formData.workCenterLocation || WORK_CENTER_WAREHOUSE[workCenterId] || 'Warehouse 2'
+
+    // The incident happened at the time the reporter picked; if they left it
+    // blank, treat it as happening now.
+    const incidentTime = parseIncidentTime(formData.timeOfIncident, now)
+
     const newIncident = {
       id:               `${workCenterId}-${Date.now()}`,
       title:            injuryLabel.length > 35 ? injuryLabel.slice(0, 35) + '…' : injuryLabel,
@@ -302,10 +308,20 @@ export default function ManufacturingDashboard() {
       workerId:         formData.workerId,
       jobTitle:         formData.jobTitle,
       incidentLocation: locationLabel,
-      workCenterLocation: formData.workCenterLocation || 'Warehouse 2',
+      workCenterLocation: warehouse,
       incidentDetails:  formData.incidentDetails,
       injuryType:       { id: formData.selectedInjuryType, label: injuryLabel },
       actionsTaken:     formData.actionsTaken,
+
+      // ── Fields the Safety Statistics page groups and filters on ──
+      // Reported incidents are charted alongside the seeded history, so they
+      // have to carry the same shape. Still open, hence resolvedAt: null —
+      // which is what puts them in the "Unresolved" bucket.
+      workCenter:   locationLabel,
+      warehouse,
+      reportDate:   now.toISOString(),
+      incidentTime: incidentTime.toISOString(),
+      resolvedAt:   null,
     }
     setIncidents(prev => ({ ...prev, [workCenterId]: [...(prev[workCenterId] || []), newIncident] }))
     showToast(severity)
@@ -363,6 +379,7 @@ export default function ManufacturingDashboard() {
         <SafetyStatisticsPage
           key={activePage.params?.initialFilter ?? 'all'}
           initialParams={activePage.params}
+          incidents={statsIncidents}
           onOpenModal={() => setIsModalOpen(true)}
         />
       ) : (

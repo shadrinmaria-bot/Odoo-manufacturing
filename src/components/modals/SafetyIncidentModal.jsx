@@ -1,92 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '../shared/Button'
 import FormDropdown from '../shared/FormDropdown'
+import {
+  WORKERS,
+  SEVERITY_OPTIONS,
+  WORK_CENTERS,
+  INJURY_TYPES as INJURY_VOCAB,
+  ACTIONS as ACTIONS_SUGGESTIONS,
+} from '../../data/vocabulary'
 import './SafetyIncidentModal.css'
 
-const WORKERS = [
-  { value: 'john-doe',        label: 'John Doe',        title: 'Machine Operator',      workerId: '2012380163' },
-  { value: 'jane-smith',      label: 'Jane Smith',      title: 'Quality Inspector',     workerId: '2012380164' },
-  { value: 'mike-johnson',    label: 'Mike Johnson',    title: 'Forklift Operator',     workerId: '2012380165' },
-  { value: 'sara-lee',        label: 'Sara Lee',        title: 'Assembly Technician',   workerId: '2012380166' },
-  { value: 'maria-lan',       label: 'Maria Lan',       title: 'Production Operator',   workerId: '2012380167' },
-  { value: 'valeria-kulishov',label: 'Valeria Kulishov',title: 'Chief Executive Officer',workerId: '2014321860' },
-  { value: 'amit-tzadik',     label: 'Amit Tzadik',     title: 'Safety Officer',        workerId: '2012380168' },
-  { value: 'oran-shuster',    label: 'Oran Shuster',    title: 'Maintenance Technician',workerId: '2012380169' },
-]
+// Drawn when an injury's SVG file is missing from public/icons/injuries.
+// These live here rather than in the vocabulary module because they are JSX.
+const FALLBACK_ICONS = {
+  'overexertion':    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v5l3 3" /><path d="M9 12l-3 2" /><path d="M12 12l3 2" /><path d="M9 17l-1 3" /><path d="M15 17l1 3" /></svg>,
+  'other-exertions': <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v6" /><path d="M9 10l3 2 3-2" /><path d="M10 20l2-7 2 7" /></svg>,
+  'repetitive':      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg>,
+  'fall-same':       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M8 9l4 3-4 4" /><path d="M3 20h18" /><path d="M16 14l-4-2" /></svg>,
+  'roadway':         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="10" width="22" height="8" rx="2" /><path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></svg>,
+  'struck-against':  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="5" r="2" /><path d="M8 7v5l5 3" /><rect x="15" y="12" width="7" height="7" rx="1" /><path d="M6 17l2 3" /></svg>,
+  'struck-by':       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="16" cy="5" r="2" /><path d="M16 7v5l-5 3" /><path d="M2 12l5 2" /><path d="M2 12l2-2m-2 2l2 2" /><path d="M18 17l-2 3" /></svg>,
+  'slip':            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M10 8l-3 5 4 1" /><path d="M11 14l1 4 3-1" /><path d="M4 21c2-2 6-3 10-1" /></svg>,
+  'other':           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>,
+  'fall-lower':      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M12 6v4" /><path d="M9 10l3 2 3-2" /><path d="M12 12v3l-3 2" /><path d="M12 15l3 2" /><path d="M3 22h18" /><path d="M12 17l1 3" /></svg>,
+  'caught':          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" /></svg>,
+}
 
-const SEVERITY_OPTIONS = [
-  { value: 'critical',  label: 'Critical',        color: '#B83232' },
-  { value: 'attention', label: 'Needs Attention', color: '#008FE3' },
-]
-
-const INJURY_TYPES = [
-  // Row 1
-  {
-    id: 'overexertion', label: 'Overexertion involving outside sources',
-    iconSrc: '/icons/injuries/overexertion.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v5l3 3" /><path d="M9 12l-3 2" /><path d="M12 12l3 2" /><path d="M9 17l-1 3" /><path d="M15 17l1 3" /></svg>,
-  },
-  {
-    id: 'other-exertions', label: 'Other exertions or bodily reactions',
-    iconSrc: '/icons/injuries/other-exertions.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><path d="M12 7v6" /><path d="M9 10l3 2 3-2" /><path d="M10 20l2-7 2 7" /></svg>,
-  },
-  {
-    id: 'repetitive', label: 'Repetitive motions involving microtasks',
-    iconSrc: '/icons/injuries/repetitive.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg>,
-  },
-  // Row 2
-  {
-    id: 'fall-same', label: 'Falls on the same level',
-    iconSrc: '/icons/injuries/fall-same.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M8 9l4 3-4 4" /><path d="M3 20h18" /><path d="M16 14l-4-2" /></svg>,
-  },
-  {
-    id: 'roadway', label: 'Roadway incidents by motorized vehicles',
-    iconSrc: '/icons/injuries/roadway.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="10" width="22" height="8" rx="2" /><path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></svg>,
-  },
-  {
-    id: 'struck-against', label: 'Struck against object or equipment',
-    iconSrc: '/icons/injuries/struck-against.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="5" r="2" /><path d="M8 7v5l5 3" /><rect x="15" y="12" width="7" height="7" rx="1" /><path d="M6 17l2 3" /></svg>,
-  },
-  // Row 3
-  {
-    id: 'struck-by', label: 'Struck by object or equipment',
-    iconSrc: '/icons/injuries/struck-by.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="16" cy="5" r="2" /><path d="M16 7v5l-5 3" /><path d="M2 12l5 2" /><path d="M2 12l2-2m-2 2l2 2" /><path d="M18 17l-2 3" /></svg>,
-  },
-  {
-    id: 'slip', label: 'Slip or trip without fall',
-    iconSrc: '/icons/injuries/slip.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M10 8l-3 5 4 1" /><path d="M11 14l1 4 3-1" /><path d="M4 21c2-2 6-3 10-1" /></svg>,
-  },
-  {
-    id: 'other', label: 'Other...',
-    iconSrc: '/icons/injuries/other.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>,
-  },
-  // Row 4
-  {
-    id: 'fall-lower', label: 'Falls to lower level',
-    iconSrc: '/icons/injuries/fall-lower.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2" /><path d="M12 6v4" /><path d="M9 10l3 2 3-2" /><path d="M12 12v3l-3 2" /><path d="M12 15l3 2" /><path d="M3 22h18" /><path d="M12 17l1 3" /></svg>,
-  },
-  {
-    id: 'caught', label: 'Caught in equipment or objects',
-    iconSrc: '/icons/injuries/caught.svg',
-    fallbackIcon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" /></svg>,
-  },
-]
-
-const WORK_CENTERS = [
-  { id: 'carpentry', label: 'Carpentry Workshop', warehouseLocation: 'Warehouse 2' },
-  { id: 'paint',     label: 'Paint',              warehouseLocation: 'Warehouse 1' },
-  { id: 'assembly',  label: 'Assembly',            warehouseLocation: 'Warehouse 3' },
-  { id: 'other',     label: 'Other',               warehouseLocation: '' },
-]
+// Tile order is inherited from the vocabulary and is load-bearing: the grid
+// below renders the first 8, then the "Other..." field, then the remaining 2.
+const INJURY_TYPES = INJURY_VOCAB.map(t => ({ ...t, fallbackIcon: FALLBACK_ICONS[t.id] }))
 
 const CURRENT_USER = 'Emma Granger'
 
@@ -103,21 +45,6 @@ const TIME_OPTIONS = Array.from({ length: 24 * 4 }, (_, i) => {
 })
 
 const REQUIRED_FIELDS = ['injuredWorker', 'jobTitle', 'workerId', 'incidentLocation', 'actionsTaken', 'severity']
-
-const ACTIONS_SUGGESTIONS = [
-  'First Aid Provided',
-  'Supervisor Notified',
-  'Worker Removed from Duty',
-  'Ambulance Called',
-  'Area Secured',
-  'Equipment Shut Down',
-  'Incident Photographed',
-  'Safety Officer Alerted',
-  'Medical Examination Scheduled',
-  'Corrective Action Initiated',
-  'Witness Statements Collected',
-  'Management Informed',
-]
 
 const OTHER_SUGGESTIONS = [
   'Chemical exposure',

@@ -253,7 +253,7 @@ function StatsSubHeader({ filteredCenter, onClearFilter, onOpenModal }) {
 
 // ── SafetyStatisticsPage ───────────────────────────────────────────────────────
 
-export default function SafetyStatisticsPage({ initialParams = null, onOpenModal }) {
+export default function SafetyStatisticsPage({ initialParams = null, incidents = INCIDENTS, onOpenModal }) {
   const [groupById,     setGroupById]     = useState(initialParams?.initialGroupBy   ?? 'workCenter')
   const [compareById,   setCompareById]   = useState(initialParams?.initialCompareBy ?? null)
   const [dateFilterId,  setDateFilterId]  = useState(
@@ -301,7 +301,7 @@ export default function SafetyStatisticsPage({ initialParams = null, onOpenModal
   const compareBy  = compareById ? findDimension(compareById) : null
   const dateFilter = findDateFilter(dateFilterId) ?? STATS_DATE_FILTERS[0]
 
-  const filteredIncidents = INCIDENTS.filter(i => {
+  const filteredIncidents = incidents.filter(i => {
     if (!dateFilter.predicate(i)) return false
     if (filteredCenter && i.workCenter !== filteredCenter) return false
     return true
