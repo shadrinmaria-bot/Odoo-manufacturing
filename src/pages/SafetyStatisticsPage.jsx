@@ -39,7 +39,9 @@ const tooltipItemStyle = {
 
 const GRID_STROKE = '#32343c'
 
-// Left edge of the toolbar's controls — the Y-axis numbers line up with it.
+// Left edge of the toolbar's controls. The Y-axis numbers line up with it, and
+// the plot keeps the same inset on its right so the grid lines stop just short
+// of the page edge rather than running into it.
 const CONTENT_INSET = 16
 const Y_AXIS_WIDTH  = 44
 
@@ -449,7 +451,7 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
                 data={rows}
                 // No right margin: the grid lines run to the edge of the plot,
                 // as they do in Odoo.
-                margin={{ top: 20, right: 0, left: 0, bottom: 48 }}
+                margin={{ top: 20, right: CONTENT_INSET, left: 0, bottom: 48 }}
                 onMouseMove={handleChartHover}
                 onMouseLeave={() => setBarAnchor(null)}
               >
@@ -461,7 +463,7 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
                 {renderBars(rows, seriesKeys, stacked, compareBy, setBarAnchor)}
               </BarChart>
             ) : graphType === 'line' ? (
-              <LineChart data={rows} margin={{ top: 20, right: 0, left: 0, bottom: 48 }}>
+              <LineChart data={rows} margin={{ top: 20, right: CONTENT_INSET, left: 0, bottom: 48 }}>
                 <CartesianGrid stroke={GRID_STROKE} vertical={false} />
                 <XAxis dataKey="key" interval={0} tick={<WrappedTick />} axisLine={false} tickLine={false} tickMargin={10} />
                 <YAxis width={Y_AXIS_WIDTH} tick={<YTick />} axisLine={false} tickLine={false} allowDecimals={false} />
