@@ -39,6 +39,31 @@ const tooltipItemStyle = {
 
 const GRID_STROKE = '#32343c'
 
+// Left edge of the toolbar's controls — the Y-axis numbers line up with it.
+const CONTENT_INSET = 16
+const Y_AXIS_WIDTH  = 44
+
+/**
+ * Y-axis tick pinned to the page's content inset. Recharts right-aligns these
+ * by default, which leaves their left edge floating with the label's width
+ * instead of squaring up with the toolbar buttons above.
+ */
+function YTick({ y, payload }) {
+  return (
+    <text
+      x={CONTENT_INSET}
+      y={y}
+      dy={4}
+      textAnchor="start"
+      fill="#e4e4e4"
+      fontSize={12}
+      fontFamily={FONT}
+    >
+      {payload?.value}
+    </text>
+  )
+}
+
 /**
  * X-axis tick that wraps long category names onto extra lines instead of
  * letting neighbouring labels run into each other.
@@ -430,7 +455,7 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
               >
                 <CartesianGrid stroke={GRID_STROKE} vertical={false} />
                 <XAxis dataKey="key" interval={0} tick={<WrappedTick />} axisLine={false} tickLine={false} tickMargin={10} />
-                <YAxis tick={{ fill: '#e4e4e4', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <YAxis width={Y_AXIS_WIDTH} tick={<YTick />} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={barAnchor ?? undefined} />
                 {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
                 {renderBars(rows, seriesKeys, stacked, compareBy, setBarAnchor)}
@@ -439,7 +464,7 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
               <LineChart data={rows} margin={{ top: 20, right: 0, left: 0, bottom: 48 }}>
                 <CartesianGrid stroke={GRID_STROKE} vertical={false} />
                 <XAxis dataKey="key" interval={0} tick={<WrappedTick />} axisLine={false} tickLine={false} tickMargin={10} />
-                <YAxis tick={{ fill: '#e4e4e4', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <YAxis width={Y_AXIS_WIDTH} tick={<YTick />} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} />
                 {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
                 {renderLines(rows, seriesKeys, compareBy)}
