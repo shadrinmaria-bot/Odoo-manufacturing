@@ -26,12 +26,63 @@ const tooltipContentStyle = {
   background: '#262A36', border: '1px solid #3C3E4A', borderRadius: 4,
   padding: '8px 12px', fontFamily: FONT, fontSize: 12.5,
   color: '#F5F5F6', boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
+  // The wrapper is positioned at the bar's top centre; this re-centres the box
+  // on that point rather than hanging it down and to the right of it.
+  transform: 'translate(-50%, -50%)',
 }
 const tooltipLabelStyle = {
   color: '#F5F5F6', fontFamily: FONT, fontWeight: 700, fontSize: 12.5, marginBottom: 4,
 }
 const tooltipItemStyle = {
   color: '#F5F5F6', fontFamily: FONT, fontSize: 12.5, padding: 0,
+}
+
+const GRID_STROKE = '#32343c'
+
+/**
+ * X-axis tick that wraps long category names onto extra lines instead of
+ * letting neighbouring labels run into each other.
+ *
+ * Recharts hands a custom tick `width` (the axis width) and `visibleTicksCount`,
+ * so the space one label may occupy is width / count. At 11px Segoe a character
+ * averages ~5.6px, which gives the per-line character budget.
+ */
+function WrappedTick({ x, y, payload, width, visibleTicksCount }) {
+  const label = String(payload?.value ?? '')
+  const band  = visibleTicksCount ? (width || 0) / visibleTicksCount : 0
+  const maxChars = Math.max(6, Math.floor((band - 8) / 5.6))
+
+  const lines = []
+  let current = ''
+  for (const word of label.split(' ')) {
+    const candidate = current ? `${current} ${word}` : word
+    if (candidate.length > maxChars && current) {
+      lines.push(current)
+      current = word
+    } else {
+      current = candidate
+    }
+  }
+  if (current) lines.push(current)
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      {lines.map((line, i) => (
+        <text
+          key={i}
+          x={0}
+          y={0}
+          dy={12 + i * 12}
+          textAnchor="middle"
+          fill="#e4e4e4"
+          fontSize={11}
+          fontFamily={FONT}
+        >
+          {line}
+        </text>
+      ))}
+    </g>
+  )
 }
 
 // ── ConfigDropdown ─────────────────────────────────────────────────────────────
@@ -273,6 +324,34 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
   // Top-centre of the hovered bar, so the tooltip pins there instead of
   // tracking the pointer up and down inside the bar.
   const [barAnchor, setBarAnchor] = useState(null)
+  const chartWrapRef = useRef(null)
+
+  /**
+   * Anchor the tooltip to the bar for the hovered category, wherever in that
+   * column the pointer is. Recharts' own bar hover events only fire over the
+   * drawn rectangle, so hovering the empty space above a short bar would leave
+   * the tooltip tracking the cursor.
+   */
+  function handleChartHover(state) {
+    const cx = state?.activeCoordinate?.x
+    if (cx == null || !chartWrapRef.current) return
+    const wrap = chartWrapRef.current.querySelector('.recharts-wrapper')
+    if (!wrap) return
+
+    const wrapBox = wrap.getBoundingClientRect()
+    let best = null
+    for (const el of wrap.querySelectorAll('.recharts-bar-rectangle path, .recharts-bar-rectangle rect')) {
+      const box = el.getBoundingClientRect()
+      if (box.height <= 0) continue
+      const left   = box.left - wrapBox.left
+      const centre = left + box.width / 2
+      // Same column as the pointer: within half a bar width of the band centre.
+      if (Math.abs(centre - cx) > box.width) continue
+      const top = box.top - wrapBox.top
+      if (!best || top < best.y) best = { x: centre, y: top }
+    }
+    if (best) setBarAnchor(best)
+  }
   const [isInsertOpen, setIsInsertOpen] = useState(false)
   const [toast,        setToast]        = useState(null)
   const [dashboards,   setDashboards]   = useState([
@@ -338,21 +417,28 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
           sortOrder={sortOrder}       onSortChange={setSortOrder}
           onInsertSpreadsheet={() => setIsInsertOpen(true)}
         />
-        <div className="stats-chart-container">
+        <div className="stats-chart-container" ref={chartWrapRef}>
           <ResponsiveContainer width="100%" height="100%">
             {graphType === 'bar' ? (
-              <BarChart data={rows} margin={{ top: 20, right: 24, left: 8, bottom: 40 }} onMouseLeave={() => setBarAnchor(null)}>
-                <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="key" interval={0} tick={{ fill: '#e4e4e4', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
+              <BarChart
+                data={rows}
+                // No right margin: the grid lines run to the edge of the plot,
+                // as they do in Odoo.
+                margin={{ top: 20, right: 0, left: 8, bottom: 48 }}
+                onMouseMove={handleChartHover}
+                onMouseLeave={() => setBarAnchor(null)}
+              >
+                <CartesianGrid stroke={GRID_STROKE} vertical={false} />
+                <XAxis dataKey="key" interval={0} tick={<WrappedTick />} axisLine={false} tickLine={false} tickMargin={10} />
                 <YAxis tick={{ fill: '#e4e4e4', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={barAnchor ?? undefined} />
                 {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
                 {renderBars(rows, seriesKeys, stacked, compareBy, setBarAnchor)}
               </BarChart>
             ) : graphType === 'line' ? (
-              <LineChart data={rows} margin={{ top: 20, right: 32, left: 8, bottom: 40 }}>
-                <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="key" interval={0} tick={{ fill: '#e4e4e4', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
+              <LineChart data={rows} margin={{ top: 20, right: 0, left: 8, bottom: 48 }}>
+                <CartesianGrid stroke={GRID_STROKE} vertical={false} />
+                <XAxis dataKey="key" interval={0} tick={<WrappedTick />} axisLine={false} tickLine={false} tickMargin={10} />
                 <YAxis tick={{ fill: '#e4e4e4', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} />
                 {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
