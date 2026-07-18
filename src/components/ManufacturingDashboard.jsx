@@ -254,10 +254,13 @@ export default function ManufacturingDashboard() {
       subItem: 'Safety Statistics',
       params: {
         initialFilter:    workCenterName,
-        initialGroupBy:   'workCenter',
+        // Grouping by injury type rather than work center: the view is already
+        // filtered to one center, so grouping by it would collapse everything
+        // into a single bar.
+        initialGroupBy:   'injuryType',
         initialCompareBy: null,
-        initialDate:      'last7',
-        initialGraphType: 'line',
+        initialDate:      'thisYear',
+        initialGraphType: 'bar',
       },
     })
   }

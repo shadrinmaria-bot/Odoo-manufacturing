@@ -33,7 +33,6 @@ const tooltipLabelStyle = {
 const tooltipItemStyle = {
   color: '#F5F5F6', fontFamily: FONT, fontSize: 12.5, padding: 0,
 }
-const tooltipFixedPosition = { y: 0 }
 
 // ── ConfigDropdown ─────────────────────────────────────────────────────────────
 
@@ -164,17 +163,19 @@ function StatsToolbar({
 
 // ── Chart render helpers ───────────────────────────────────────────────────────
 
-function renderBars(rows, seriesKeys, stacked, compareDim) {
+function renderBars(rows, seriesKeys, stacked, compareDim, onHover) {
   if (!seriesKeys.length) {
     return (
-      <Bar dataKey="value" radius={[2, 2, 0, 0]} isAnimationActive={false}>
+      <Bar dataKey="value" radius={[2, 2, 0, 0]} isAnimationActive={false}
+        onMouseEnter={(d) => onHover({ x: d.x + d.width / 2, y: d.y })}>
         {rows.map((r, i) => <Cell key={r.key} fill={PALETTE[i % PALETTE.length]} />)}
       </Bar>
     )
   }
   return seriesKeys.map((s, i) => (
     <Bar key={s} dataKey={s} stackId={stacked ? 'stack' : undefined}
-      fill={colorFor(compareDim, s, i)} radius={stacked ? 0 : [2, 2, 0, 0]} isAnimationActive={false} />
+      fill={colorFor(compareDim, s, i)} radius={stacked ? 0 : [2, 2, 0, 0]} isAnimationActive={false}
+      onMouseEnter={(d) => onHover({ x: d.x + d.width / 2, y: d.y })} />
   ))
 }
 
@@ -182,7 +183,7 @@ function renderLines(rows, seriesKeys, compareDim) {
   if (!seriesKeys.length) {
     const stroke = PALETTE[0]
     return (
-      <Line type="linear" dataKey="value" stroke={stroke} strokeWidth={2.4}
+      <Line type="monotone" dataKey="value" stroke={stroke} strokeWidth={2.4}
         dot={{ r: 4, fill: stroke, strokeWidth: 0 }}
         activeDot={{ r: 5, fill: stroke, strokeWidth: 0 }}
         isAnimationActive={false} />
@@ -191,7 +192,7 @@ function renderLines(rows, seriesKeys, compareDim) {
   return seriesKeys.map((s, i) => {
     const stroke = colorFor(compareDim, s, i)
     return (
-      <Line key={s} type="linear" dataKey={s} stroke={stroke} strokeWidth={2.2}
+      <Line key={s} type="monotone" dataKey={s} stroke={stroke} strokeWidth={2.2}
         dot={{ r: 4, fill: stroke, strokeWidth: 0 }}
         activeDot={{ r: 5, fill: stroke, strokeWidth: 0 }}
         isAnimationActive={false} />
@@ -269,6 +270,9 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
   const [sortOrder,     setSortOrder]     = useState(null)
   const [filteredCenter, setFilteredCenter] = useState(initialParams?.initialFilter ?? null)
 
+  // Top-centre of the hovered bar, so the tooltip pins there instead of
+  // tracking the pointer up and down inside the bar.
+  const [barAnchor, setBarAnchor] = useState(null)
   const [isInsertOpen, setIsInsertOpen] = useState(false)
   const [toast,        setToast]        = useState(null)
   const [dashboards,   setDashboards]   = useState([
@@ -337,26 +341,26 @@ export default function SafetyStatisticsPage({ initialParams = null, incidents =
         <div className="stats-chart-container">
           <ResponsiveContainer width="100%" height="100%">
             {graphType === 'bar' ? (
-              <BarChart data={rows} margin={{ top: 20, right: 24, left: 8, bottom: 40 }}>
+              <BarChart data={rows} margin={{ top: 20, right: 24, left: 8, bottom: 40 }} onMouseLeave={() => setBarAnchor(null)}>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="key" interval={0} tick={{ fill: '#A0A4AF', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
-                <YAxis tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+                <XAxis dataKey="key" interval={0} tick={{ fill: '#e4e4e4', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
+                <YAxis tick={{ fill: '#e4e4e4', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={barAnchor ?? undefined} />
                 {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
-                {renderBars(rows, seriesKeys, stacked, compareBy)}
+                {renderBars(rows, seriesKeys, stacked, compareBy, setBarAnchor)}
               </BarChart>
             ) : graphType === 'line' ? (
               <LineChart data={rows} margin={{ top: 20, right: 32, left: 8, bottom: 40 }}>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="key" interval={0} tick={{ fill: '#626363', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
-                <YAxis tick={{ fill: '#626363', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+                <XAxis dataKey="key" interval={0} tick={{ fill: '#e4e4e4', fontSize: 11, fontFamily: FONT }} axisLine={false} tickLine={false} tickMargin={10} />
+                <YAxis tick={{ fill: '#e4e4e4', fontSize: 12, fontFamily: FONT }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} />
                 {seriesKeys.length > 0 && <Legend wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />}
                 {renderLines(rows, seriesKeys, compareBy)}
               </LineChart>
             ) : (
               <PieChart>
-                <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} position={tooltipFixedPosition} />
+                <Tooltip contentStyle={tooltipContentStyle} labelStyle={tooltipLabelStyle} itemStyle={tooltipItemStyle} />
                 <Legend layout="vertical" verticalAlign="top" align="right" wrapperStyle={{ fontFamily: FONT, fontSize: 12, color: '#F5F5F6' }} iconType="rect" />
                 <Pie data={pieDisplayRows} dataKey="value" nameKey="key" cx="45%" outerRadius="80%" innerRadius={0} isAnimationActive={false} labelLine={false} stroke="none">
                   {pieDisplayRows.map((d, i) => <Cell key={d.key} fill={colorFor(groupBy, d.key, i)} stroke="none" />)}

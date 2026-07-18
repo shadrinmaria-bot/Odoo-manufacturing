@@ -27,12 +27,6 @@ const COLOR_EXCESS_DARK = '#5B3457'
 // top. Grows in 10h steps if a work center ever books more than this.
 const Y_HEADROOM = 60
 
-// Tooltip placement relative to the cursor. TIP_WIDTH only needs to be close —
-// it decides when to flip the tooltip to the left of the pointer near the right
-// edge of the card.
-const TIP_OFFSET = 14
-const TIP_WIDTH  = 150
-
 // ── StatusDot ─────────────────────────────────────────────────────────────────
 
 function StatusDot({ hasCritical }) {
@@ -111,21 +105,12 @@ export default function WorkCenterCard({
   const badgeRef = useRef(null)
   const chartAreaRef = useRef(null)
   const [anchorRect, setAnchorRect] = useState(null)
-  const [hovered, setHovered] = useState(null)   // { series: 'base'|'excess', index } | null
-  const [cursor, setCursor] = useState(null)     // { x, y, w } in chart space
+  const [hovered, setHovered] = useState(null)   // { series, index, x, y } | null
 
-  // Recharts anchors the tooltip to the data point — the top-centre of the bar —
-  // so it sits still while the pointer moves inside a bar. Feeding it the live
-  // cursor instead makes it track the mouse; the wrapper's transform transition
-  // then eases it along rather than teleporting.
-  const tipPos = cursor
-    ? {
-        x: cursor.w && cursor.x + TIP_OFFSET + TIP_WIDTH > cursor.w
-          ? cursor.x - TIP_WIDTH - TIP_OFFSET     // flip left near the right edge
-          : cursor.x + TIP_OFFSET,
-        y: Math.max(0, cursor.y - TIP_OFFSET),
-      }
-    : undefined
+  // Left free, Recharts tracks the pointer's y. Pinning the tooltip to the top
+  // centre of the drawn bar instead means it sits in the same place wherever
+  // inside the bar you happen to be.
+  const tipPos = hovered ? { x: hovered.x, y: hovered.y } : undefined
 
   const incidentCount = incidents.length
   const badgeVariant  = getVariantFromIncidents(incidents)
@@ -162,11 +147,7 @@ export default function WorkCenterCard({
                 // width of the card exactly as it does in Odoo.
                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
                 barCategoryGap="15%"
-                onMouseMove={(state) => {
-                  if (state?.chartX == null) return
-                  setCursor({ x: state.chartX, y: state.chartY, w: chartAreaRef.current?.offsetWidth ?? 0 })
-                }}
-                onMouseLeave={() => { setHovered(null); setCursor(null) }}
+                onMouseLeave={() => setHovered(null)}
               >
                 <XAxis
                   dataKey="week"
@@ -189,7 +170,14 @@ export default function WorkCenterCard({
                 <Bar
                   dataKey="base" stackId="load"
                   isAnimationActive={false} activeBar={false}
-                  onMouseEnter={(_, index) => setHovered({ series: 'base', index })}
+                  onMouseEnter={(d, index) => {
+                    // Anchor to the top of the whole stack, not this segment:
+                    // scale up from the base rect using its own px-per-hour.
+                    const row    = center.data[index] || {}
+                    const perHr  = row.base ? d.height / row.base : 0
+                    const excess = row.excess || 0
+                    setHovered({ series: 'base', index, x: d.x + d.width / 2, y: d.y - excess * perHr })
+                  }}
                   onMouseLeave={() => setHovered(null)}
                 >
                   {center.data.map((d, i) => (
@@ -199,7 +187,7 @@ export default function WorkCenterCard({
                 <Bar
                   dataKey="excess" stackId="load"
                   isAnimationActive={false} activeBar={false}
-                  onMouseEnter={(_, index) => setHovered({ series: 'excess', index })}
+                  onMouseEnter={(d, index) => setHovered({ series: 'excess', index, x: d.x + d.width / 2, y: d.y })}
                   onMouseLeave={() => setHovered(null)}
                 >
                   {center.data.map((d, i) => (
