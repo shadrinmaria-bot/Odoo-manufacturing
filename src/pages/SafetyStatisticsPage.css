@@ -198,9 +198,29 @@
 }
 
 /* ── Chart container ─────────────────────────────────────────────────────── */
+/* No horizontal padding: the grid lines have to run to the edge of the page,
+   so the chart itself spans the full width. The Y-axis labels get their inset
+   from the axis width instead.
+
+   Height comes from the flex parent rather than a calc() of the chrome above
+   it — that hardcoded 156px was 8px short of the real height, so the page
+   scrolled and the scrollbar ate into the right edge. */
 .stats-chart-container {
-  padding: 0 16px 16px;
-  height:  calc(100vh - 156px);
+  flex:       1;
+  min-height: 0;
+  position:   relative;
+}
+
+/* Recharts' ResponsiveContainer resolves height:100% against its parent, which
+   in a flex item is circular — it measures 0 and never recovers. Taking it out
+   of flow against the positioned parent gives it a definite box to fill. The
+   bottom inset is the old container padding. */
+.stats-chart-container .recharts-responsive-container {
+  position: absolute;
+  top:      0;
+  left:     0;
+  right:    0;
+  bottom:   16px;
 }
 
 /* ── Sub-header (control panel): 58px, padded, with 16px gap ─────────────── */
