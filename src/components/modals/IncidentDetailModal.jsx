@@ -134,6 +134,9 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
   const injuryId    = incident.injuryType?.id    || 'other'
   const injuryLabel = incident.injuryType?.label || INJURY_TYPE_LABELS[injuryId] || 'Other'
 
+  // Anything past 'open' means the incident has already been shared onward.
+  const hasBeenShared = !!incident.status && incident.status !== 'open'
+
   const isCritical      = incident.severity === 'critical'
   const severityKey     = isCritical ? 'critical' : 'attention'
   const severityLabel   = isCritical ? 'Critical' : 'Needs Attention'
@@ -168,62 +171,58 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
 
         {/* Scrollable body */}
         <div className="idm-body">
-          {/* Top card: injury icon + meta grid */}
-          <div className="idm-card">
-            <div className="idm-icon-row">
-              <div className={`idm-injury-icon idm-injury-icon--${severityKey}`}>
-                <InjuryImg injuryId={injuryId} />
-              </div>
-              <span className="idm-injury-label">{injuryLabel}</span>
+          {/* Injury icon + meta grid — full-bleed, no card container */}
+          <div className="idm-icon-row">
+            <div className={`idm-injury-icon idm-injury-icon--${severityKey}`}>
+              <InjuryImg injuryId={injuryId} />
             </div>
+            <span className="idm-injury-label">{injuryLabel}</span>
+          </div>
 
-            <div className="idm-grid-row">
-              <div className="idm-grid-col">
-                <div>
-                  <span className="idm-meta-label">Injured Worker</span>
-                  <div className="idm-worker-row">
-                    <AvatarImg
-                      name={incident.injuredWorker}
-                      fallback={workerInitial}
-                      baseClass="idm-worker-avatar"
-                    />
-                    <span className="idm-meta-value">{incident.injuredWorker || '—'}</span>
-                  </div>
-                </div>
-                <div>
-                  <span className="idm-meta-label">Incident Location</span>
-                  <span className="idm-meta-value">{incident.incidentLocation || '—'}</span>
+          <div className="idm-grid-row">
+            <div className="idm-grid-col">
+              <div>
+                <span className="idm-meta-label">Injured Worker</span>
+                <div className="idm-worker-row">
+                  <AvatarImg
+                    name={incident.injuredWorker}
+                    fallback={workerInitial}
+                    baseClass="idm-worker-avatar"
+                  />
+                  <span className="idm-meta-value">{incident.injuredWorker || '—'}</span>
                 </div>
               </div>
-              <div className="idm-grid-col">
-                <div>
-                  <span className="idm-meta-label">Incident Date</span>
-                  <div className="idm-date-row">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
-                      <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                    </svg>
-                    <span className="idm-meta-value">{incident.incidentDate || '—'}</span>
-                  </div>
+              <div>
+                <span className="idm-meta-label">Incident Location</span>
+                <span className="idm-meta-value">{incident.incidentLocation || '—'}</span>
+              </div>
+            </div>
+            <div className="idm-grid-col">
+              <div>
+                <span className="idm-meta-label">Incident Date</span>
+                <div className="idm-date-row">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8A8D9A" strokeWidth="2" strokeLinecap="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+                  </svg>
+                  <span className="idm-meta-value">{incident.incidentDate || '—'}</span>
                 </div>
-                <div>
-                  <span className="idm-meta-label">Worker ID</span>
-                  <span className="idm-meta-value">{incident.workerId || '—'}</span>
-                </div>
+              </div>
+              <div>
+                <span className="idm-meta-label">Worker ID</span>
+                <span className="idm-meta-value">{incident.workerId || '—'}</span>
               </div>
             </div>
           </div>
 
-          {/* Bottom card: Actions Taken | Incident Details */}
-          <div className="idm-card">
-            <div className="idm-grid-row">
-              <div>
-                <div className="idm-section-title">Actions Taken</div>
-                <p className="idm-section-text">{incident.actionsTaken || '—'}</p>
-              </div>
-              <div>
-                <div className="idm-section-title">Incident Details</div>
-                <p className="idm-section-text">{incident.incidentDetails || 'No details provided.'}</p>
-              </div>
+          {/* Actions Taken | Incident Details — full-bleed, no card container */}
+          <div className="idm-grid-row">
+            <div>
+              <div className="idm-section-title">Actions Taken</div>
+              <p className="idm-section-text">{incident.actionsTaken || '—'}</p>
+            </div>
+            <div>
+              <div className="idm-section-title">Incident Details</div>
+              <p className="idm-section-text">{incident.incidentDetails || 'No details provided.'}</p>
             </div>
           </div>
         </div>
@@ -231,10 +230,14 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
         {/* Footer */}
         <div className="idm-footer">
           <div className="idm-footer__actions">
-            <button
-              className="idm-btn idm-btn--share"
-              onClick={() => setIsShareOpen(true)}
-            >Share</button>
+            {/* Sharing is a one-way step — once done, the incident has moved on
+                and the button has nothing left to do. */}
+            {!hasBeenShared && (
+              <button
+                className="idm-btn idm-btn--share"
+                onClick={() => setIsShareOpen(true)}
+              >Share</button>
+            )}
             <button className="idm-btn idm-btn--print" onClick={() => window.print()}>Print</button>
           </div>
           <div className="idm-footer__reporter">

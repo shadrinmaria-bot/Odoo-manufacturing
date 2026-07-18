@@ -82,14 +82,6 @@
   background:      #1B1D26;
 }
 
-/* Grouped cards (match the form's grouped sections) */
-.idm-card {
-  border:        1px solid #3C3E4A;
-  border-radius: 6px;
-  padding:       16px 18px;
-  background:    transparent;
-}
-
 /* Icon row */
 .idm-icon-row {
   display:        flex;
@@ -339,9 +331,8 @@
   .idm-severity-text--critical,
   .idm-severity-text--attention   { color: #000; }
 
-  /* Dividers / card framing */
-  .idm-icon-row,
-  .idm-card                       { border-color: #ccc; }
+  /* Dividers */
+  .idm-icon-row                   { border-color: #ccc; }
 
   .idm-body                       { background: #fff; }
 

@@ -274,9 +274,7 @@ export default function WorkCenterCard({
       {incidentCount > 0 && (
         <OpenSafetyItemsDropdown
           isOpen={isDropdownOpen}
-          anchorRect={anchorRect}
-          workCenterName={center.name}
-          incidents={incidents}
+          anchorRect={anchorRect}          incidents={incidents}
           onClose={onCloseDropdown}
           onViewIncident={onViewIncident}
           onReportIncident={() => onReportIncident?.(center.id)}

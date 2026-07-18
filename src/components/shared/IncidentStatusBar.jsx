@@ -1,15 +1,16 @@
 import React from 'react'
 import './IncidentStatusBar.css'
 
-const H = 24    // chevron height px
-const D = 8     // arrow / notch depth px
+const H = 33    // chevron height px
+const D = 11    // arrow / notch depth px
 const S = 0.5   // polygon inset so stroke stays within viewBox
 
+// Sharing an incident moves it straight to "Investigated" — there is no
+// separate Shared stage, so the bar shows the three real stages only.
 const STAGES = [
-  { key: 'open',         label: 'Incident Open', w: 110 },
-  { key: 'shared',       label: 'Shared',        w: 68  },
-  { key: 'investigated', label: 'Investigated',  w: 96  },
-  { key: 'resolved',     label: 'Resolved',      w: 78  },
+  { key: 'open',         label: 'Incident Open', w: 118 },
+  { key: 'investigated', label: 'Investigated',  w: 104 },
+  { key: 'resolved',     label: 'Resolved',      w: 86  },
 ]
 
 const STAGE_ORDER = Object.fromEntries(STAGES.map((s, i) => [s.key, i]))
@@ -26,11 +27,14 @@ function chevronPts(w, pos) {
 }
 
 export default function IncidentStatusBar({ status = 'open' }) {
-  const currentIdx = STAGE_ORDER[status] ?? 0
+  // An incident that was shared but not yet given a later stage still reads as
+  // "investigated", since sharing is what advances it.
+  const key = status === 'shared' ? 'investigated' : status
+  const currentIdx = STAGE_ORDER[key] ?? 0
 
   return (
     <div className="isb" role="progressbar" aria-label="Incident status">
-      {STAGES.map(({ key, label, w }, idx) => {
+      {STAGES.map(({ key: stageKey, label, w }, idx) => {
         const isActive = idx === currentIdx
         const pos    = idx === 0 ? 'first' : idx === STAGES.length - 1 ? 'last' : 'middle'
         const fill   = isActive ? '#17373B' : '#3C3E4B'
@@ -40,11 +44,15 @@ export default function IncidentStatusBar({ status = 'open' }) {
 
         return (
           <svg
-            key={key}
+            key={stageKey}
             className="isb__seg"
             width={w}
             height={H}
             viewBox={`0 0 ${w} ${H}`}
+            // Each segment slides left by the notch depth so its notch sits over
+            // the previous segment's point — without this the tapers leave
+            // bowtie-shaped gaps between the chevrons.
+            style={idx > 0 ? { marginLeft: -D } : undefined}
             aria-current={isActive ? 'step' : undefined}
           >
             <polygon

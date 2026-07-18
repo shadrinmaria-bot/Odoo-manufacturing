@@ -6,6 +6,13 @@
 }
 
 .isb__seg {
-  display:    block;
+  display:     block;
   flex-shrink: 0;
+  position:    relative;
+}
+
+/* Segments overlap by the notch depth, so a later sibling would paint over the
+   active segment's teal stroke where the two meet. Lift the active one. */
+.isb__seg[aria-current='step'] {
+  z-index: 1;
 }

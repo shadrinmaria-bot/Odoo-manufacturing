@@ -66,9 +66,7 @@ function IncidentRow({ incident, onView }) {
 
 export default function OpenSafetyItemsDropdown({
   isOpen,
-  anchorRect,
-  workCenterName,
-  incidents,
+  anchorRect,  incidents,
   onClose,
   onViewIncident,
   onReportIncident,
@@ -97,15 +95,6 @@ export default function OpenSafetyItemsDropdown({
         '--dropdown-right': `${window.innerWidth - anchorRect.right}px`,
       }}
     >
-      <div className="osd-header">
-        <div className="osd-header__title">Open Safety Items — {workCenterName}</div>
-        <div className="osd-header__count">
-          {incidents.length} record{incidents.length !== 1 ? 's' : ''}
-        </div>
-      </div>
-
-      <div className="osd-divider" />
-
       {incidents.length === 0 ? (
         <div className="osd-empty">No open safety items.</div>
       ) : (

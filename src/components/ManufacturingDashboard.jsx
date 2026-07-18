@@ -217,7 +217,9 @@ export default function ManufacturingDashboard() {
   function handleShareIncident(incident, shareOptions) {
     if (!incident) return
     acknowledgeIncident(incident.id)
-    setIncidentStatus(incident.id, 'shared')
+    // Sharing moves the incident straight to Investigated — there is no
+    // separate Shared stage on the status bar.
+    setIncidentStatus(incident.id, 'investigated')
     const recipients = shareOptions?.recipients ?? []
     const first = recipients[0] ?? { name: 'Maria Shadrin', initial: 'M' }
     const extras = Math.max(0, recipients.length - 1)
@@ -283,6 +285,8 @@ export default function ManufacturingDashboard() {
     })
   }
 
+  // 'shared' is retained only so any incident already carrying that status
+  // still orders correctly; nothing sets it any more.
   const STAGE_ORDER = ['open', 'shared', 'investigated', 'resolved']
 
   function setIncidentStatus(incidentId, nextStatus) {
