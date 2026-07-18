@@ -170,14 +170,7 @@ export default function WorkCenterCard({
                 <Bar
                   dataKey="base" stackId="load"
                   isAnimationActive={false} activeBar={false}
-                  onMouseEnter={(d, index) => {
-                    // Anchor to the top of the whole stack, not this segment:
-                    // scale up from the base rect using its own px-per-hour.
-                    const row    = center.data[index] || {}
-                    const perHr  = row.base ? d.height / row.base : 0
-                    const excess = row.excess || 0
-                    setHovered({ series: 'base', index, x: d.x + d.width / 2, y: d.y - excess * perHr })
-                  }}
+                  onMouseEnter={(d, index) => setHovered({ series: 'base', index, x: d.x + d.width / 2, y: d.y })}
                   onMouseLeave={() => setHovered(null)}
                 >
                   {center.data.map((d, i) => (

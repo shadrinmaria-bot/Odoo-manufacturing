@@ -211,9 +211,9 @@
   font-size:     12px;
   color:         #FFFFFF;
   white-space:   nowrap;
-  /* The wrapper is positioned at the bar's top centre; this re-centres the box
-     on that point rather than hanging it down and to the right of it. */
-  transform:     translate(-50%, -50%);
+  /* The wrapper sits at the bar's top centre. Only the vertical axis is
+     re-centred: the box's left edge stays on that point and it runs rightward. */
+  transform:     translate(0, -50%);
   /* Fades in on first appearance only: the content unmounts when you leave a
      bar, so moving between bars re-renders in place without replaying this. */
   animation:     wcTooltipFadeIn 0.22s ease-out;

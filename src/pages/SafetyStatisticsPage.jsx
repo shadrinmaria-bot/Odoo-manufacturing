@@ -26,9 +26,9 @@ const tooltipContentStyle = {
   background: '#262A36', border: '1px solid #3C3E4A', borderRadius: 4,
   padding: '8px 12px', fontFamily: FONT, fontSize: 12.5,
   color: '#F5F5F6', boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
-  // The wrapper is positioned at the bar's top centre; this re-centres the box
-  // on that point rather than hanging it down and to the right of it.
-  transform: 'translate(-50%, -50%)',
+  // The wrapper sits at the bar's top centre. Only the vertical axis is
+  // re-centred: the box's left edge stays on that point and it runs rightward.
+  transform: 'translate(0, -50%)',
 }
 const tooltipLabelStyle = {
   color: '#F5F5F6', fontFamily: FONT, fontWeight: 700, fontSize: 12.5, marginBottom: 4,
