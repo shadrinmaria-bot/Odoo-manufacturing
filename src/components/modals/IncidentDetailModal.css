@@ -127,6 +127,13 @@
   gap:                   0 32px;
 }
 
+/* Separates the last two fields from the meta grid above, matching the rule
+   under the injury icon row. */
+.idm-grid-row--divided {
+  padding-top: 16px;
+  border-top:  1px solid #3C3E4A;
+}
+
 .idm-grid-col {
   display:        flex;
   flex-direction: column;
@@ -180,19 +187,25 @@
   gap:         6px;
 }
 
+/* Matches .idm-meta-label / .idm-meta-value above — these were inverted, with a
+   white bold title over grey text while every other field on the page is a grey
+   uppercase label over white text. */
 .idm-section-title {
-  font-family:    'Segoe UI', sans-serif;
-  font-weight:    700;
-  font-size:      13.5px;
-  color:          #F5F5F6;
-  margin-bottom:  10px;
+  font-family:     'Segoe UI', sans-serif;
+  font-size:       11px;
+  font-weight:     600;
+  color:           #8A8D9A;
+  text-transform:  uppercase;
+  letter-spacing:  0.05em;
+  display:         block;
+  margin-bottom:   4px;
 }
 
 .idm-section-text {
   font-family: 'Segoe UI', sans-serif;
   font-size:   13px;
   font-weight: 400;
-  color:       #A0A4AF;
+  color:       #F5F5F6;
   line-height: 1.6;
   margin:      0;
 }

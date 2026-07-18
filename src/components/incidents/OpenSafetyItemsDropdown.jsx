@@ -3,14 +3,11 @@ import ReactDOM from 'react-dom'
 import Icon from '../shared/Icon'
 import './OpenSafetyItemsDropdown.css'
 
+// Same glyph as the Report Incident button (fa-exclamation-triangle), so the
+// two read as one icon. The exclamation is cut out of the triangle rather than
+// drawn over it in white.
 function CriticalIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="#F9464C" xmlns="http://www.w3.org/2000/svg" className="osd-row__icon">
-      <path d="M7.131 2.5a1 1 0 0 1 1.738 0l5.642 9.75A1 1 0 0 1 13.642 14H2.358a1 1 0 0 1-.869-1.5L7.131 2.5z" />
-      <line x1="8" y1="6" x2="8" y2="9.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
-      <circle cx="8" cy="11.5" r="0.7" fill="white" />
-    </svg>
-  )
+  return <Icon char={"\uF071"} size={14} color="#F9464C" />
 }
 
 function AttentionIcon() {

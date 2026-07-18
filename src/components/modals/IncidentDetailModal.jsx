@@ -215,7 +215,7 @@ export default function IncidentDetailModal({ incident, isOpen, onClose, onShare
           </div>
 
           {/* Actions Taken | Incident Details — full-bleed, no card container */}
-          <div className="idm-grid-row">
+          <div className="idm-grid-row idm-grid-row--divided">
             <div>
               <div className="idm-section-title">Actions Taken</div>
               <p className="idm-section-text">{incident.actionsTaken || '—'}</p>

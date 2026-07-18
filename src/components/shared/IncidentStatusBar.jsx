@@ -39,7 +39,7 @@ export default function IncidentStatusBar({ status = 'open' }) {
         const pos    = idx === 0 ? 'first' : idx === STAGES.length - 1 ? 'last' : 'middle'
         const fill   = isActive ? '#17373B' : '#3C3E4B'
         const stroke = isActive ? '#03F9E3' : 'none'
-        const color  = isActive ? '#03F9E3' : '#6B6E7C'
+        const color  = isActive ? '#FFFFFF' : '#6B6E7C'
         const textX  = pos === 'first' ? (w - D) / 2 : pos === 'last' ? (w + D) / 2 : w / 2
 
         return (
